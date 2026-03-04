@@ -1,0 +1,26 @@
+{
+  "name": "@void-ui/tokens",
+  "version": "0.1.0",
+  "description": "Design tokens for void-ui — the single source of truth",
+  "author": "Germán Román",
+  "license": "MIT",
+  "main": "dist/tokens.js",
+  "exports": {
+    ".": "./dist/tokens.js",
+    "./css": "./dist/variables.css",
+    "./scss": "./dist/tokens.scss"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "style-dictionary": "^4.1.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

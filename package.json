@@ -1,0 +1,35 @@
+{
+  "name": "void-ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "void-ui monorepo — minimal, spatial React component library",
+  "author": "Germán Román",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "build:tokens": "npm run build --workspace=packages/tokens",
+    "build:library": "npm run build --workspace=packages/library",
+    "dev": "npm run dev --workspace=packages/library",
+    "storybook": "npm run storybook --workspace=packages/library",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint . --ext .ts,.tsx",
+    "generate": "npm run generate --workspace=packages/library",
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

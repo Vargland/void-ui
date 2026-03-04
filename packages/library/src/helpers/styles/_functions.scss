@@ -1,0 +1,11 @@
+// void-ui — SCSS Functions
+
+// Convert px to rem
+@function rem($px, $base: 16) {
+  @return calc($px / $base) * 1rem;
+}
+
+// Alpha variant of a color
+@function alpha($color, $opacity) {
+  @return rgba($color, $opacity);
+}

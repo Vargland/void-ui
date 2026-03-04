@@ -1,0 +1,62 @@
+// void-ui — SCSS Mixins
+
+// ─── Focus ring ──────────────────────────────────────────────────────────────
+@mixin focus-ring($color: var(--void-color-border-focus)) {
+  outline: 2px solid $color;
+  outline-offset: 2px;
+}
+
+// ─── Visually hidden (accessible) ────────────────────────────────────────────
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ─── Truncate text ───────────────────────────────────────────────────────────
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ─── Flex center ─────────────────────────────────────────────────────────────
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ─── Transition ──────────────────────────────────────────────────────────────
+@mixin transition($props...) {
+  $result: ();
+  @each $prop in $props {
+    $result: append($result, $prop var(--void-transition-normal), comma);
+  }
+  transition: $result;
+}
+
+// ─── Breakpoints ─────────────────────────────────────────────────────────────
+$breakpoints: (
+  'sm': 640px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  '2xl': 1536px,
+);
+
+@mixin respond-to($bp) {
+  @if map-has-key($breakpoints, $bp) {
+    @media (min-width: map-get($breakpoints, $bp)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint `#{$bp}` not found in $breakpoints.";
+  }
+}

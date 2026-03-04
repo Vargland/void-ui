@@ -1,93 +1,87 @@
-# void-ui — Architecture Document
-
-Basado en el análisis de void-ui. Este documento es la referencia de cómo está organizado el proyecto, por qué cada decisión existe, y cómo escalar.
-
----
-
-## Estructura del monorepo
+## Monorepo structure
 
 ```
 void-ui/
 ├── packages/
-│   ├── library/          ← componentes React principales
-│   ├── tokens/           ← design tokens (fuente de verdad)
-│   ├── icons/            ← iconografía (SVG + font)
-│   └── dates/            ← componentes de fecha (paquete separado, opcional)
-├── mcp-server/           ← servidor MCP para integración con Claude/Cursor
-├── .storybook/           ← config global de Storybook
+│   ├── library/          ← main React components
+│   ├── tokens/           ← design tokens (source of truth)
+│   ├── icons/            ← iconography (SVG + font)
+│   └── dates/            ← date components (separate package, optional)
+├── mcp-server/           ← MCP server for Claude/Cursor integration
+├── .storybook/           ← global Storybook config
 ├── package.json          ← workspace root
 └── void-ui.code-workspace
 ```
 
-### Por qué monorepo
+### Why a monorepo
 
-Cada sub-paquete se publica por separado en npm:
-- `@void-ui/library` — los componentes
-- `@void-ui/tokens` — los tokens (usable sin React)
-- `@void-ui/icons` — los íconos
-- `@void-ui/dates` — componentes de fecha (opcional, heavy dependency)
+Each sub-package is published separately on npm:
+- `@void-ui/library` — the components
+- `@void-ui/tokens` — the tokens (usable without React)
+- `@void-ui/icons` — the icons
+- `@void-ui/dates` — date components (optional, heavy dependency)
 
-Esto permite que un consumidor instale solo lo que necesita.
+This allows a consumer to install only what they need.
 
 ---
 
-## packages/library — Estructura de un componente
+## packages/library — Component structure
 
-Cada componente vive en su propia carpeta y sigue esta convención **sin excepción**:
+Each component lives in its own folder and follows this convention **without exception**:
 
 ```
 src/components/button/
-├── button.tsx              ← implementación del componente
-├── button.module.scss      ← estilos con CSS Modules
-├── button.stories.tsx      ← stories de Storybook
-├── button.test.tsx         ← tests con Vitest + Testing Library
+├── button.tsx              ← component implementation
+├── button.module.scss      ← styles with CSS Modules
+├── button.stories.tsx      ← Storybook stories
+├── button.test.tsx         ← tests with Vitest + Testing Library
 ├── index.ts                ← barrel export
 ├── styles/
-│   └── base.scss           ← estilos base importados por el module
+│   └── base.scss           ← base styles imported by the module
 └── docs/
-    └── button.mdx          ← documentación en Storybook
+    └── button.mdx          ← documentation in Storybook
 ```
 
-Y el tipado **siempre separado**:
+And the typings **always separated**:
 
 ```
 src/typings/components/
-└── buttons.ts              ← interfaces y types del componente
+└── buttons.ts              ← component interfaces and types
 ```
 
-### Por qué separar typings
+### Why separate typings
 
-- Permite importar solo los tipos sin importar el componente (útil para formularios, validaciones)
-- Fuerza a pensar la API del componente antes de implementar
-- Más fácil de revisar en PRs — los cambios de API son visibles solos
+- Allows importing only the types without importing the component (useful for forms, validations)
+- Forces you to think about the component API before implementing
+- Easier to review in PRs — API changes are visible on their own
 
 ---
 
-## packages/library — Estructura interna completa
+## packages/library — Full internal structure
 
 ```
 src/
-├── components/             ← un directorio por componente
+├── components/             ← one directory per component
 ├── typings/
-│   ├── components/         ← types de cada componente
-│   ├── hooks/              ← types de cada hook
-│   ├── contexts/           ← types de cada context
-│   ├── helpers/            ← types compartidos (colors, shadows, etc.)
-│   └── docs/               ← types para el sistema de documentación
-├── hooks/                  ← hooks reutilizables (use-toast, use-popper, etc.)
+│   ├── components/         ← types for each component
+│   ├── hooks/              ← types for each hook
+│   ├── contexts/           ← types for each context
+│   ├── helpers/            ← shared types (colors, shadows, etc.)
+│   └── docs/               ← types for the documentation system
+├── hooks/                  ← reusable hooks (use-toast, use-popper, etc.)
 ├── contexts/               ← React contexts (toast, tile, etc.)
 ├── helpers/
-│   ├── classnames/         ← utilidades para generar classNames
-│   ├── constants/          ← constantes compartidas
-│   ├── functions/          ← funciones puras reutilizables
-│   ├── hooks/              ← hooks helper internos (no expuestos)
+│   ├── classnames/         ← utilities for generating classNames
+│   ├── constants/          ← shared constants
+│   ├── functions/          ← reusable pure functions
+│   ├── hooks/              ← internal helper hooks (not exposed)
 │   └── styles/             ← SCSS helpers (_mixins, _functions, _constants)
 ├── static/
 │   ├── assets/             ← SVGs, logos
-│   └── styles/             ← reset.css global
-├── templates/              ← stories de patrones completos (form, data-grid, navigation)
-├── docs/                   ← páginas de documentación general (changelog, welcome)
-└── index.ts                ← barrel export principal de la librería
+│   └── styles/             ← global reset.css
+├── templates/              ← stories for complete patterns (form, data-grid, navigation)
+├── docs/                   ← general documentation pages (changelog, welcome)
+└── index.ts                ← main barrel export for the library
 ```
 
 ---
@@ -97,29 +91,29 @@ src/
 ```
 tokens/
 ├── tokens/
-│   ├── base.json           ← colores, espaciado, tipografía (primitivos)
-│   └── theme.json          ← tokens semánticos (color.primary, color.error, etc.)
-├── build.js                ← script que genera CSS variables, JS, SCSS desde los JSON
-├── config.js               ← configuración del build (Style Dictionary)
+│   ├── base.json           ← colors, spacing, typography (primitives)
+│   └── theme.json          ← semantic tokens (color.primary, color.error, etc.)
+├── build.js                ← script that generates CSS variables, JS, SCSS from the JSON files
+├── config.js               ← build configuration (Style Dictionary)
 └── package.json
 ```
 
-### Flujo de tokens
+### Token flow
 
 ```
 Figma Variables
       ↓
-tokens/base.json + theme.json   ← fuente de verdad
+tokens/base.json + theme.json   ← source of truth
       ↓
 build.js (Style Dictionary)
       ↓
 dist/
   ├── variables.css             ← CSS custom properties
-  ├── tokens.js                 ← JS object para uso en React
-  └── tokens.scss               ← variables SCSS
+  ├── tokens.js                 ← JS object for use in React
+  └── tokens.scss               ← SCSS variables
 ```
 
-Cuando se integra Figma MCP, el sync actualiza directamente los `.json`.
+When Figma MCP is integrated, the sync directly updates the `.json` files.
 
 ---
 
@@ -128,83 +122,83 @@ Cuando se integra Figma MCP, el sync actualiza directamente los `.json`.
 ```
 icons/
 ├── src/
-│   ├── assets/             ← SVGs originales
+│   ├── assets/             ← original SVGs
 │   └── icons/
-│       ├── fonts/          ← font generada (woff, ttf, svg)
-│       ├── icons.css       ← clases CSS para usar los íconos
-│       └── selection.json  ← definición de la font (IcoMoon format)
-├── build.js                ← genera la icon font desde los SVGs
-└── generate-enum.js        ← genera un TypeScript enum con todos los íconos
+│       ├── fonts/          ← generated font (woff, ttf, svg)
+│       ├── icons.css       ← CSS classes for using the icons
+│       └── selection.json  ← font definition (IcoMoon format)
+├── build.js                ← generates the icon font from SVGs
+└── generate-enum.js        ← generates a TypeScript enum with all icons
 ```
 
 ---
 
-## mcp-server — Integración con IA
+## mcp-server — AI integration
 
 ```
 mcp-server/
 ├── src/
-│   ├── index.ts            ← entry point del servidor MCP
-│   ├── tools.ts            ← herramientas expuestas a Claude/Cursor
-│   ├── resources.ts        ← recursos (componentes, tokens, docs)
-│   ├── constants.ts        ← constantes del servidor
-│   ├── types.ts            ← types del servidor
-│   └── utils.ts            ← utilidades
+│   ├── index.ts            ← MCP server entry point
+│   ├── tools.ts            ← tools exposed to Claude/Cursor
+│   ├── resources.ts        ← resources (components, tokens, docs)
+│   ├── constants.ts        ← server constants
+│   ├── types.ts            ← server types
+│   └── utils.ts            ← utilities
 ├── scripts/
-│   ├── generate-data.ts    ← genera el snapshot de la librería para el MCP
-│   └── sync-version.js     ← sincroniza versiones entre paquetes
+│   ├── generate-data.ts    ← generates the library snapshot for the MCP
+│   └── sync-version.js     ← syncs versions across packages
 └── README.md + SETUP_GUIDE.md
 ```
 
-El MCP server expone la librería completa como contexto para Claude y Cursor. Cuando Claude "conoce" void-ui, genera código que usa los componentes correctamente en lugar de inventar los suyos.
+The MCP server exposes the full library as context for Claude and Cursor. When Claude "knows" void-ui, it generates code that uses the components correctly instead of making up its own.
 
 ---
 
-## Convenciones de código
+## Code conventions
 
-### Nomenclatura de archivos
-| Tipo | Convención | Ejemplo |
+### File naming
+| Type | Convention | Example |
 |------|-----------|---------|
-| Componente | kebab-case | `button.tsx` |
+| Component | kebab-case | `button.tsx` |
 | Stories | kebab-case + `.stories` | `button.stories.tsx` |
 | Tests | kebab-case + `.test` | `button.test.tsx` |
-| Tipos | kebab-case + plural | `buttons.ts` |
+| Types | kebab-case + plural | `buttons.ts` |
 | Hooks | `use-` prefix | `use-toast.ts` |
 | SCSS helpers | `_` prefix | `_mixins.scss` |
 
 ### Barrel exports
-Cada componente tiene su `index.ts` que re-exporta:
+Each component has its own `index.ts` that re-exports:
 ```ts
 // components/button/index.ts
 export { Button } from './button'
 export type { ButtonProps } from '../../typings/components/buttons'
 ```
 
-Y el `src/index.ts` principal re-exporta todo:
+And the main `src/index.ts` re-exports everything:
 ```ts
 export { Button } from './components/button'
 export type { ButtonProps } from './typings/components/buttons'
 // ...
 ```
 
-### Separación de lógica y presentación
-Los componentes complejos separan la lógica en un hook propio:
+### Separation of logic and presentation
+Complex components separate their logic into a dedicated hook:
 ```
-combobox/combobox.tsx         ← solo JSX
-hooks/use-combobox.ts         ← toda la lógica
-typings/hooks/use-combobox.ts ← types del hook
+combobox/combobox.tsx         ← JSX only
+hooks/use-combobox.ts         ← all the logic
+typings/hooks/use-combobox.ts ← hook types
 ```
 
 ---
 
 ## Storybook
 
-Cada componente tiene dos tipos de documentación:
+Each component has two types of documentation:
 
-**Stories** (`button.stories.tsx`) — casos de uso interactivos
-**MDX** (`docs/button.mdx`) — documentación narrativa con la template compartida
+**Stories** (`button.stories.tsx`) — interactive use cases
+**MDX** (`docs/button.mdx`) — narrative documentation using the shared template
 
-La template de docs está en `src/docs/template/` y estandariza cómo se documenta cada componente — misma estructura, mismo formato.
+The docs template lives in `src/docs/template/` and standardizes how each component is documented — same structure, same format.
 
 ---
 
@@ -212,14 +206,14 @@ La template de docs está en `src/docs/template/` y estandariza cómo se documen
 
 - **Framework**: Vitest + Testing Library
 - **Setup**: `test-config/setup-tests.js`
-- **Snapshots**: carpeta `__snapshots__/` dentro de cada componente
-- **Convención**: un archivo `.test.tsx` por componente + un archivo `.test.ts` por hook
+- **Snapshots**: `__snapshots__/` folder inside each component
+- **Convention**: one `.test.tsx` file per component + one `.test.ts` file per hook
 
 ---
 
-## Plop — generador de componentes
+## Plop — component generator
 
-void-ui tiene `plopfile.mjs` con templates para generar un componente completo:
+void-ui has a `plopfile.mjs` with templates to generate a complete component:
 
 ```
 plop-templates/new-component/
@@ -231,47 +225,47 @@ plop-templates/new-component/
 └── sass.module.hbs     ← component.module.scss
 ```
 
-Comando: `npm run generate` → te pregunta el nombre → genera toda la estructura.
-**Esto es clave para mantener consistencia a escala.**
+Command: `npm run generate` → prompts for the name → generates the full structure.
+**This is key to maintaining consistency at scale.**
 
 ---
 
-## Roadmap de implementación para void-ui
+## Implementation roadmap for void-ui
 
 ```
-Fase 1 — Fundación
-  ✓ Repo en GitHub
+Phase 1 — Foundation
+  ✓ Repo on GitHub
   → Monorepo setup (npm workspaces)
   → packages/tokens (base.json + theme.json + build)
-  → packages/library (estructura vacía + config Storybook + Vitest)
+  → packages/library (empty structure + Storybook config + Vitest)
 
-Fase 2 — Primer componente completo
-  → Button (con toda la estructura: component, types, stories, test, docs)
-  → Validar que el pipeline completo funciona antes de agregar más
+Phase 2 — First complete component
+  → Button (with full structure: component, types, stories, test, docs)
+  → Validate that the full pipeline works before adding more
 
-Fase 3 — Figma sync
-  → Conectar Figma Variables con tokens/base.json via MCP
+Phase 3 — Figma sync
+  → Connect Figma Variables with tokens/base.json via MCP
 
-Fase 4 — MCP server
-  → mcp-server con tools y resources
-  → Validar con Claude Code y Cursor
+Phase 4 — MCP server
+  → mcp-server with tools and resources
+  → Validate with Claude Code and Cursor
 
-Fase 5 — CI/CD
-  → GitHub Actions: lint + test + build en cada PR
-  → AI code review en PRs
-  → npm publish automático al mergear a main
+Phase 5 — CI/CD
+  → GitHub Actions: lint + test + build on every PR
+  → AI code review on PRs
+  → Automatic npm publish on merge to main
 
-Fase 6 — Escalar componentes
-  → Plop templates para generar componentes
-  → Agregar componentes uno por uno, con calidad
+Phase 6 — Scale components
+  → Plop templates to generate components
+  → Add components one by one, with quality
 ```
 
 ---
 
-## Decisiones de diseño que NO cambiar
+## Design decisions that must NOT change
 
-1. **Un directorio por componente** — nunca agrupar múltiples componentes en una carpeta
-2. **Typings separados** — los types nunca viven dentro del `.tsx`
-3. **Hooks propios para lógica compleja** — si el componente tiene más de 50 líneas de lógica, va a un hook
-4. **Storybook como fuente de verdad visual** — si no está en Storybook, no existe
-5. **Tests antes de publicar** — ningún componente se publica sin test
+1. **One directory per component** — never group multiple components in one folder
+2. **Separate typings** — types never live inside the `.tsx`
+3. **Dedicated hooks for complex logic** — if the component has more than 50 lines of logic, it goes into a hook
+4. **Storybook as the visual source of truth** — if it's not in Storybook, it doesn't exist
+5. **Tests before publishing** — no component is published without tests

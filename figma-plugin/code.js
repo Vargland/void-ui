@@ -12,7 +12,7 @@ const T = {
 }
 
 const FONT_BOLD     = { family: 'Inter', style: 'Bold' }
-const FONT_SEMIBOLD = { family: 'Inter', style: 'SemiBold' }
+const FONT_SEMIBOLD = { family: 'Inter', style: 'Semi Bold' }
 const FONT_MEDIUM   = { family: 'Inter', style: 'Medium' }
 const FONT_REGULAR  = { family: 'Inter', style: 'Regular' }
 

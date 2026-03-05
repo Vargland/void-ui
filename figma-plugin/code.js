@@ -1,5 +1,4 @@
 // void-ui Figma Plugin — code.js
-// Uses fixed widths — no text measurement needed
 
 const T = {
   bgBase:        { r: 0.039, g: 0.039, b: 0.039 },
@@ -13,7 +12,7 @@ const T = {
 }
 
 const FONT_BOLD     = { family: 'Inter', style: 'Bold' }
-const FONT_SEMIBOLD = { family: 'Inter', style: 'SemiBold' }
+const FONT_SEMIBOLD = { family: 'Inter', style: 'Semi Bold' }
 const FONT_MEDIUM   = { family: 'Inter', style: 'Medium' }
 const FONT_REGULAR  = { family: 'Inter', style: 'Regular' }
 
@@ -22,6 +21,21 @@ function solid(c) { return [{ type: 'SOLID', color: c }] }
 // Approximate char width for Inter Medium at given fontSize
 function approxWidth(text, fontSize) {
   return Math.ceil(text.length * fontSize * 0.52)
+}
+
+// Create a text node and append it to parent BEFORE setting characters
+// (Figma requires the node to be in the document before assigning characters)
+function makeText(parent, { fontName, fontSize, fills, characters, textAutoResize = 'WIDTH_AND_HEIGHT', letterSpacing, opacity }) {
+  const node = figma.createText()
+  parent.appendChild(node)           // ← must be in doc first
+  node.fontName       = fontName
+  node.fontSize       = fontSize
+  node.fills          = fills
+  node.textAutoResize = textAutoResize
+  if (letterSpacing !== undefined) node.letterSpacing = letterSpacing
+  if (opacity !== undefined)       node.opacity = opacity
+  node.characters     = characters   // ← set last, after font & parent
+  return node
 }
 
 function makeButton(root, { label, variant = 'primary', size = 'md', disabled = false, loading = false }, x, y) {
@@ -42,31 +56,30 @@ function makeButton(root, { label, variant = 'primary', size = 'md', disabled = 
   const textW = approxWidth(displayLabel, S.fontSize)
   const btnW  = textW + S.px * 2
 
-  // Frame
+  // Frame — append to root first so child nodes are in the document
   const frame = figma.createFrame()
   frame.name         = `Button/${variant}/${size}${disabled ? '/disabled' : ''}${loading ? '/loading' : ''}`
+  frame.x            = x
+  frame.y            = y
+  root.appendChild(frame)            // ← in doc before resize/style
   frame.resize(btnW, S.h)
   frame.cornerRadius = S.radius
   frame.opacity      = disabled ? 0.4 : 1
   frame.fills        = STYLE.bg ? solid(STYLE.bg) : []
-  frame.clipsContent = true
+  frame.clipsContent = false
   if (STYLE.border) {
     frame.strokes      = solid(STYLE.border)
     frame.strokeWeight = 1
     frame.strokeAlign  = 'INSIDE'
   }
-  frame.x = x
-  frame.y = y
-  root.appendChild(frame)
 
-  // Label — appended to frame so it renders inside it
-  const labelNode = figma.createText()
-  labelNode.fontName       = FONT_MEDIUM
-  labelNode.fontSize       = S.fontSize
-  labelNode.fills          = solid(STYLE.text)
-  labelNode.characters     = displayLabel
-  labelNode.textAutoResize = 'WIDTH_AND_HEIGHT'
-  frame.appendChild(labelNode)
+  // Label — append to frame (already in doc) before setting characters
+  const labelNode = makeText(frame, {
+    fontName:  FONT_MEDIUM,
+    fontSize:  S.fontSize,
+    fills:     solid(STYLE.text),
+    characters: displayLabel,
+  })
   labelNode.x = S.px
   labelNode.y = Math.round((S.h - S.fontSize * 1.4) / 2)
 
@@ -91,50 +104,58 @@ async function main() {
   const prev = page.children.find(n => n.name === '🔘 Button')
   if (prev) prev.remove()
 
-  // Root frame
+  // Root frame — append to page immediately
   const root = figma.createFrame()
   root.name         = '🔘 Button'
+  root.x            = 300
+  root.y            = 300
+  page.appendChild(root)             // ← in doc before anything else
   root.fills        = solid(T.bgBase)
   root.cornerRadius = 12
   root.clipsContent = false
-  root.resize(CANVAS_W, 100)
-  root.x = 300
-  root.y = 300
-  page.appendChild(root)
+  root.resize(CANVAS_W, 100)        // temporary height, resized at end
 
   let y = PAD
 
   // Title
-  const title = figma.createText()
-  title.fontName = FONT_BOLD; title.fontSize = 22
-  title.fills = solid(T.textPrimary); title.characters = 'Button'
-  title.textAutoResize = 'WIDTH_AND_HEIGHT'
-  root.appendChild(title); title.x = PAD; title.y = y
+  const title = makeText(root, {
+    fontName:   FONT_BOLD,
+    fontSize:   22,
+    fills:      solid(T.textPrimary),
+    characters: 'Button',
+  })
+  title.x = PAD; title.y = y
   y += 28 + 6
 
-  const sub = figma.createText()
-  sub.fontName = FONT_REGULAR; sub.fontSize = 12
-  sub.fills = solid(T.textMuted); sub.characters = '@void-ui/library'
-  sub.textAutoResize = 'WIDTH_AND_HEIGHT'
-  root.appendChild(sub); sub.x = PAD; sub.y = y
+  // Subtitle
+  const sub = makeText(root, {
+    fontName:   FONT_REGULAR,
+    fontSize:   12,
+    fills:      solid(T.textMuted),
+    characters: '@void-ui/library',
+  })
+  sub.x = PAD; sub.y = y
   y += 18 + SECTION_GAP
 
   function addLabel(text) {
-    const lbl = figma.createText()
-    lbl.fontName = FONT_SEMIBOLD; lbl.fontSize = 10
-    lbl.fills = solid(T.textMuted); lbl.opacity = 0.7
-    lbl.characters = text; lbl.textAutoResize = 'WIDTH_AND_HEIGHT'
-    lbl.letterSpacing = { value: 1.5, unit: 'PIXELS' }
-    root.appendChild(lbl); lbl.x = PAD; lbl.y = y
+    const lbl = makeText(root, {
+      fontName:      FONT_SEMIBOLD,
+      fontSize:      10,
+      fills:         solid(T.textMuted),
+      characters:    text,
+      letterSpacing: { value: 1.5, unit: 'PIXELS' },
+      opacity:       0.7,
+    })
+    lbl.x = PAD; lbl.y = y
     y += 14 + LABEL_MB
   }
 
   function addRow(buttons) {
     let x = PAD
     let maxH = 0
-    const S = { sm: 28, md: 36, lg: 44 }
+    const H = { sm: 28, md: 36, lg: 44 }
     for (const btn of buttons) {
-      const h = S[btn.size || 'md']
+      const h = H[btn.size || 'md']
       const w = makeButton(root, btn, x, y)
       x += w + GAP_X
       maxH = Math.max(maxH, h)
@@ -185,7 +206,7 @@ async function main() {
   }
   y += PAD
 
-  // Resize root to final height
+  // Resize root to actual content height
   root.resize(CANVAS_W, y)
   root.clipsContent = true
 

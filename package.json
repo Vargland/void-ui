@@ -17,7 +17,10 @@
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint . --ext .ts,.tsx",
     "generate": "npm run generate --workspace=packages/library",
-    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules"
+    "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
+    "figma:push": "node figma-sync/push-to-figma.js",
+    "figma:pull": "node figma-sync/pull-from-figma.js",
+    "figma:sync": "npm run figma:push && npm run build:tokens"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.0.0",

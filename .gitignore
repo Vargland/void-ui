@@ -12,6 +12,8 @@ storybook-static/
 .env
 .env.local
 .env.*.local
+# keep example
+!.env.example
 
 # OS
 .DS_Store

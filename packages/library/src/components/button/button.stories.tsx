@@ -4,7 +4,7 @@ import { Button } from './button'
 const meta = {
   title:     'Components/Button',
   component:  Button,
-  tags:      [],
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
@@ -68,6 +68,7 @@ export const Danger: Story = {
 // ─── Sizes ───────────────────────────────────────────────────────────────────
 
 export const Sizes: Story = {
+  args: {},
   render: () => (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       <Button size="sm">Small</Button>

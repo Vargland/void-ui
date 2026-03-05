@@ -1,3 +1,4 @@
+@use 'sass:map';
 @use '../../helpers/styles/mixins' as *;
 @use './styles/base' as *;
 
@@ -36,18 +37,18 @@
 
 @each $name, $props in $button-sizes {
   .size-#{$name} {
-    height:        map-get($props, 'height');
-    padding-left:  map-get($props, 'padding-x');
-    padding-right: map-get($props, 'padding-x');
-    font-size:     map-get($props, 'font-size');
-    border-radius: map-get($props, 'radius');
-    gap:           map-get($props, 'gap');
+    height:        map.get($props, 'height');
+    padding-left:  map.get($props, 'padding-x');
+    padding-right: map.get($props, 'padding-x');
+    font-size:     map.get($props, 'font-size');
+    border-radius: map.get($props, 'radius');
+    gap:           map.get($props, 'gap');
 
     .iconBefore,
     .iconAfter,
     .spinner {
-      width:  map-get($props, 'icon-size');
-      height: map-get($props, 'icon-size');
+      width:  map.get($props, 'icon-size');
+      height: map.get($props, 'icon-size');
     }
   }
 }

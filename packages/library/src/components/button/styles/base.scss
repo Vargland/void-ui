@@ -1,0 +1,31 @@
+// button — base styles
+// Shared tokens consumed by button.module.scss
+
+$button-transition: background-color, border-color, color, box-shadow, opacity;
+
+$button-sizes: (
+  'sm': (
+    'height':      28px,
+    'padding-x':   var(--void-space-3),
+    'font-size':   var(--void-font-size-sm),
+    'icon-size':   14px,
+    'gap':         var(--void-space-1),
+    'radius':      var(--void-radius-md),
+  ),
+  'md': (
+    'height':      36px,
+    'padding-x':   var(--void-space-4),
+    'font-size':   var(--void-font-size-base),
+    'icon-size':   16px,
+    'gap':         var(--void-space-2),
+    'radius':      var(--void-radius-md),
+  ),
+  'lg': (
+    'height':      44px,
+    'padding-x':   var(--void-space-6),
+    'font-size':   var(--void-font-size-md),
+    'icon-size':   18px,
+    'gap':         var(--void-space-2),
+    'radius':      var(--void-radius-lg),
+  ),
+);

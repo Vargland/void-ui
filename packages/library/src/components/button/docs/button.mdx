@@ -1,0 +1,69 @@
+import { Canvas, Controls, Meta, Story } from '@storybook/blocks'
+import * as ButtonStories from '../button.stories'
+
+<Meta of={ButtonStories} />
+
+# Button
+
+The Button component is the primary action trigger in void-ui.
+It supports four visual variants, three sizes, loading and disabled states,
+and can render as any HTML element via the `as` prop.
+
+## Usage
+
+```tsx
+import { Button } from '@void-ui/library'
+
+<Button variant="primary" size="md">
+  Click me
+</Button>
+```
+
+## Variants
+
+Use `variant` to communicate intent.
+
+<Canvas of={ButtonStories.AllVariants} />
+
+| Variant     | When to use                                     |
+|-------------|-------------------------------------------------|
+| `primary`   | Main CTA — one per view                         |
+| `secondary` | Supporting actions                              |
+| `ghost`     | Low-emphasis actions inside dense UIs           |
+| `danger`    | Destructive actions (delete, revoke, etc.)      |
+
+## Sizes
+
+<Canvas of={ButtonStories.Sizes} />
+
+## States
+
+### Loading
+
+Use `loading` while async work is in progress. The button is automatically disabled.
+
+<Canvas of={ButtonStories.Loading} />
+
+### Disabled
+
+<Canvas of={ButtonStories.Disabled} />
+
+## With Icons
+
+<Canvas of={ButtonStories.WithIconBefore} />
+<Canvas of={ButtonStories.WithIconAfter} />
+
+## Polymorphic rendering
+
+The `as` prop lets you render the button as any element while keeping all styles.
+Useful for rendering as `<a>` for navigation.
+
+```tsx
+<Button as="a" href="/dashboard">
+  Go to Dashboard
+</Button>
+```
+
+## Props
+
+<Controls />

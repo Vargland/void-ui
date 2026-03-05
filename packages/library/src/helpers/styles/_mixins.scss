@@ -1,4 +1,6 @@
 // void-ui — SCSS Mixins
+@use 'sass:list';
+@use 'sass:map';
 
 // ─── Focus ring ──────────────────────────────────────────────────────────────
 @mixin focus-ring($color: var(--void-color-border-focus)) {
@@ -37,7 +39,7 @@
 @mixin transition($props...) {
   $result: ();
   @each $prop in $props {
-    $result: append($result, $prop var(--void-transition-normal), comma);
+    $result: list.append($result, $prop var(--void-transition-normal), comma);
   }
   transition: $result;
 }
@@ -52,8 +54,8 @@ $breakpoints: (
 );
 
 @mixin respond-to($bp) {
-  @if map-has-key($breakpoints, $bp) {
-    @media (min-width: map-get($breakpoints, $bp)) {
+  @if map.has-key($breakpoints, $bp) {
+    @media (min-width: map.get($breakpoints, $bp)) {
       @content;
     }
   } @else {

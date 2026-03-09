@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const i = JSON.parse(process.env.CLAUDE_TOOL_INPUT || '{}'); const p = i.file_path || ''; if (p.includes('package-lock.json')) { console.error('BLOCK: package-lock.json no debe editarse manualmente. Usa npm install.'); process.exit(1); } process.exit(0);\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const i = JSON.parse(process.env.CLAUDE_TOOL_INPUT || '{}'); const p = i.file_path || ''; if (!p.match(/\\.(ts|tsx)$/)) process.exit(0); const { execSync } = require('child_process'); try { execSync('npm run lint --workspace=packages/library -- --fix --quiet', { cwd: 'E:/Work/void-ui', stdio: 'pipe' }); } catch(e) { const out = e.stdout?.toString() || ''; const err = e.stderr?.toString() || ''; console.log(out.split('\\n').slice(-8).join('\\n')); } process.exit(0);\""
+          }
+        ]
+      }
+    ]
+  }
+}

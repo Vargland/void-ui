@@ -1,0 +1,148 @@
+@use 'sass:map';
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
+.root {
+  display:     inline-flex;
+  align-items: flex-start;
+  gap:         var(--void-space-2);
+  cursor:      pointer;
+
+  &.disabled {
+    opacity: 0.4;
+    cursor:  not-allowed;
+
+    .label {
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ─── Control (input + box wrapper) ───────────────────────────────────────────
+
+.control {
+  position:    relative;
+  flex-shrink: 0;
+  display:     flex;
+  align-items: center;
+}
+
+// ─── Native input (visually hidden, but keeps focus + keyboard) ───────────────
+
+.input {
+  @include visually-hidden;
+
+  // ─── Checked ──────────────────────────────────────────────────────────────
+  &:checked + .box,
+  &[aria-checked='mixed'] + .box {
+    background-color: var(--void-color-action-primary);
+    border-color:     var(--void-color-action-primary);
+    color:            var(--void-color-text-inverse);
+
+    svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  // ─── Focus visible ────────────────────────────────────────────────────────
+  &:focus-visible + .box {
+    @include focus-ring;
+  }
+}
+
+// ─── Visual box ──────────────────────────────────────────────────────────────
+
+.box {
+  @include transition(background-color, border-color, box-shadow);
+
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  border:           1.5px solid var(--void-color-border-default);
+  background-color: var(--void-color-background-surface);
+  color:            transparent;
+  border-radius:    var(--void-radius-sm);
+  pointer-events:   none;
+
+  svg {
+    opacity:    0;
+    transform:  scale(0.6);
+    transition: opacity var(--void-transition-fast),
+                transform var(--void-transition-fast);
+    width:      100%;
+    height:     100%;
+  }
+
+  .root:hover:not(.disabled) & {
+    border-color: var(--void-color-border-strong);
+  }
+}
+
+// ─── Error state ──────────────────────────────────────────────────────────────
+
+.hasError {
+  .box {
+    border-color: var(--void-color-status-error);
+  }
+
+  .input:checked + .box {
+    background-color: var(--void-color-status-error);
+    border-color:     var(--void-color-status-error);
+  }
+}
+
+// ─── Content (label + hint) ───────────────────────────────────────────────────
+
+.content {
+  display:        flex;
+  flex-direction: column;
+  gap:            2px;
+}
+
+.label {
+  font-family:  var(--void-font-family-sans);
+  font-weight:  var(--void-font-weight-medium);
+  color:        var(--void-color-text-primary);
+  line-height:  var(--void-font-line-height-tight);
+  cursor:       pointer;
+}
+
+.hint {
+  font-family: var(--void-font-family-sans);
+  color:       var(--void-color-text-muted);
+  line-height: var(--void-font-line-height-normal);
+}
+
+.hintError {
+  color: var(--void-color-status-error);
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $props in $checkbox-sizes {
+  .size-#{$name} {
+    gap: map.get($props, 'gap');
+
+    .box {
+      width:         map.get($props, 'box');
+      height:        map.get($props, 'box');
+      border-radius: map.get($props, 'radius');
+
+      svg {
+        width:  map.get($props, 'icon');
+        height: map.get($props, 'icon');
+      }
+    }
+
+    .label {
+      font-size: map.get($props, 'font-size');
+    }
+
+    .hint {
+      font-size: map.get($props, 'font-size');
+    }
+  }
+}

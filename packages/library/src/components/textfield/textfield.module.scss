@@ -1,0 +1,138 @@
+@use 'sass:map';
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Root wrapper ─────────────────────────────────────────────────────────────
+
+.root {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--void-space-1);
+  font-family:    var(--void-font-family-sans);
+
+  &.fullWidth { width: 100%; }
+  &.compact   { gap: 0; }
+}
+
+// ─── Label ────────────────────────────────────────────────────────────────────
+
+.label {
+  font-size:   var(--void-font-size-sm);
+  font-weight: var(--void-font-weight-medium);
+  color:       var(--void-color-text-primary);
+  line-height: 1;
+}
+
+// ─── Field (input + adornments) ───────────────────────────────────────────────
+
+.field {
+  position:        relative;
+  display:         flex;
+  align-items:     center;
+  background:      var(--void-color-background-surface);
+  border:          1px solid var(--void-color-border-default);
+  border-radius:   var(--void-radius-md);
+  transition:      $textfield-transition 150ms ease;
+
+  &:focus-within {
+    border-color: var(--void-color-border-focus);
+    box-shadow:   0 0 0 2px color-mix(in srgb, var(--void-color-border-focus) 20%, transparent);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor:  not-allowed;
+  }
+}
+
+// ─── Native input ─────────────────────────────────────────────────────────────
+
+.input {
+  flex:            1;
+  min-width:       0;
+  background:      transparent;
+  border:          none;
+  outline:         none;
+  color:           var(--void-color-text-primary);
+  font-family:     var(--void-font-family-sans);
+  font-weight:     var(--void-font-weight-regular);
+  line-height:     1;
+
+  &::placeholder {
+    color: var(--void-color-text-muted);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $props in $textfield-sizes {
+  .size-#{$name} {
+    .field {
+      height:        map.get($props, 'height');
+      border-radius: map.get($props, 'radius');
+    }
+
+    .input {
+      height:        map.get($props, 'height');
+      padding-left:  map.get($props, 'padding-x');
+      padding-right: map.get($props, 'padding-x');
+      font-size:     map.get($props, 'font-size');
+    }
+
+    .prefix,
+    .suffix {
+      width:     map.get($props, 'icon-size');
+      height:    map.get($props, 'icon-size');
+      font-size: map.get($props, 'icon-size');
+    }
+  }
+}
+
+// ─── Adornments ───────────────────────────────────────────────────────────────
+
+.prefix,
+.suffix {
+  display:        flex;
+  align-items:    center;
+  flex-shrink:    0;
+  color:          var(--void-color-text-muted);
+  pointer-events: none;
+}
+
+// When prefix/suffix present, reduce input padding on that side
+.prefix { padding-left:  var(--void-space-2); }
+.suffix { padding-right: var(--void-space-2); }
+
+.hasPrefix .input { padding-left:  var(--void-space-1); }
+.hasSuffix .input { padding-right: var(--void-space-1); }
+
+// ─── States ───────────────────────────────────────────────────────────────────
+
+@each $state, $props in $textfield-states {
+  @if $state != 'default' {
+    .state-#{$state} {
+      .field {
+        border-color: map.get($props, 'border');
+
+        &:focus-within {
+          border-color: map.get($props, 'focus');
+          box-shadow:   0 0 0 2px color-mix(in srgb, #{map.get($props, 'focus')} 20%, transparent);
+        }
+      }
+
+      .hint { color: map.get($props, 'hint'); }
+    }
+  }
+}
+
+// ─── Hint / Error ─────────────────────────────────────────────────────────────
+
+.hint {
+  font-size:   var(--void-font-size-xs);
+  color:       var(--void-color-text-muted);
+  line-height: 1.4;
+}

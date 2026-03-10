@@ -1,0 +1,80 @@
+@use 'sass:map';
+@use './styles/base' as *;
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+
+.badge {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:     0;
+  vertical-align:  middle;
+  gap:             var(--void-space-1);
+  border:          1px solid transparent;
+  border-radius:   var(--void-radius-full);
+  font-family:     var(--void-font-family-sans);
+  font-weight:     var(--void-font-weight-medium);
+  line-height:     1;
+  white-space:     nowrap;
+  letter-spacing:  var(--void-font-letter-spacing-wide);
+  transition:      $badge-transition 150ms ease;
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $props in $badge-sizes {
+  .size-#{$name} {
+    height:       map.get($props, 'height');
+    padding-left: map.get($props, 'padding-x');
+    padding-right: map.get($props, 'padding-x');
+    font-size:    map.get($props, 'font-size');
+  }
+}
+
+// ─── Dot mode ─────────────────────────────────────────────────────────────────
+
+.dot {
+  padding: 0;
+  border-radius: var(--void-radius-full);
+
+  @each $name, $props in $badge-sizes {
+    &.size-#{$name} {
+      width:  map.get($props, 'dot-size');
+      height: map.get($props, 'dot-size');
+    }
+  }
+}
+
+// ─── Variants × Tones ────────────────────────────────────────────────────────
+
+@each $tone, $props in $badge-tones {
+  .tone-#{$tone} {
+    &.variant-solid {
+      background-color: map.get($props, 'bg');
+      color:            map.get($props, 'color');
+      border-color:     transparent;
+    }
+
+    &.variant-subtle {
+      background-color: map.get($props, 'bg-subtle');
+      color:            map.get($props, 'bg');
+      border-color:     transparent;
+
+      // default tone uses text-primary instead of bg color for readability
+      @if $tone == 'default' {
+        color: var(--void-color-text-primary);
+      }
+    }
+
+    &.variant-outlined {
+      background-color: transparent;
+      color:            map.get($props, 'bg');
+      border-color:     map.get($props, 'bg');
+
+      @if $tone == 'default' {
+        color:       var(--void-color-text-primary);
+        border-color: var(--void-color-border-default);
+      }
+    }
+  }
+}

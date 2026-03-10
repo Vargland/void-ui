@@ -1,0 +1,16 @@
+// avatar — base styles
+
+$avatar-sizes: (
+  'xs': ( size: 24px,  font-size: var(--void-font-size-xs),   status: 6px  ),
+  'sm': ( size: 32px,  font-size: var(--void-font-size-sm),   status: 8px  ),
+  'md': ( size: 40px,  font-size: var(--void-font-size-base), status: 10px ),
+  'lg': ( size: 48px,  font-size: var(--void-font-size-md),   status: 11px ),
+  'xl': ( size: 64px,  font-size: var(--void-font-size-lg),   status: 13px ),
+);
+
+$status-colors: (
+  'online':  var(--void-color-status-success),
+  'offline': var(--void-color-text-disabled),
+  'busy':    var(--void-color-status-error),
+  'away':    var(--void-color-status-warning),
+);

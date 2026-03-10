@@ -1,0 +1,68 @@
+@use 'sass:map';
+@use './styles/base' as *;
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+
+.typography {
+  font-family: var(--void-font-family-sans);
+  margin:      0;
+  padding:     0;
+}
+
+// ─── Heading defaults (when no explicit props override) ───────────────────────
+
+@each $tag, $props in $heading-defaults {
+  .#{$tag} {
+    font-size:      map.get($props, 'size');
+    font-weight:    map.get($props, 'weight');
+    line-height:    map.get($props, 'leading');
+    letter-spacing: map.get($props, 'tracking');
+    color:          var(--void-color-text-primary);
+  }
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $value in $text-sizes {
+  .size-#{$name} { font-size: $value; }
+}
+
+// ─── Colors ───────────────────────────────────────────────────────────────────
+
+@each $name, $value in $text-colors {
+  .color-#{$name} { color: $value; }
+}
+
+// ─── Weights ─────────────────────────────────────────────────────────────────
+
+@each $name, $value in $text-weights {
+  .weight-#{$name} { font-weight: $value; }
+}
+
+// ─── Line heights ─────────────────────────────────────────────────────────────
+
+@each $name, $value in $text-leadings {
+  .leading-#{$name} { line-height: $value; }
+}
+
+// ─── Letter spacing ───────────────────────────────────────────────────────────
+
+@each $name, $value in $text-trackings {
+  .tracking-#{$name} { letter-spacing: $value; }
+}
+
+// ─── Modifiers ────────────────────────────────────────────────────────────────
+
+.truncate {
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.mono {
+  font-family: var(--void-font-family-mono);
+}

@@ -1,0 +1,56 @@
+// text — base styles
+
+$text-sizes: (
+  'xs':   var(--void-font-size-xs),
+  'sm':   var(--void-font-size-sm),
+  'base': var(--void-font-size-base),
+  'md':   var(--void-font-size-md),
+  'lg':   var(--void-font-size-lg),
+  'xl':   var(--void-font-size-xl),
+  '2xl':  var(--void-font-size-2xl),
+  '3xl':  var(--void-font-size-3xl),
+  '4xl':  var(--void-font-size-4xl),
+);
+
+$text-colors: (
+  'primary':   var(--void-color-text-primary),
+  'secondary': var(--void-color-text-secondary),
+  'muted':     var(--void-color-text-muted),
+  'disabled':  var(--void-color-text-disabled),
+  'inverse':   var(--void-color-text-inverse),
+  'accent':    var(--void-color-text-accent),
+);
+
+$text-weights: (
+  'regular':  var(--void-font-weight-regular),
+  'medium':   var(--void-font-weight-medium),
+  'semibold': var(--void-font-weight-semibold),
+  'bold':     var(--void-font-weight-bold),
+);
+
+$text-leadings: (
+  'none':    var(--void-font-line-height-none),
+  'tight':   var(--void-font-line-height-tight),
+  'snug':    var(--void-font-line-height-snug),
+  'normal':  var(--void-font-line-height-normal),
+  'relaxed': var(--void-font-line-height-relaxed),
+);
+
+$text-trackings: (
+  'tighter': var(--void-font-letter-spacing-tighter),
+  'tight':   var(--void-font-letter-spacing-tight),
+  'normal':  var(--void-font-letter-spacing-normal),
+  'wide':    var(--void-font-letter-spacing-wide),
+  'wider':   var(--void-font-letter-spacing-wider),
+  'widest':  var(--void-font-letter-spacing-widest),
+);
+
+// Default sizes for semantic heading elements
+$heading-defaults: (
+  'h1': (size: var(--void-font-size-4xl), weight: var(--void-font-weight-bold),    leading: var(--void-font-line-height-tight),  tracking: var(--void-font-letter-spacing-tighter)),
+  'h2': (size: var(--void-font-size-3xl), weight: var(--void-font-weight-bold),    leading: var(--void-font-line-height-tight),  tracking: var(--void-font-letter-spacing-tighter)),
+  'h3': (size: var(--void-font-size-2xl), weight: var(--void-font-weight-semibold),leading: var(--void-font-line-height-snug),   tracking: var(--void-font-letter-spacing-tight)),
+  'h4': (size: var(--void-font-size-xl),  weight: var(--void-font-weight-semibold),leading: var(--void-font-line-height-snug),   tracking: var(--void-font-letter-spacing-tight)),
+  'h5': (size: var(--void-font-size-lg),  weight: var(--void-font-weight-medium),  leading: var(--void-font-line-height-snug),   tracking: var(--void-font-letter-spacing-normal)),
+  'h6': (size: var(--void-font-size-md),  weight: var(--void-font-weight-medium),  leading: var(--void-font-line-height-normal), tracking: var(--void-font-letter-spacing-normal)),
+);

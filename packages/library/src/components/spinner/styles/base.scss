@@ -1,0 +1,36 @@
+// spinner — base styles
+
+$spinner-transition: opacity;
+
+$spinner-sizes: (
+  'xs': (
+    'size':        12px,
+    'stroke':      1.5px,
+    'dot-size':    3px,
+  ),
+  'sm': (
+    'size':        16px,
+    'stroke':      2px,
+    'dot-size':    4px,
+  ),
+  'md': (
+    'size':        24px,
+    'stroke':      2.5px,
+    'dot-size':    5px,
+  ),
+  'lg': (
+    'size':        32px,
+    'stroke':      3px,
+    'dot-size':    6px,
+  ),
+  'xl': (
+    'size':        48px,
+    'stroke':      3.5px,
+    'dot-size':    8px,
+  ),
+);
+
+// Animation durations
+$ring-duration:   0.75s;
+$dots-duration:   1.2s;
+$pulse-duration:  1.4s;

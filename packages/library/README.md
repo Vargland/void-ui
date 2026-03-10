@@ -2,7 +2,9 @@
 
 Minimal, spatial, dark React component library — built on CSS custom properties, fully typed, zero config.
 
-> **Docs**: [open-void-ui.vercel.app](https://open-void-ui.vercel.app) · **npm**: [@open-void-ui/library](https://www.npmjs.com/package/@open-void-ui/library)
+> **Storybook**: [open-void-ui on Vercel](https://void-ui-library-git-main-varglands-projects.vercel.app) · **npm**: [@open-void-ui/library](https://www.npmjs.com/package/@open-void-ui/library)
+
+---
 
 ## Install
 
@@ -22,7 +24,7 @@ import '@open-void-ui/library/styles' // component styles
 ## Usage
 
 ```tsx
-import { Button, Badge, TextField, Avatar } from '@open-void-ui/library'
+import { Button, Badge, TextField, Avatar, Checkbox } from '@open-void-ui/library'
 
 export default function App() {
   return (
@@ -31,51 +33,79 @@ export default function App() {
       <Badge tone="success">Live</Badge>
       <TextField label="Email" placeholder="you@example.com" />
       <Avatar initials="GR" status="online" />
+      <Checkbox label="Accept terms" />
     </div>
   )
 }
 ```
 
+---
+
 ## Components
 
-| Component | Description |
-|-----------|-------------|
-| `Button` | Actions and navigation — 5 variants, 3 sizes, loading state |
-| `Badge` | Status indicators — solid, subtle, outlined × 4 tones |
-| `Typography` | Semantic text — 7 sizes, 4 weights, polymorphic `as` prop |
-| `Avatar` | User representation — image, initials, status badge |
-| `Divider` | Horizontal/vertical separator with optional label |
-| `Stack` | Flex layout utility — direction, spacing, alignment |
-| `Spinner` | Loading indicator — ring and dots variants |
-| `TextField` | Text input with label, helper text, error state |
+| Component | Props highlight |
+|-----------|----------------|
+| `Button` | `variant` · `size` · `loading` · `iconBefore` · `iconAfter` · `fullWidth` · `as` |
+| `Badge` | `variant` · `tone` · `size` · `dot` |
+| `Typography` | `as` · `size` · `color` · `weight` · `leading` · `tracking` · `mono` · `truncate` |
+| `Avatar` | `size` · `shape` · `status` · `src` · `initials` |
+| `Divider` | `orientation` · `variant` · `label` · `labelAlign` · `flush` |
+| `Stack` | `as` · `direction` · `gap` · `align` · `justify` · `wrap` · `full` |
+| `Spinner` | `variant` · `size` |
+| `TextField` | `size` · `state` · `label` · `hint` · `error` · `prefix` · `suffix` · `fullWidth` |
+| `Checkbox` | `size` · `label` · `description` · `error` · `indeterminate` · `disabled` |
+
+---
 
 ## Theming
 
-All components consume `--void-*` CSS custom properties from `@open-void-ui/tokens`. Override any token globally or scope a theme to a subtree:
+All components consume `--void-*` CSS custom properties from `@open-void-ui/tokens`.
+
+### Global token override
 
 ```css
-/* Global override */
 :root {
   --void-color-action-primary: #7c3aed;
   --void-radius-md: 12px;
 }
 ```
 
+### Planet theme (scoped)
+
 ```tsx
-/* Planet theme (scoped) */
 <div data-void-planet="mars">
-  <Button>Mars themed</Button>
+  <Button variant="primary">Mars themed</Button>
 </div>
 ```
 
-## Framework support
+Available planets: `mercury` · `moon` · `mars` · `earth` · `europa` · `neptune` · `jupiter` · `saturn` · `venus` · `io` · `uranus` · `nostromo`
 
-The tokens package (`@open-void-ui/tokens`) is framework-agnostic — use it in Angular, Vue, Svelte, or any web project. The library package requires React 18+.
+### Planet theme via prop
+
+```tsx
+<Button variant="primary" planet="neptune">Neptune</Button>
+```
+
+The `planet` prop wraps the component in a `[data-void-planet]` scope without touching the DOM structure.
+
+---
+
+## MCP server
+
+The repo ships `@open-void-ui/mcp-server` — an MCP server that exposes this library as context for Claude and Cursor. When connected, the AI knows every prop, variant, size, token and example for every component.
+
+See the [root README](../../README.md#mcp-server-claude--cursor) for setup instructions.
+
+---
 
 ## Requirements
 
 - React `>=18.0.0`
 - Node `>=20.0.0`
+
+## Framework support
+
+`@open-void-ui/tokens` is framework-agnostic — use it in Angular, Vue, Svelte or plain CSS. The library package requires React 18+.
 
 ## License
 

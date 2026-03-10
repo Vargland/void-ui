@@ -1,16 +1,14 @@
 /**
- * void-ui Figma Plugin v2
- * Uses AutoLayout frames — colors, radius and spacing from exact token values
+ * void-ui Figma Plugin v3
+ * AutoLayout only — no absolute positioning, no orphan nodes
  */
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
 const C = {
-  bg:               { r:0.039, g:0.039, b:0.039 }, // #0a0a0a
   surface:          { r:0.102, g:0.102, b:0.102 }, // #1a1a1a
   overlay:          { r:0.141, g:0.141, b:0.141 }, // #242424
   borderDefault:    { r:0.180, g:0.180, b:0.180 }, // #2e2e2e
-  borderStrong:     { r:0.239, g:0.239, b:0.239 }, // #3d3d3d
   textPrimary:      { r:0.961, g:0.961, b:0.961 }, // #f5f5f5
   textSecondary:    { r:0.639, g:0.639, b:0.639 }, // #a3a3a3
   textMuted:        { r:0.451, g:0.451, b:0.451 }, // #737373
@@ -23,17 +21,11 @@ const C = {
   success:          { r:0.133, g:0.773, b:0.369 }, // #22c55e
   warning:          { r:0.961, g:0.620, b:0.043 }, // #f59e0b
   error:            { r:0.937, g:0.267, b:0.267 }, // #ef4444
-  info:             { r:0.400, g:0.400, b:1.000 }, // #6666ff
 }
 
 const R = { none:0, sm:2, md:4, lg:8, xl:12, full:9999 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function rgb(c, a) {
-  if (!c) return []
-  return [{ type: 'SOLID', color: c, opacity: a !== undefined ? a : 1 }]
-}
+// ─── Primitives ───────────────────────────────────────────────────────────────
 
 async function loadFonts() {
   await Promise.all([
@@ -44,116 +36,115 @@ async function loadFonts() {
   ])
 }
 
-// AutoLayout frame — sizes itself to content
-function af(name, dir, gap, pH, pV, fill, fillOpacity, border, radius) {
+function solid(color, opacity) {
+  return [{ type: 'SOLID', color, opacity: opacity ?? 1 }]
+}
+
+// AutoLayout frame, sizes to content by default
+function frame(opts) {
   const f = figma.createFrame()
-  f.name = name || 'frame'
-  f.layoutMode = dir === 'row' ? 'HORIZONTAL' : 'VERTICAL'
-  f.primaryAxisSizingMode = 'AUTO'
-  f.counterAxisSizingMode = 'AUTO'
-  f.itemSpacing = gap || 0
-  f.paddingLeft = pH || 0; f.paddingRight = pH || 0
-  f.paddingTop = pV || 0;  f.paddingBottom = pV || 0
-  f.fills = fill ? rgb(fill, fillOpacity) : []
-  if (border) { f.strokes = rgb(border); f.strokeWeight = 1; f.strokeAlign = 'INSIDE' }
-  if (radius !== undefined) f.cornerRadius = radius
+  f.name = opts.name ?? 'frame'
+  f.layoutMode = opts.dir === 'row' ? 'HORIZONTAL' : 'VERTICAL'
+  f.itemSpacing = opts.gap ?? 0
+  f.paddingLeft = f.paddingRight = opts.pH ?? 0
+  f.paddingTop = f.paddingBottom = opts.pV ?? 0
+  f.primaryAxisSizingMode = opts.wFix ? 'FIXED' : 'AUTO'
+  f.counterAxisSizingMode = opts.hFix ? 'FIXED' : 'AUTO'
+  f.primaryAxisAlignItems = opts.mainAlign ?? 'MIN'
+  f.counterAxisAlignItems = opts.crossAlign ?? 'MIN'
+  f.fills = opts.fill ? solid(opts.fill, opts.fillOp) : []
+  if (opts.border) { f.strokes = solid(opts.border); f.strokeWeight = 1; f.strokeAlign = 'INSIDE' }
+  if (opts.radius !== undefined) f.cornerRadius = opts.radius
   f.clipsContent = false
+  if (opts.w && opts.h) f.resize(opts.w, opts.h)
+  else if (opts.w) f.resize(opts.w, f.height || 1)
+  else if (opts.h) f.resize(f.width || 1, opts.h)
   return f
 }
 
-// Text node
-function t(content, size, color, weight) {
+function text(str, size, color, weight) {
   const n = figma.createText()
-  n.fontName = { family: 'Inter', style: weight || 'Regular' }
-  n.fontSize = size || 14
-  n.characters = String(content)
-  n.fills = rgb(color || C.textPrimary)
+  n.fontName = { family: 'Inter', style: weight ?? 'Regular' }
+  n.fontSize = size ?? 14
+  n.characters = String(str)
+  n.fills = solid(color ?? C.textPrimary)
   return n
 }
 
-// Rectangle
-function rct(name, w, h, fill, fillOp, border, radius) {
+function box(opts) {
   const r = figma.createRectangle()
-  r.name = name || 'rect'
-  r.resize(Math.max(1, w), Math.max(1, h))
-  r.fills = fill ? rgb(fill, fillOp) : []
-  if (border) { r.strokes = rgb(border); r.strokeWeight = 1; r.strokeAlign = 'INSIDE' }
-  if (radius !== undefined) r.cornerRadius = radius
+  r.name = opts.name ?? 'rect'
+  r.resize(Math.max(1, opts.w), Math.max(1, opts.h))
+  r.fills = opts.fill ? solid(opts.fill, opts.fillOp) : []
+  if (opts.border) { r.strokes = solid(opts.border); r.strokeWeight = opts.sw ?? 1; r.strokeAlign = 'INSIDE' }
+  if (opts.radius !== undefined) r.cornerRadius = opts.radius
+  if (opts.opacity !== undefined) r.opacity = opts.opacity
   return r
 }
 
-// Button component
-function btn(label, bg, fg, border, h, px, fs, radius, opacity) {
-  const f = af('Button', 'row', 6, px, 0, bg, 1, border, radius)
-  f.resize(10, h)
-  f.counterAxisSizingMode = 'FIXED'
-  f.primaryAxisSizingMode = 'AUTO'
-  f.primaryAxisAlignItems = 'CENTER'
-  f.counterAxisAlignItems = 'CENTER'
-  f.appendChild(t(label, fs, fg, 'Medium'))
-  if (opacity !== undefined && opacity < 1) f.opacity = opacity
-  return f
-}
+// ─── Component helpers ────────────────────────────────────────────────────────
 
-// Card (component showcase wrapper)
+// Card wrapper — dark surface with border, vertical stack
 function card(name) {
-  const f = af(name, 'col', 0, 24, 24, C.surface, 1, C.borderDefault, R.xl)
-  return f
+  return frame({ name, dir: 'col', gap: 16, pH: 24, pV: 24, fill: C.surface, border: C.borderDefault, radius: R.xl })
 }
 
-// Row of items with a label above
-function section(label, dir) {
-  const wrap = af('section', 'col', 6, 0, 0, null, 1, null, 0)
-  wrap.appendChild(t(label, 10, C.textMuted, 'SemiBold'))
-  const inner = af('items', dir || 'row', 8, 0, 0, null, 1, null, 0)
-  inner.counterAxisAlignItems = 'CENTER'
-  wrap.appendChild(inner)
-  return { wrap, inner }
-}
-
-function header(parent, name, props) {
-  const col = af('header', 'col', 4, 0, 0, null, 1, null, 0)
-  col.appendChild(t(name, 18, C.textPrimary, 'Bold'))
-  col.appendChild(t(props, 11, C.textMuted, 'Regular'))
-  parent.appendChild(col)
-  // spacer
-  const sp = rct('sp', 1, 16, null)
-  parent.appendChild(sp)
-}
-
-function addSec(parent, label, dir, builder) {
-  const { wrap, inner } = section(label, dir)
+// Section title + row/col of items
+function section(parent, label, dir, gap, builder) {
+  const wrap = frame({ name: label, dir: 'col', gap: 8 })
+  wrap.appendChild(text(label, 10, C.textMuted, 'SemiBold'))
+  const inner = frame({ name: 'items', dir: dir ?? 'row', gap: gap ?? 8, crossAlign: 'CENTER' })
   builder(inner)
+  wrap.appendChild(inner)
   parent.appendChild(wrap)
-  const sp = rct('sp', 1, 4, null)
-  parent.appendChild(sp)
+}
+
+function cardHeader(parent, name, props) {
+  const wrap = frame({ name: 'header', dir: 'col', gap: 4 })
+  wrap.appendChild(text(name, 18, C.textPrimary, 'Bold'))
+  wrap.appendChild(text(props, 11, C.textMuted, 'Regular'))
+  parent.appendChild(wrap)
 }
 
 // ─── Button ───────────────────────────────────────────────────────────────────
 
+function mkBtn(label, bg, fg, border, h, px, fs, radius, opacity) {
+  const f = frame({
+    name: 'Button/' + label,
+    dir: 'row', gap: 6,
+    pH: px, h,
+    hFix: true,
+    mainAlign: 'CENTER', crossAlign: 'CENTER',
+    fill: bg, border, radius,
+  })
+  f.appendChild(text(label, fs, fg, 'Medium'))
+  if (opacity !== undefined && opacity < 1) f.opacity = opacity
+  return f
+}
+
 function drawButton() {
   const c = card('🔘 Button')
-  header(c, 'Button', 'variant · size · loading · iconBefore · iconAfter · fullWidth · as')
+  cardHeader(c, 'Button', 'variant · size · loading · iconBefore · iconAfter · fullWidth · as')
 
-  addSec(c, 'VARIANTS', 'row', (row) => {
-    row.appendChild(btn('Primary',   C.actionPrimary,  C.textInverse,  null,             36, 16, 14, R.md))
-    row.appendChild(btn('Secondary', C.actionSecondary, C.textPrimary,  C.borderDefault,  36, 16, 14, R.md))
-    row.appendChild(btn('Ghost',     null,              C.textPrimary,  null,             36, 16, 14, R.md))
-    row.appendChild(btn('Outlined',  null,              C.actionPrimary, C.actionPrimary, 36, 16, 14, R.md))
-    row.appendChild(btn('Danger',    C.error,           C.textInverse,  null,             36, 16, 14, R.md))
+  section(c, 'VARIANTS', 'row', 8, (row) => {
+    row.appendChild(mkBtn('Primary',   C.actionPrimary,  C.textInverse,  null,              36, 16, 14, R.md))
+    row.appendChild(mkBtn('Secondary', C.actionSecondary, C.textPrimary, C.borderDefault,   36, 16, 14, R.md))
+    row.appendChild(mkBtn('Ghost',     null,              C.textPrimary,  null,             36, 16, 14, R.md))
+    row.appendChild(mkBtn('Outlined',  null,              C.actionPrimary, C.actionPrimary, 36, 16, 14, R.md))
+    row.appendChild(mkBtn('Danger',    C.error,           C.textInverse,  null,             36, 16, 14, R.md))
   })
 
-  addSec(c, 'SIZES', 'row', (row) => {
-    row.appendChild(btn('SM', C.actionPrimary, C.textInverse, null, 28, 12, 13, R.md))
-    row.appendChild(btn('MD', C.actionPrimary, C.textInverse, null, 36, 16, 14, R.md))
-    row.appendChild(btn('LG', C.actionPrimary, C.textInverse, null, 44, 24, 16, R.lg))
+  section(c, 'SIZES', 'row', 8, (row) => {
+    row.appendChild(mkBtn('SM', C.actionPrimary, C.textInverse, null, 28, 12, 13, R.md))
+    row.appendChild(mkBtn('MD', C.actionPrimary, C.textInverse, null, 36, 16, 14, R.md))
+    row.appendChild(mkBtn('LG', C.actionPrimary, C.textInverse, null, 44, 24, 16, R.lg))
   })
 
-  addSec(c, 'STATES', 'row', (row) => {
-    row.appendChild(btn('Default',  C.actionPrimary,    C.textInverse, null, 36, 16, 14, R.md, 1.0))
-    row.appendChild(btn('Hover',    C.actionPrimaryHv,  C.textInverse, null, 36, 16, 14, R.md, 1.0))
-    row.appendChild(btn('Active',   C.actionPrimaryAct, C.textInverse, null, 36, 16, 14, R.md, 1.0))
-    row.appendChild(btn('Disabled', C.actionPrimary,    C.textInverse, null, 36, 16, 14, R.md, 0.4))
+  section(c, 'STATES', 'row', 8, (row) => {
+    row.appendChild(mkBtn('Default',  C.actionPrimary,    C.textInverse, null, 36, 16, 14, R.md))
+    row.appendChild(mkBtn('Hover',    C.actionPrimaryHv,  C.textInverse, null, 36, 16, 14, R.md))
+    row.appendChild(mkBtn('Active',   C.actionPrimaryAct, C.textInverse, null, 36, 16, 14, R.md))
+    row.appendChild(mkBtn('Disabled', C.actionPrimary,    C.textInverse, null, 36, 16, 14, R.md, 0.4))
   })
 
   return c
@@ -161,45 +152,48 @@ function drawButton() {
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 
-function mkBadge(label, variant, toneColor) {
-  let fill = null, fillOp = 1, border = null, fg = toneColor
-  if (variant === 'solid')    { fill = toneColor; fg = C.textInverse }
-  if (variant === 'subtle')   { fill = toneColor; fillOp = 0.15 }
-  if (variant === 'outlined') { border = toneColor }
+function mkBadge(label, variant, color) {
+  let fill = null, fillOp = 1, border = null, fg = color
+  if (variant === 'solid')    { fill = color; fg = C.textInverse }
+  if (variant === 'subtle')   { fill = color; fillOp = 0.15 }
+  if (variant === 'outlined') { border = color }
 
-  const f = af('Badge', 'row', 0, 8, 0, fill, fillOp, border, R.full)
-  f.resize(10, 22)
-  f.counterAxisSizingMode = 'FIXED'
-  f.primaryAxisSizingMode = 'AUTO'
-  f.primaryAxisAlignItems = 'CENTER'
-  f.counterAxisAlignItems = 'CENTER'
-  f.appendChild(t(label, 12, fg, 'Medium'))
+  const f = frame({
+    name: 'Badge/' + variant + '/' + label,
+    dir: 'row', gap: 0,
+    pH: 8, h: 22,
+    hFix: true,
+    mainAlign: 'CENTER', crossAlign: 'CENTER',
+    fill, fillOp, border, radius: R.full,
+  })
+  f.appendChild(text(label, 12, fg, 'Medium'))
   return f
 }
 
 function drawBadge() {
   const c = card('🏷 Badge')
-  header(c, 'Badge', 'variant · tone · size · dot')
+  cardHeader(c, 'Badge', 'variant · tone · size · dot')
 
   const tones = [
     ['default', C.textMuted],
     ['success', C.success],
     ['warning', C.warning],
     ['error',   C.error],
-    ['info',    C.info],
+    ['info',    C.actionPrimary],
   ]
 
   for (const variant of ['solid', 'subtle', 'outlined']) {
-    addSec(c, variant.toUpperCase(), 'row', (row) => {
+    section(c, variant.toUpperCase(), 'row', 6, (row) => {
       for (const [tone, color] of tones) {
         row.appendChild(mkBadge(tone, variant, color))
       }
     })
   }
 
-  addSec(c, 'DOT', 'row', (row) => {
+  section(c, 'DOT', 'row', 8, (row) => {
+    row.counterAxisAlignItems = 'CENTER'
     for (const [, color] of tones) {
-      row.appendChild(rct('dot', 8, 8, color, 1, null, R.full))
+      row.appendChild(box({ name: 'dot', w: 8, h: 8, fill: color, radius: R.full }))
     }
   })
 
@@ -209,25 +203,24 @@ function drawBadge() {
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
 function mkAvatar(size, shape, statusColor) {
-  const p = { xs:24, sm:32, md:40, lg:48, xl:64 }[size] || 40
+  const p = { xs:24, sm:32, md:40, lg:48, xl:64 }[size] ?? 40
   const radius = shape === 'square' ? R.sm : shape === 'rounded' ? R.lg : R.full
 
+  // Use a plain frame (not autolayout) so we can position the status dot
   const wrap = figma.createFrame()
-  wrap.name = `Avatar/${size}`
+  wrap.name = 'Avatar/' + size
   wrap.resize(p, p)
-  wrap.fills = rgb(C.actionPrimary)
+  wrap.fills = solid(C.actionPrimary)
   wrap.cornerRadius = radius
   wrap.clipsContent = false
 
-  const initials = t('GR', Math.max(9, Math.floor(p / 3.2)), C.textInverse, 'SemiBold')
+  const initials = text('GR', Math.max(9, Math.floor(p / 3.2)), C.textInverse, 'SemiBold')
   initials.x = Math.floor(p * 0.18)
   initials.y = Math.floor(p * 0.26)
   wrap.appendChild(initials)
 
   if (statusColor) {
-    const dot = rct('status', 10, 10, statusColor, 1, C.surface, R.full)
-    dot.strokes = rgb(C.surface)
-    dot.strokeWeight = 2
+    const dot = box({ name: 'status', w: 10, h: 10, fill: statusColor, border: C.surface, sw: 2, radius: R.full })
     dot.x = p - 12
     dot.y = p - 12
     wrap.appendChild(dot)
@@ -238,20 +231,20 @@ function mkAvatar(size, shape, statusColor) {
 
 function drawAvatar() {
   const c = card('👤 Avatar')
-  header(c, 'Avatar', 'size · shape · status · src · initials')
+  cardHeader(c, 'Avatar', 'size · shape · status · src · initials')
 
-  addSec(c, 'SIZES', 'row', (row) => {
+  section(c, 'SIZES', 'row', 8, (row) => {
     row.counterAxisAlignItems = 'CENTER'
     for (const s of ['xs','sm','md','lg','xl']) row.appendChild(mkAvatar(s, 'circle', null))
   })
 
-  addSec(c, 'SHAPES', 'row', (row) => {
-    row.appendChild(mkAvatar('md', 'circle', null))
-    row.appendChild(mkAvatar('md', 'square', null))
+  section(c, 'SHAPES', 'row', 12, (row) => {
+    row.appendChild(mkAvatar('md', 'circle',  null))
+    row.appendChild(mkAvatar('md', 'square',  null))
     row.appendChild(mkAvatar('md', 'rounded', null))
   })
 
-  addSec(c, 'STATUS', 'row', (row) => {
+  section(c, 'STATUS', 'row', 12, (row) => {
     row.appendChild(mkAvatar('md', 'circle', C.success))
     row.appendChild(mkAvatar('md', 'circle', C.textMuted))
     row.appendChild(mkAvatar('md', 'circle', C.error))
@@ -265,11 +258,10 @@ function drawAvatar() {
 
 function drawTypography() {
   const c = card('✍️ Typography')
-  header(c, 'Typography', 'as · size · color · weight · leading · tracking · mono · truncate')
+  cardHeader(c, 'Typography', 'as · size · color · weight · leading · tracking · mono · truncate')
 
-  addSec(c, 'SIZE SCALE', 'col', (col) => {
-    col.itemSpacing = 8
-    const scale = [
+  section(c, 'SIZE SCALE', 'col', 6, (col) => {
+    for (const [sz, lbl, w] of [
       [36,'4xl — The void','Bold'],
       [30,'3xl — The void','Bold'],
       [24,'2xl — The void','SemiBold'],
@@ -279,19 +271,17 @@ function drawTypography() {
       [14,'base — The void','Regular'],
       [13,'sm — The void','Regular'],
       [11,'xs — The void','Regular'],
-    ]
-    for (const [sz, lbl, w] of scale) col.appendChild(t(lbl, sz, C.textPrimary, w))
+    ]) col.appendChild(text(lbl, sz, C.textPrimary, w))
   })
 
-  addSec(c, 'COLORS', 'col', (col) => {
-    col.itemSpacing = 8
+  section(c, 'COLORS', 'col', 8, (col) => {
     for (const [lbl, color] of [
       ['primary — Sample text',   C.textPrimary],
       ['secondary — Sample text', C.textSecondary],
       ['muted — Sample text',     C.textMuted],
       ['disabled — Sample text',  C.textDisabled],
       ['accent — Sample text',    C.actionPrimary],
-    ]) col.appendChild(t(lbl, 14, color))
+    ]) col.appendChild(text(lbl, 14, color))
   })
 
   return c
@@ -301,30 +291,28 @@ function drawTypography() {
 
 function drawDivider() {
   const c = card('➖ Divider')
-  header(c, 'Divider', 'orientation · variant · label · labelAlign · flush')
+  cardHeader(c, 'Divider', 'orientation · variant · label · labelAlign · flush')
 
-  addSec(c, 'LINES', 'col', (col) => {
-    col.itemSpacing = 12
+  section(c, 'LINES', 'col', 12, (col) => {
     for (const v of ['solid','dashed','dotted']) {
-      const row = af(v, 'col', 4, 0, 0, null, 1, null, 0)
-      row.appendChild(t(v, 11, C.textMuted, 'Medium'))
-      row.appendChild(rct(`line/${v}`, 320, 1, C.borderDefault))
+      const row = frame({ name: v, dir: 'col', gap: 4 })
+      row.appendChild(text(v, 11, C.textMuted, 'Medium'))
+      row.appendChild(box({ name: 'line', w: 300, h: 1, fill: C.borderDefault }))
       col.appendChild(row)
     }
   })
 
-  addSec(c, 'WITH LABEL', 'row', (row) => {
+  section(c, 'WITH LABEL', 'row', 8, (row) => {
     row.counterAxisAlignItems = 'CENTER'
-    row.appendChild(rct('l', 80, 1, C.borderDefault))
-    row.appendChild(t('Section', 12, C.textMuted, 'Medium'))
-    row.appendChild(rct('r', 80, 1, C.borderDefault))
+    row.appendChild(box({ name: 'left',  w: 80, h: 1, fill: C.borderDefault }))
+    row.appendChild(text('Section', 12, C.textMuted, 'Medium'))
+    row.appendChild(box({ name: 'right', w: 80, h: 1, fill: C.borderDefault }))
   })
 
-  addSec(c, 'VERTICAL', 'row', (row) => {
+  section(c, 'VERTICAL', 'row', 8, (row) => {
     row.counterAxisAlignItems = 'MIN'
-    row.appendChild(rct('v1', 1, 48, C.borderDefault))
-    row.appendChild(rct('spacer', 8, 1, null))
-    row.appendChild(rct('v2', 1, 48, C.textMuted))
+    row.appendChild(box({ name: 'v1', w: 1, h: 48, fill: C.borderDefault }))
+    row.appendChild(box({ name: 'v2', w: 1, h: 48, fill: C.textMuted }))
   })
 
   return c
@@ -333,26 +321,26 @@ function drawDivider() {
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 
 function mkSpinner(size) {
-  const p = { xs:16, sm:20, md:24, lg:32, xl:40 }[size] || 24
+  const p = { xs:16, sm:20, md:24, lg:32, xl:40 }[size] ?? 24
   const sw = Math.max(2, Math.floor(p / 10))
 
   const wrap = figma.createFrame()
-  wrap.name = `Spinner/${size}`
+  wrap.name = 'Spinner/' + size
   wrap.resize(p, p)
   wrap.fills = []
   wrap.clipsContent = false
 
-  // track: full circle border
-  const track = rct('track', p, p, null, 1, C.borderDefault, R.full)
+  // Track ring
+  const track = box({ name: 'track', w: p, h: p, radius: R.full })
   track.fills = []
-  track.strokes = rgb(C.borderDefault)
+  track.strokes = solid(C.borderDefault)
   track.strokeWeight = sw
   track.strokeAlign = 'INSIDE'
   wrap.appendChild(track)
 
-  // arc: colored quarter
+  // Arc (colored quarter)
   const qs = Math.ceil(p / 2)
-  const arc = rct('arc', qs, qs, C.actionPrimary, 1, null, Math.ceil(qs / 2))
+  const arc = box({ name: 'arc', w: qs, h: qs, fill: C.actionPrimary, radius: Math.ceil(qs / 2) })
   arc.x = 0; arc.y = 0
   wrap.appendChild(arc)
 
@@ -361,9 +349,9 @@ function mkSpinner(size) {
 
 function drawSpinner() {
   const c = card('⏳ Spinner')
-  header(c, 'Spinner', 'variant · size')
+  cardHeader(c, 'Spinner', 'variant · size')
 
-  addSec(c, 'SIZES', 'row', (row) => {
+  section(c, 'SIZES', 'row', 12, (row) => {
     row.counterAxisAlignItems = 'CENTER'
     for (const s of ['xs','sm','md','lg','xl']) row.appendChild(mkSpinner(s))
   })
@@ -374,36 +362,49 @@ function drawSpinner() {
 // ─── TextField ───────────────────────────────────────────────────────────────
 
 function mkTextField(state, size) {
-  const h = { sm:32, md:40, lg:48 }[size] || 40
-  const borderC = { default:C.borderDefault, error:C.error, success:C.success, warning:C.warning }[state] || C.borderDefault
+  const heights = { sm:32, md:40, lg:48 }
+  const h = heights[size] ?? 40
+  const borderC = { default:C.borderDefault, error:C.error, success:C.success, warning:C.warning }[state] ?? C.borderDefault
   const hintC   = state === 'default' ? C.textMuted : borderC
+  const hintTxt = state === 'error' ? '✗ Error message' : 'Hint text'
 
-  const col = af('tf', 'col', 4, 0, 0, null, 1, null, 0)
-  col.appendChild(t('Label', 11, C.textSecondary, 'Medium'))
+  const col = frame({ name: 'TF/' + state + '/' + size, dir: 'col', gap: 4 })
+  col.appendChild(text('Label', 11, C.textSecondary, 'Medium'))
 
-  // input — resize first, then lock sizing modes
-  const inp = af('input', 'row', 0, 12, 0, C.overlay, 1, borderC, R.md)
+  // Input box — fixed 170×h
+  const inp = figma.createFrame()
+  inp.name = 'input'
   inp.resize(170, h)
+  inp.layoutMode = 'HORIZONTAL'
   inp.primaryAxisSizingMode = 'FIXED'
   inp.counterAxisSizingMode = 'FIXED'
+  inp.primaryAxisAlignItems = 'MIN'
   inp.counterAxisAlignItems = 'CENTER'
-  inp.appendChild(t('Placeholder…', 14, C.textMuted, 'Regular'))
+  inp.paddingLeft = inp.paddingRight = 12
+  inp.paddingTop = inp.paddingBottom = 0
+  inp.fills = solid(C.overlay)
+  inp.strokes = solid(borderC)
+  inp.strokeWeight = 1
+  inp.strokeAlign = 'INSIDE'
+  inp.cornerRadius = R.md
+  inp.clipsContent = false
+  inp.appendChild(text('Placeholder…', 14, C.textMuted, 'Regular'))
   col.appendChild(inp)
 
-  col.appendChild(t(state === 'error' ? '✗ Error message' : 'Hint text', 11, hintC, 'Regular'))
+  col.appendChild(text(hintTxt, 11, hintC, 'Regular'))
   return col
 }
 
 function drawTextField() {
   const c = card('📝 TextField')
-  header(c, 'TextField', 'size · state · label · hint · error · prefix · suffix · fullWidth')
+  cardHeader(c, 'TextField', 'size · state · label · hint · error · prefix · suffix · fullWidth')
 
-  addSec(c, 'STATES', 'row', (row) => {
+  section(c, 'STATES', 'row', 8, (row) => {
     row.counterAxisAlignItems = 'MIN'
     for (const s of ['default','error','success','warning']) row.appendChild(mkTextField(s, 'md'))
   })
 
-  addSec(c, 'SIZES', 'row', (row) => {
+  section(c, 'SIZES', 'row', 8, (row) => {
     row.counterAxisAlignItems = 'MIN'
     for (const s of ['sm','md','lg']) row.appendChild(mkTextField('default', s))
   })
@@ -415,21 +416,20 @@ function drawTextField() {
 
 function drawStack() {
   const c = card('📦 Stack')
-  header(c, 'Stack', 'as · direction · gap · align · justify · wrap · full')
+  cardHeader(c, 'Stack', 'as · direction · gap · align · justify · wrap · full')
 
-  addSec(c, 'ROW  gap=4 (16px)', 'row', (row) => {
+  section(c, 'ROW  gap=4 (16px)', 'row', 16, (row) => {
     for (let i = 1; i <= 4; i++) {
-      const item = af(`item${i}`, 'row', 0, 12, 6, C.overlay, 1, C.borderDefault, R.md)
-      item.appendChild(t(`Item ${i}`, 11, C.textSecondary, 'Regular'))
+      const item = frame({ name: 'item' + i, dir: 'row', gap: 0, pH: 12, pV: 6, fill: C.overlay, border: C.borderDefault, radius: R.md })
+      item.appendChild(text('Item ' + i, 11, C.textSecondary, 'Regular'))
       row.appendChild(item)
     }
   })
 
-  addSec(c, 'COLUMN  gap=2 (8px)', 'col', (col) => {
-    col.itemSpacing = 8
+  section(c, 'COLUMN  gap=2 (8px)', 'col', 8, (col) => {
     for (let i = 1; i <= 3; i++) {
-      const item = af(`item${i}`, 'row', 0, 12, 6, C.overlay, 1, C.borderDefault, R.md)
-      item.appendChild(t(`Item ${i}`, 11, C.textSecondary, 'Regular'))
+      const item = frame({ name: 'item' + i, dir: 'row', gap: 0, pH: 12, pV: 6, fill: C.overlay, border: C.borderDefault, radius: R.md })
+      item.appendChild(text('Item ' + i, 11, C.textSecondary, 'Regular'))
       col.appendChild(item)
     }
   })
@@ -437,53 +437,38 @@ function drawStack() {
   return c
 }
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
-
-function layoutGrid(cards) {
-  const COLS = 3
-  const GAP  = 40
-  let col = 0, rowY = 0, rowMaxH = 0
-  const colX = [0, 0, 0]
-
-  for (const card of cards) {
-    figma.currentPage.appendChild(card)
-    card.x = colX[col]
-    card.y = rowY
-    rowMaxH = Math.max(rowMaxH, card.height)
-    colX[col] += card.width + GAP
-    col++
-    if (col >= COLS) {
-      col = 0
-      rowY += rowMaxH + GAP
-      rowMaxH = 0
-      colX[0] = 0; colX[1] = (cards[0] ? cards[0].width + GAP : 0) + (cards[3] ? cards[3].width + GAP : 0)
-    }
-  }
-}
-
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 async function run() {
   await loadFonts()
 
-  const names = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack']
-  figma.currentPage.children.filter(n => names.includes(n.name)).forEach(n => n.remove())
+  const NAMES = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack']
+  figma.currentPage.children.filter(n => NAMES.includes(n.name)).forEach(n => n.remove())
 
-  const cards = [
-    drawButton(),
-    drawBadge(),
-    drawAvatar(),
-    drawTypography(),
-    drawDivider(),
-    drawSpinner(),
-    drawTextField(),
-    drawStack(),
+  const drawFns = [
+    ['🔘 Button',      drawButton],
+    ['🏷 Badge',       drawBadge],
+    ['👤 Avatar',      drawAvatar],
+    ['✍️ Typography',  drawTypography],
+    ['➖ Divider',     drawDivider],
+    ['⏳ Spinner',     drawSpinner],
+    ['📝 TextField',   drawTextField],
+    ['📦 Stack',       drawStack],
   ]
 
-  // Simple grid layout
+  const cards = []
+  for (const [name, fn] of drawFns) {
+    try {
+      cards.push(fn())
+    } catch (e) {
+      figma.notify(`❌ ${name}: ${e.message}`, { timeout: 8000 })
+      console.error(name, e)
+    }
+  }
+
+  // Grid layout: 3 columns
   const COLS = 3, GAP = 40
   let col = 0, x = 0, y = 0, rowH = 0
-  const rowStartX = [0]
 
   for (const card of cards) {
     figma.currentPage.appendChild(card)
@@ -492,13 +477,11 @@ async function run() {
     rowH = Math.max(rowH, card.height)
     x += card.width + GAP
     col++
-    if (col >= COLS) {
-      col = 0; x = 0; y += rowH + GAP; rowH = 0
-    }
+    if (col >= COLS) { col = 0; x = 0; y += rowH + GAP; rowH = 0 }
   }
 
-  figma.viewport.scrollAndZoomIntoView(figma.currentPage.children.filter(n => names.includes(n.name)))
-  figma.closePlugin('✅ void-ui — 8 componentes con AutoLayout y estilos exactos')
+  figma.viewport.scrollAndZoomIntoView(figma.currentPage.children.filter(n => NAMES.includes(n.name)))
+  figma.closePlugin(`✅ void-ui — ${cards.length}/8 componentes`)
 }
 
 run().catch(err => figma.closePlugin(`❌ ${err.message}`))

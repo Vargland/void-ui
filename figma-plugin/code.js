@@ -85,11 +85,11 @@ function rct(name, w, h, fill, fillOp, border, radius) {
 // Button component
 function btn(label, bg, fg, border, h, px, fs, radius, opacity) {
   const f = af('Button', 'row', 6, px, 0, bg, 1, border, radius)
+  f.resize(10, h)
+  f.counterAxisSizingMode = 'FIXED'
+  f.primaryAxisSizingMode = 'AUTO'
   f.primaryAxisAlignItems = 'CENTER'
   f.counterAxisAlignItems = 'CENTER'
-  f.counterAxisSizingMode = 'FIXED'
-  f.resize(10, h) // height fixed, width AUTO
-  f.primaryAxisSizingMode = 'AUTO'
   f.appendChild(t(label, fs, fg, 'Medium'))
   if (opacity !== undefined && opacity < 1) f.opacity = opacity
   return f
@@ -168,11 +168,11 @@ function mkBadge(label, variant, toneColor) {
   if (variant === 'outlined') { border = toneColor }
 
   const f = af('Badge', 'row', 0, 8, 0, fill, fillOp, border, R.full)
+  f.resize(10, 22)
+  f.counterAxisSizingMode = 'FIXED'
+  f.primaryAxisSizingMode = 'AUTO'
   f.primaryAxisAlignItems = 'CENTER'
   f.counterAxisAlignItems = 'CENTER'
-  f.counterAxisSizingMode = 'FIXED'
-  f.resize(10, 22)
-  f.primaryAxisSizingMode = 'AUTO'
   f.appendChild(t(label, 12, fg, 'Medium'))
   return f
 }
@@ -381,12 +381,12 @@ function mkTextField(state, size) {
   const col = af('tf', 'col', 4, 0, 0, null, 1, null, 0)
   col.appendChild(t('Label', 11, C.textSecondary, 'Medium'))
 
-  // input
+  // input — resize first, then lock sizing modes
   const inp = af('input', 'row', 0, 12, 0, C.overlay, 1, borderC, R.md)
-  inp.counterAxisAlignItems = 'CENTER'
-  inp.counterAxisSizingMode = 'FIXED'
-  inp.primaryAxisSizingMode = 'FIXED'
   inp.resize(170, h)
+  inp.primaryAxisSizingMode = 'FIXED'
+  inp.counterAxisSizingMode = 'FIXED'
+  inp.counterAxisAlignItems = 'CENTER'
   inp.appendChild(t('Placeholder…', 14, C.textMuted, 'Regular'))
   col.appendChild(inp)
 

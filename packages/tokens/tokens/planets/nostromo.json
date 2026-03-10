@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "nostromo", "type": "other" },
+    "label": { "value": "Nostromo", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#000000", "type": "color" },
+      "subtle":  { "value": "#020400", "type": "color" },
+      "surface": { "value": "#040800", "type": "color" },
+      "overlay": { "value": "#080e00", "type": "color" },
+      "inverse": { "value": "#00ff46", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(0,255,70,0.14)", "type": "color" },
+      "subtle":  { "value": "rgba(0,255,70,0.06)", "type": "color" },
+      "strong":  { "value": "rgba(0,255,70,0.30)", "type": "color" },
+      "focus":   { "value": "#00ff46", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#00ff46", "type": "color" },
+      "secondary": { "value": "#00b832", "type": "color" },
+      "muted":     { "value": "#005018", "type": "color" },
+      "disabled":  { "value": "#003010", "type": "color" },
+      "inverse":   { "value": "#000000", "type": "color" },
+      "accent":    { "value": "#00ff46", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#00ff46", "type": "color" },
+      "primary-hover":   { "value": "#22ff60", "type": "color" },
+      "primary-active":  { "value": "#00d838", "type": "color" },
+      "secondary":       { "value": "rgba(0,255,70,0.10)", "type": "color" },
+      "secondary-hover": { "value": "rgba(0,255,70,0.18)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#00ff46", "type": "color" },
+      "warning": { "value": "#ffcc00", "type": "color" },
+      "error":   { "value": "#ff3300", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(0,255,70,0.35)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Share Tech Mono', 'VT323', monospace", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "0px", "type": "borderRadius" }
+  }
+}

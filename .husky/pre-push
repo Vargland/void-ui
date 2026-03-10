@@ -1,0 +1,2 @@
+npm run build --workspace=@open-void-ui/tokens
+npm run build --workspace=@open-void-ui/library

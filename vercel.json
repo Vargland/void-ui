@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "npm run build --workspace=@open-void-ui/tokens && npm run build-storybook --workspace=@open-void-ui/library",
+  "outputDirectory": "packages/library/storybook-static",
+  "framework": null
+}

@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "io", "type": "other" },
+    "label": { "value": "Io", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#060604", "type": "color" },
+      "subtle":  { "value": "#0a0a04", "type": "color" },
+      "surface": { "value": "#0e0d04", "type": "color" },
+      "overlay": { "value": "#171508", "type": "color" },
+      "inverse": { "value": "#e8f0a0", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(180,200,0,0.15)", "type": "color" },
+      "subtle":  { "value": "rgba(180,200,0,0.07)", "type": "color" },
+      "strong":  { "value": "rgba(180,200,0,0.32)", "type": "color" },
+      "focus":   { "value": "#c8e000", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#e8f0a0", "type": "color" },
+      "secondary": { "value": "#a0b040", "type": "color" },
+      "muted":     { "value": "#5a6018", "type": "color" },
+      "disabled":  { "value": "#303808", "type": "color" },
+      "inverse":   { "value": "#060604", "type": "color" },
+      "accent":    { "value": "#c8e000", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#c8e000", "type": "color" },
+      "primary-hover":   { "value": "#d8f010", "type": "color" },
+      "primary-active":  { "value": "#a8c000", "type": "color" },
+      "secondary":       { "value": "rgba(200,224,0,0.12)", "type": "color" },
+      "secondary-hover": { "value": "rgba(200,224,0,0.20)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#00e878", "type": "color" },
+      "warning": { "value": "#ff8800", "type": "color" },
+      "error":   { "value": "#ff2222", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(200,224,0,0.30)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Bebas Neue', 'DM Mono', monospace", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "0px", "type": "borderRadius" }
+  }
+}

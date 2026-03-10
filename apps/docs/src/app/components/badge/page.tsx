@@ -68,12 +68,10 @@ export default function BadgePage() {
           <ComponentDemo
             title="All sizes"
             code={`<Badge size="sm">Small</Badge>
-<Badge size="md">Medium</Badge>
-<Badge size="lg">Large</Badge>`}
+<Badge size="md">Medium</Badge>`}
           >
             <Badge size="sm">Small</Badge>
             <Badge size="md">Medium</Badge>
-            <Badge size="lg">Large</Badge>
           </ComponentDemo>
         </section>
 
@@ -103,7 +101,7 @@ export default function BadgePage() {
               </tr>
               <tr>
                 <td><code>size</code></td>
-                <td><code>sm | md | lg</code></td>
+                <td><code>sm | md</code></td>
                 <td><code>md</code></td>
                 <td>Badge size</td>
               </tr>

@@ -1,3 +1,2 @@
 npm run build --workspace=@open-void-ui/tokens
 npm run build --workspace=@open-void-ui/library
-npm run typecheck --workspace=@open-void-ui/docs

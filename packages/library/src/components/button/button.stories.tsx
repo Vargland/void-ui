@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Button } from './button'
+import { Stack } from '../stack/stack'
+import { Typography } from '../typography/typography'
+import { ALL_CELESTIAL_BODIES } from '../../helpers/constants/planets'
 
 const meta = {
   title:     'Components/Button',
@@ -11,7 +14,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger'],
+      options: ['primary', 'secondary', 'ghost', 'outlined', 'danger'],
       description: 'Visual style of the button',
     },
     size: {
@@ -19,117 +22,89 @@ const meta = {
       options: ['sm', 'md', 'lg'],
       description: 'Size of the button',
     },
-    loading: {
-      control: 'boolean',
+    planet: {
+      control: 'select',
+      options: ALL_CELESTIAL_BODIES,
+      description: 'Override the planet theme for this component',
     },
-    disabled: {
-      control: 'boolean',
-    },
-    fullWidth: {
-      control: 'boolean',
-    },
-    children: {
-      control: 'text',
-    },
+    loading:   { control: 'boolean' },
+    disabled:  { control: 'boolean' },
+    fullWidth: { control: 'boolean' },
+    children:  { control: 'text' },
   },
 } satisfies Meta<typeof Button>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-// ─── Base ─────────────────────────────────────────────────────────────────────
+// ─── Default playground ───────────────────────────────────────────────────────
 
 export const Default: Story = {
   args: {
     children: 'Button',
     variant:  'primary',
     size:     'md',
+    planet:   'mercury',
   },
 }
 
-// ─── Variants ────────────────────────────────────────────────────────────────
+// ─── All planets ──────────────────────────────────────────────────────────────
 
-export const Primary: Story = {
-  args: { children: 'Primary', variant: 'primary' },
-}
-
-export const Secondary: Story = {
-  args: { children: 'Secondary', variant: 'secondary' },
-}
-
-export const Ghost: Story = {
-  args: { children: 'Ghost', variant: 'ghost' },
-}
-
-export const Danger: Story = {
-  args: { children: 'Delete', variant: 'danger' },
-}
-
-// ─── Sizes ───────────────────────────────────────────────────────────────────
-
-export const Sizes: Story = {
-  args: {},
+export const PlanetThemes: Story = {
   render: () => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <Button size="sm">Small</Button>
-      <Button size="md">Medium</Button>
-      <Button size="lg">Large</Button>
-    </div>
-  ),
-}
-
-// ─── States ──────────────────────────────────────────────────────────────────
-
-export const Loading: Story = {
-  args: { children: 'Saving…', loading: true },
-}
-
-export const Disabled: Story = {
-  args: { children: 'Disabled', disabled: true },
-}
-
-export const FullWidth: Story = {
-  args:       { children: 'Full Width', fullWidth: true },
-  parameters: { layout: 'padded' },
-}
-
-// ─── With Icons ──────────────────────────────────────────────────────────────
-
-const PlusIcon = () => (
-  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-)
-
-const ArrowIcon = () => (
-  <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
-
-export const WithIconBefore: Story = {
-  args: { children: 'New item', iconBefore: <PlusIcon /> },
-}
-
-export const WithIconAfter: Story = {
-  args: { children: 'Continue', iconAfter: <ArrowIcon /> },
-}
-
-// ─── All Variants grid ────────────────────────────────────────────────────────
-
-export const AllVariants: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {(['primary', 'secondary', 'ghost', 'danger'] as const).map(variant => (
-        <div key={variant} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Button variant={variant} size="sm">{variant} sm</Button>
-          <Button variant={variant} size="md">{variant} md</Button>
-          <Button variant={variant} size="lg">{variant} lg</Button>
-          <Button variant={variant} disabled>disabled</Button>
-          <Button variant={variant} loading>loading</Button>
-        </div>
+    <Stack direction="column" gap={4} style={{ padding: '24px' }}>
+      {ALL_CELESTIAL_BODIES.map(planet => (
+        <Stack
+          key={planet}
+          direction="row"
+          align="center"
+          gap={3}
+          data-void-planet={planet}
+          style={{
+            padding:      '16px 20px',
+            background:   'var(--void-color-background-surface)',
+            borderRadius: 'var(--void-radius-md)',
+            border:       '1px solid var(--void-color-border-default)',
+          }}
+        >
+          <Typography
+            size="xs"
+            color="secondary"
+            uppercase
+            tracking="wide"
+            style={{ width: '72px', flexShrink: 0 }}
+          >
+            {planet}
+          </Typography>
+          <Button variant="primary"   size="sm">Primary</Button>
+          <Button variant="secondary" size="sm">Secondary</Button>
+          <Button variant="ghost"     size="sm">Ghost</Button>
+          <Button variant="outlined"  size="sm">Outlined</Button>
+          <Button variant="danger"    size="sm">Danger</Button>
+        </Stack>
       ))}
-    </div>
+    </Stack>
   ),
-  parameters: { layout: 'padded' },
+  parameters: { layout: 'fullscreen', backgrounds: { default: 'void' } },
+}
+
+export const PlanetPropOverride: Story = {
+  render: () => (
+    <Stack
+      direction="column"
+      gap={4}
+      data-void-planet="moon"
+      style={{ padding: '24px', background: 'var(--void-color-background-base)' }}
+    >
+      <Typography size="xs" color="secondary">
+        VoidProvider: moon — individual buttons override per-planet
+      </Typography>
+      <Stack direction="row" gap={2} wrap>
+        {ALL_CELESTIAL_BODIES.map(planet => (
+          <Button key={planet} variant="primary" planet={planet} size="sm">{planet}</Button>
+        ))}
+      </Stack>
+    </Stack>
+  ),
+  parameters: { layout: 'padded', backgrounds: { default: 'void' } },
 }

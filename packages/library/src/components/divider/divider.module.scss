@@ -1,0 +1,84 @@
+@use './styles/base' as *;
+
+// ─── Horizontal ───────────────────────────────────────────────────────────────
+
+.horizontal {
+  display:     flex;
+  align-items: center;
+  width:       100%;
+  gap:         $divider-label-gap;
+  color:       var(--void-color-text-muted);
+  font-family: var(--void-font-family-sans);
+  font-size:   var(--void-font-size-xs);
+  font-weight: var(--void-font-weight-medium);
+  white-space: nowrap;
+
+  &::before,
+  &::after {
+    content:          '';
+    flex:             1;
+    height:           $divider-thickness;
+    background-color: $divider-color;
+  }
+}
+
+// ─── Vertical ─────────────────────────────────────────────────────────────────
+
+.vertical {
+  display:          inline-block;
+  width:            $divider-thickness;
+  height:           1em;
+  background-color: $divider-color;
+  vertical-align:   middle;
+  align-self:       stretch;
+}
+
+// ─── Variants ─────────────────────────────────────────────────────────────────
+
+.solid  { }  // default — already solid from background-color
+
+.dashed {
+  &.horizontal::before,
+  &.horizontal::after {
+    background-color: transparent;
+    border-top:       $divider-thickness dashed $divider-color;
+  }
+
+  &.vertical {
+    background-color: transparent;
+    border-left:      $divider-thickness dashed $divider-color;
+    width:            0;
+  }
+}
+
+.dotted {
+  &.horizontal::before,
+  &.horizontal::after {
+    background-color: transparent;
+    border-top:       $divider-thickness dotted $divider-color;
+  }
+
+  &.vertical {
+    background-color: transparent;
+    border-left:      $divider-thickness dotted $divider-color;
+    width:            0;
+  }
+}
+
+// ─── Label alignment ──────────────────────────────────────────────────────────
+
+.label-start {
+  &::before { flex: 0 0 16px; }
+  &::after  { flex: 1; }
+}
+
+.label-end {
+  &::before { flex: 1; }
+  &::after  { flex: 0 0 16px; }
+}
+
+// label-center is the default (both sides flex: 1)
+
+// ─── Flush (no gap — continuous line) ─────────────────────────────────────────
+
+.flush { gap: 0; }

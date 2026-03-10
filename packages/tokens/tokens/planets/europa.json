@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "europa", "type": "other" },
+    "label": { "value": "Europa", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#080f1a", "type": "color" },
+      "subtle":  { "value": "#0a1220", "type": "color" },
+      "surface": { "value": "#0d1926", "type": "color" },
+      "overlay": { "value": "#122034", "type": "color" },
+      "inverse": { "value": "#d0e8ff", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(130,190,255,0.11)", "type": "color" },
+      "subtle":  { "value": "rgba(130,190,255,0.05)", "type": "color" },
+      "strong":  { "value": "rgba(130,190,255,0.24)", "type": "color" },
+      "focus":   { "value": "#4da6ff", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#d0e8ff", "type": "color" },
+      "secondary": { "value": "#7eb5e0", "type": "color" },
+      "muted":     { "value": "#3d6a96", "type": "color" },
+      "disabled":  { "value": "#1e3a58", "type": "color" },
+      "inverse":   { "value": "#080f1a", "type": "color" },
+      "accent":    { "value": "#4da6ff", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#4da6ff", "type": "color" },
+      "primary-hover":   { "value": "#6ab8ff", "type": "color" },
+      "primary-active":  { "value": "#3090e8", "type": "color" },
+      "secondary":       { "value": "rgba(77,166,255,0.14)", "type": "color" },
+      "secondary-hover": { "value": "rgba(77,166,255,0.22)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#00e5c3", "type": "color" },
+      "warning": { "value": "#ffd166", "type": "color" },
+      "error":   { "value": "#ff6b6b", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(77,166,255,0.25)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Syne', system-ui, sans-serif", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "2px", "type": "borderRadius" }
+  }
+}

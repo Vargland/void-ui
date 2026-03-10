@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "mars", "type": "other" },
+    "label": { "value": "Mars", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#110700", "type": "color" },
+      "subtle":  { "value": "#160a00", "type": "color" },
+      "surface": { "value": "#1c0e02", "type": "color" },
+      "overlay": { "value": "#271506", "type": "color" },
+      "inverse": { "value": "#f0d5b8", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(200,100,30,0.17)", "type": "color" },
+      "subtle":  { "value": "rgba(200,100,30,0.08)", "type": "color" },
+      "strong":  { "value": "rgba(200,100,30,0.34)", "type": "color" },
+      "focus":   { "value": "#e05c1a", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#f0d5b8", "type": "color" },
+      "secondary": { "value": "#b08060", "type": "color" },
+      "muted":     { "value": "#6e4a2a", "type": "color" },
+      "disabled":  { "value": "#3e2a10", "type": "color" },
+      "inverse":   { "value": "#110700", "type": "color" },
+      "accent":    { "value": "#e05c1a", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#e05c1a", "type": "color" },
+      "primary-hover":   { "value": "#f07030", "type": "color" },
+      "primary-active":  { "value": "#c04808", "type": "color" },
+      "secondary":       { "value": "rgba(224,92,26,0.15)", "type": "color" },
+      "secondary-hover": { "value": "rgba(224,92,26,0.24)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#7ecf68", "type": "color" },
+      "warning": { "value": "#ffb347", "type": "color" },
+      "error":   { "value": "#ff4c4c", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(224,92,26,0.30)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Rajdhani', system-ui, sans-serif", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "1px", "type": "borderRadius" }
+  }
+}

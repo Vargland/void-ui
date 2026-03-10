@@ -3,7 +3,7 @@ import type { BaseComponentProps, ComponentSize, ComponentVariant } from '../hel
 
 // ─── Variant ─────────────────────────────────────────────────────────────────
 
-export type ButtonVariant = Extract<ComponentVariant, 'primary' | 'secondary' | 'ghost' | 'danger'>
+export type ButtonVariant = Extract<ComponentVariant, 'primary' | 'secondary' | 'ghost' | 'outlined' | 'danger'>
 
 // ─── Size ─────────────────────────────────────────────────────────────────────
 

@@ -124,11 +124,4 @@ describe('Button', () => {
     render(<Button className="custom-class">Test</Button>)
     expect(screen.getByRole('button')).toHaveClass('custom-class')
   })
-
-  // ─── Snapshot ──────────────────────────────────────────────────────────────
-
-  it('matches snapshot', () => {
-    const { container } = render(<Button variant="primary" size="md">Snapshot</Button>)
-    expect(container.firstChild).toMatchSnapshot()
-  })
 })

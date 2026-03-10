@@ -1,0 +1,51 @@
+// badge — base styles
+
+$badge-transition: background-color, border-color, color;
+
+$badge-sizes: (
+  'sm': (
+    'height':    20px,
+    'padding-x': 6px,
+    'font-size': var(--void-font-size-xs),
+    'dot-size':  6px,
+  ),
+  'md': (
+    'height':    24px,
+    'padding-x': 8px,
+    'font-size': var(--void-font-size-sm),
+    'dot-size':  8px,
+  ),
+);
+
+$badge-tones: (
+  'default': (
+    'bg':      var(--void-color-action-secondary),
+    'color':   var(--void-color-text-primary),
+    'border':  var(--void-color-border-default),
+    'bg-subtle': var(--void-color-action-secondary),
+  ),
+  'success': (
+    'bg':      var(--void-color-status-success),
+    'color':   var(--void-color-text-inverse),
+    'border':  var(--void-color-status-success),
+    'bg-subtle': color-mix(in srgb, var(--void-color-status-success) 15%, transparent),
+  ),
+  'warning': (
+    'bg':      var(--void-color-status-warning),
+    'color':   var(--void-color-text-inverse),
+    'border':  var(--void-color-status-warning),
+    'bg-subtle': color-mix(in srgb, var(--void-color-status-warning) 15%, transparent),
+  ),
+  'error': (
+    'bg':      var(--void-color-status-error),
+    'color':   var(--void-color-text-inverse),
+    'border':  var(--void-color-status-error),
+    'bg-subtle': color-mix(in srgb, var(--void-color-status-error) 15%, transparent),
+  ),
+  'info': (
+    'bg':      var(--void-color-action-primary),
+    'color':   var(--void-color-text-inverse),
+    'border':  var(--void-color-action-primary),
+    'bg-subtle': color-mix(in srgb, var(--void-color-action-primary) 15%, transparent),
+  ),
+);

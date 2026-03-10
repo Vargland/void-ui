@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "moon", "type": "other" },
+    "label": { "value": "Moon", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#0c0c0e", "type": "color" },
+      "subtle":  { "value": "#101014", "type": "color" },
+      "surface": { "value": "#131317", "type": "color" },
+      "overlay": { "value": "#1a1a20", "type": "color" },
+      "inverse": { "value": "#d0d0e0", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(160,160,180,0.10)", "type": "color" },
+      "subtle":  { "value": "rgba(160,160,180,0.05)", "type": "color" },
+      "strong":  { "value": "rgba(160,160,180,0.22)", "type": "color" },
+      "focus":   { "value": "#9090c0", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#d0d0e0", "type": "color" },
+      "secondary": { "value": "#8080a0", "type": "color" },
+      "muted":     { "value": "#404050", "type": "color" },
+      "disabled":  { "value": "#282830", "type": "color" },
+      "inverse":   { "value": "#0c0c0e", "type": "color" },
+      "accent":    { "value": "#9090c0", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#9090c0", "type": "color" },
+      "primary-hover":   { "value": "#a8a8d8", "type": "color" },
+      "primary-active":  { "value": "#7878a8", "type": "color" },
+      "secondary":       { "value": "rgba(144,144,192,0.12)", "type": "color" },
+      "secondary-hover": { "value": "rgba(144,144,192,0.20)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#7090b0", "type": "color" },
+      "warning": { "value": "#b0a060", "type": "color" },
+      "error":   { "value": "#a06060", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(144,144,192,0.22)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Syne', system-ui, sans-serif", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "2px", "type": "borderRadius" }
+  }
+}

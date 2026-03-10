@@ -8,6 +8,7 @@ export function Button({
   fullWidth = false,
   loading = false,
   disabled,
+  planet,
   iconBefore,
   iconAfter,
   children,
@@ -18,7 +19,7 @@ export function Button({
 }: ButtonProps) {
   const isDisabled = disabled || loading
 
-  return (
+  const button = (
     <Tag
       data-testid={testId}
       disabled={Tag === 'button' ? isDisabled : undefined}
@@ -57,4 +58,10 @@ export function Button({
       )}
     </Tag>
   )
+
+  if (planet) {
+    return <span data-void-planet={planet}>{button}</span>
+  }
+
+  return button
 }

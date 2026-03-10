@@ -41,13 +41,13 @@ export default function StackPage() {
           <h2 className={styles.sectionTitle}>Direction</h2>
           <ComponentDemo
             title="Row (default)"
-            code={`<Stack direction="row" spacing="3">
+            code={`<Stack direction="row" gap={3}>
   <Box />
   <Box />
   <Box />
 </Stack>`}
           >
-            <Stack direction="row" spacing="3">
+            <Stack direction="row" gap={3}>
               <Box label="1" />
               <Box label="2" />
               <Box label="3" />
@@ -56,13 +56,13 @@ export default function StackPage() {
 
           <ComponentDemo
             title="Column"
-            code={`<Stack direction="column" spacing="3">
+            code={`<Stack direction="column" gap={3}>
   <Box />
   <Box />
   <Box />
 </Stack>`}
           >
-            <Stack direction="column" spacing="3">
+            <Stack direction="column" gap={3}>
               <Box label="1" />
               <Box label="2" />
               <Box label="3" />
@@ -74,22 +74,22 @@ export default function StackPage() {
           <h2 className={styles.sectionTitle}>Spacing</h2>
           <ComponentDemo
             title="Spacing scale"
-            code={`<Stack spacing="1">...</Stack>
-<Stack spacing="4">...</Stack>
-<Stack spacing="8">...</Stack>`}
+            code={`<Stack gap={1}>...</Stack>
+<Stack gap={4}>...</Stack>
+<Stack gap={8}>...</Stack>`}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <Stack direction="row" spacing="1">
+              <Stack direction="row" gap={1}>
                 <Box label="1" />
                 <Box label="2" />
                 <Box label="3" />
               </Stack>
-              <Stack direction="row" spacing="4">
+              <Stack direction="row" gap={4}>
                 <Box label="1" />
                 <Box label="2" />
                 <Box label="3" />
               </Stack>
-              <Stack direction="row" spacing="8">
+              <Stack direction="row" gap={8}>
                 <Box label="1" />
                 <Box label="2" />
                 <Box label="3" />
@@ -102,13 +102,13 @@ export default function StackPage() {
           <h2 className={styles.sectionTitle}>Alignment</h2>
           <ComponentDemo
             title="justify + align"
-            code={`<Stack justify="between" align="center">
+            code={`<Stack justify="space-between" align="center">
   <Button size="sm">Cancel</Button>
   <Button variant="primary" size="sm">Save</Button>
 </Stack>`}
           >
             <div style={{ width: '100%' }}>
-              <Stack justify="between" align="center">
+              <Stack justify="space-between" align="center">
                 <Button size="sm">Cancel</Button>
                 <Button variant="primary" size="sm">Save</Button>
               </Stack>
@@ -135,21 +135,21 @@ export default function StackPage() {
                 <td>Flex direction</td>
               </tr>
               <tr>
-                <td><code>spacing</code></td>
-                <td><code>1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12</code></td>
+                <td><code>gap</code></td>
+                <td><code>0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12 | 16 | 20 | 24</code></td>
                 <td><code>4</code></td>
-                <td>Gap between children</td>
+                <td>Gap between children (maps to --void-space-* tokens)</td>
               </tr>
               <tr>
                 <td><code>align</code></td>
-                <td><code>start | center | end | stretch | baseline</code></td>
-                <td><code>start</code></td>
+                <td><code>normal | start | end | center | baseline | stretch</code></td>
+                <td><code>normal</code></td>
                 <td>align-items</td>
               </tr>
               <tr>
                 <td><code>justify</code></td>
-                <td><code>start | center | end | between | around | evenly</code></td>
-                <td><code>start</code></td>
+                <td><code>normal | start | end | center | space-between | space-around | space-evenly | stretch</code></td>
+                <td><code>normal</code></td>
                 <td>justify-content</td>
               </tr>
               <tr>

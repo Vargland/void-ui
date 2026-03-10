@@ -26,7 +26,8 @@
     "deploy:docs:prod": "vercel --cwd apps/docs --prod",
     "figma:push": "node figma-sync/push-to-figma.js",
     "figma:pull": "node figma-sync/pull-from-figma.js",
-    "figma:sync": "npm run figma:push && npm run build:tokens"
+    "figma:sync": "npm run figma:push && npm run build:tokens",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.0.0",
@@ -35,6 +36,7 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^9.1.7",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5"
   },

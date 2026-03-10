@@ -22,41 +22,44 @@ export default function BadgePage() {
           <ComponentDemo
             title="Solid"
             description="Filled background. Default variant."
-            code={`<Badge variant="solid" tone="neutral">Solid</Badge>
-<Badge variant="solid" tone="success">Solid</Badge>
-<Badge variant="solid" tone="warning">Solid</Badge>
-<Badge variant="solid" tone="danger">Solid</Badge>`}
+            code={`<Badge variant="solid" tone="default">Default</Badge>
+<Badge variant="solid" tone="success">Success</Badge>
+<Badge variant="solid" tone="warning">Warning</Badge>
+<Badge variant="solid" tone="error">Error</Badge>
+<Badge variant="solid" tone="info">Info</Badge>`}
           >
-            <Badge variant="solid" tone="neutral">Neutral</Badge>
+            <Badge variant="solid" tone="default">Default</Badge>
             <Badge variant="solid" tone="success">Success</Badge>
             <Badge variant="solid" tone="warning">Warning</Badge>
-            <Badge variant="solid" tone="danger">Danger</Badge>
+            <Badge variant="solid" tone="error">Error</Badge>
+            <Badge variant="solid" tone="info">Info</Badge>
           </ComponentDemo>
 
           <ComponentDemo
             title="Subtle"
             description="Reduced intensity, transparent background."
-            code={`<Badge variant="subtle" tone="neutral">Subtle</Badge>
-<Badge variant="subtle" tone="success">Subtle</Badge>
-<Badge variant="subtle" tone="warning">Subtle</Badge>
-<Badge variant="subtle" tone="danger">Subtle</Badge>`}
+            code={`<Badge variant="subtle" tone="default">Default</Badge>
+<Badge variant="subtle" tone="success">Success</Badge>
+<Badge variant="subtle" tone="warning">Warning</Badge>
+<Badge variant="subtle" tone="error">Error</Badge>`}
           >
-            <Badge variant="subtle" tone="neutral">Neutral</Badge>
+            <Badge variant="subtle" tone="default">Default</Badge>
             <Badge variant="subtle" tone="success">Success</Badge>
             <Badge variant="subtle" tone="warning">Warning</Badge>
-            <Badge variant="subtle" tone="danger">Danger</Badge>
+            <Badge variant="subtle" tone="error">Error</Badge>
           </ComponentDemo>
 
           <ComponentDemo
             title="Outlined"
             description="Border only, transparent fill."
-            code={`<Badge variant="outlined" tone="neutral">Outlined</Badge>
-<Badge variant="outlined" tone="success">Outlined</Badge>`}
+            code={`<Badge variant="outlined" tone="default">Default</Badge>
+<Badge variant="outlined" tone="success">Success</Badge>
+<Badge variant="outlined" tone="info">Info</Badge>`}
           >
-            <Badge variant="outlined" tone="neutral">Neutral</Badge>
+            <Badge variant="outlined" tone="default">Default</Badge>
             <Badge variant="outlined" tone="success">Success</Badge>
             <Badge variant="outlined" tone="warning">Warning</Badge>
-            <Badge variant="outlined" tone="danger">Danger</Badge>
+            <Badge variant="outlined" tone="error">Error</Badge>
           </ComponentDemo>
         </section>
 
@@ -94,8 +97,8 @@ export default function BadgePage() {
               </tr>
               <tr>
                 <td><code>tone</code></td>
-                <td><code>neutral | success | warning | danger</code></td>
-                <td><code>neutral</code></td>
+                <td><code>default | success | warning | error | info</code></td>
+                <td><code>default</code></td>
                 <td>Semantic color</td>
               </tr>
               <tr>

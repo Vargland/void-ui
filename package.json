@@ -6,18 +6,23 @@
   "author": "Germán Román",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "build:tokens": "npm run build --workspace=packages/tokens",
     "build:library": "npm run build --workspace=packages/library",
+    "build:docs": "npm run build --workspace=apps/docs",
     "dev": "npm run dev --workspace=packages/library",
+    "dev:docs": "npm run dev --workspace=apps/docs",
     "storybook": "npm run storybook --workspace=packages/library",
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint . --ext .ts,.tsx",
     "generate": "npm run generate --workspace=packages/library",
     "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
+    "deploy:docs": "vercel --cwd apps/docs",
+    "deploy:docs:prod": "vercel --cwd apps/docs --prod",
     "figma:push": "node figma-sync/push-to-figma.js",
     "figma:pull": "node figma-sync/pull-from-figma.js",
     "figma:sync": "npm run figma:push && npm run build:tokens"

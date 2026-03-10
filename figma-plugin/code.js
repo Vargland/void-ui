@@ -431,6 +431,199 @@ function drawTextField() {
   return c
 }
 
+// ─── Checkbox ─────────────────────────────────────────────────────────────────
+
+function mkCheckbox(state, size, label) {
+  var boxSizes = { sm:14, md:16, lg:20 }
+  var fontSizes = { sm:13, md:14, lg:16 }
+  var gaps = { sm:8, md:8, lg:12 }
+  var b = boxSizes[size] || 16
+  var fs = fontSizes[size] || 14
+  var gap = gaps[size] || 8
+
+  var row = autoFrame('Checkbox/' + state, 'row', gap, 0, 0)
+  row.counterAxisAlignItems = 'CENTER'
+
+  // Box
+  var box = rect('box', b, b, null, 1, C.border, R.sm)
+  if (state === 'checked') {
+    box.fills = solidFill(C.primary)
+    box.strokes = solidFill(C.primary)
+    // Checkmark as small rect approximation
+    var check = rect('check', Math.floor(b * 0.55), Math.floor(b * 0.35), C.textInverse, 1, null, 1)
+    // Use a plain frame to hold box + check with absolute positioning
+    var boxWrap = plainFrame('box-wrap', b, b)
+    boxWrap.fills = solidFill(C.primary)
+    boxWrap.cornerRadius = R.sm
+    check.x = Math.floor(b * 0.2)
+    check.y = Math.floor(b * 0.32)
+    boxWrap.appendChild(check)
+    row.appendChild(boxWrap)
+  } else if (state === 'indeterminate') {
+    var boxWrap2 = plainFrame('box-wrap', b, b)
+    boxWrap2.fills = solidFill(C.primary)
+    boxWrap2.cornerRadius = R.sm
+    var dash = rect('dash', Math.floor(b * 0.55), 2, C.textInverse, 1, null, 1)
+    dash.x = Math.floor(b * 0.22)
+    dash.y = Math.floor(b * 0.43)
+    boxWrap2.appendChild(dash)
+    row.appendChild(boxWrap2)
+  } else if (state === 'error') {
+    box.strokes = solidFill(C.error)
+    row.appendChild(box)
+  } else if (state === 'disabled') {
+    row.opacity = 0.4
+    row.appendChild(box)
+  } else {
+    row.appendChild(box)
+  }
+
+  if (label) row.appendChild(txt(label, fs, C.textPrimary, 'Medium'))
+  return row
+}
+
+function drawCheckbox() {
+  var c = card('☑️ Checkbox')
+  cardHeader(c, 'Checkbox', 'label · description · error · size · indeterminate · disabled')
+
+  section(c, 'STATES', 'row', 12, 'CENTER', function(row) {
+    row.appendChild(mkCheckbox('unchecked',    'md', 'Unchecked'))
+    row.appendChild(mkCheckbox('checked',      'md', 'Checked'))
+    row.appendChild(mkCheckbox('indeterminate','md', 'Indeterminate'))
+    row.appendChild(mkCheckbox('error',        'md', 'Error'))
+    row.appendChild(mkCheckbox('disabled',     'md', 'Disabled'))
+  })
+
+  section(c, 'SIZES', 'row', 16, 'CENTER', function(row) {
+    row.appendChild(mkCheckbox('checked', 'sm', 'Small'))
+    row.appendChild(mkCheckbox('checked', 'md', 'Medium'))
+    row.appendChild(mkCheckbox('checked', 'lg', 'Large'))
+  })
+
+  section(c, 'WITH DESCRIPTION', 'col', 8, 'MIN', function(col) {
+    var item = autoFrame('item', 'row', 8, 0, 0)
+    item.counterAxisAlignItems = 'MIN'
+    var box = rect('box', 16, 16, null, 1, C.border, R.sm)
+    item.appendChild(box)
+    var textCol = autoFrame('text', 'col', 2, 0, 0)
+    textCol.appendChild(txt('Send me updates', 14, C.textPrimary, 'Medium'))
+    textCol.appendChild(txt('We will only send relevant product news.', 12, C.textMuted, 'Regular'))
+    item.appendChild(textCol)
+    col.appendChild(item)
+  })
+
+  return c
+}
+
+// ─── Planets ──────────────────────────────────────────────────────────────────
+
+function hexToRgb(hex) {
+  // handles #rrggbb only
+  var r = parseInt(hex.slice(1,3),16)/255
+  var g = parseInt(hex.slice(3,5),16)/255
+  var b = parseInt(hex.slice(5,7),16)/255
+  return { r:r, g:g, b:b }
+}
+
+function drawPlanets() {
+  var PLANETS = [
+    { name:'Mercury', base:'#080808', surface:'#0f0f0f', primary:'#b0b0b0', text:'#d8d8d8', border:'#333333' },
+    { name:'Moon',    base:'#0c0c0e', surface:'#131317', primary:'#9090c0', text:'#d0d0e0', border:'#323236' },
+    { name:'Mars',    base:'#110700', surface:'#1c0e02', primary:'#e05c1a', text:'#f0d5b8', border:'#3a2010' },
+    { name:'Earth',   base:'#021208', surface:'#061c0e', primary:'#3dd68c', text:'#c8f0d8', border:'#1a4a2a' },
+    { name:'Europa',  base:'#080f1a', surface:'#0d1926', primary:'#4da6ff', text:'#d0e8ff', border:'#1a3060' },
+    { name:'Neptune', base:'#020412', surface:'#040820', primary:'#6070ff', text:'#b0b8ff', border:'#151828' },
+    { name:'Jupiter', base:'#0e0a06', surface:'#16100a', primary:'#d4943c', text:'#f2e0c0', border:'#3a2a10' },
+    { name:'Saturn',  base:'#0a0900', surface:'#141100', primary:'#d4c070', text:'#ede0b0', border:'#38320a' },
+    { name:'Venus',   base:'#0f0d00', surface:'#1a1700', primary:'#e8c020', text:'#f5e8b0', border:'#3a3408' },
+    { name:'Io',      base:'#060604', surface:'#0e0d04', primary:'#c8e000', text:'#e8f0a0', border:'#282800' },
+    { name:'Uranus',  base:'#030f12', surface:'#061620', primary:'#40d0e0', text:'#b8eef5', border:'#0a3040' },
+    { name:'Nostromo',base:'#000000', surface:'#040800', primary:'#00ff46', text:'#00ff46', border:'#003010' },
+  ]
+
+  var SWATCH = 24   // swatch square size
+  var ROW_H  = 56   // height of each planet row
+  var COL_W  = 200  // width of each planet row
+
+  var c = card('🪐 Planets')
+  cardHeader(c, 'Planets', '12 themes — base · surface · primary · text · border')
+
+  // Column headers
+  var headers = autoFrame('headers', 'row', 0, 0, 0)
+  headers.itemSpacing = 0
+  var headerLabels = ['', 'base', 'surface', 'primary', 'text', 'border']
+  var headerWidths = [80, 40, 40, 40, 40, 40]
+  for (var hi = 0; hi < headerLabels.length; hi++) {
+    var hCell = autoFrame('h', 'row', 0, 0, 4)
+    hCell.primaryAxisSizingMode = 'FIXED'
+    hCell.counterAxisSizingMode = 'FIXED'
+    hCell.resize(headerWidths[hi], 20)
+    hCell.primaryAxisAlignItems = 'MIN'
+    hCell.counterAxisAlignItems = 'CENTER'
+    if (headerLabels[hi]) hCell.appendChild(txt(headerLabels[hi], 9, C.textMuted, 'Medium'))
+    headers.appendChild(hCell)
+  }
+  c.appendChild(headers)
+
+  // Planet rows
+  for (var pi = 0; pi < PLANETS.length; pi++) {
+    var p = PLANETS[pi]
+    var row = autoFrame(p.name, 'row', 0, 0, 0)
+    row.counterAxisAlignItems = 'CENTER'
+    row.itemSpacing = 0
+
+    // Name cell
+    var nameCell = autoFrame('name', 'row', 0, 0, 0)
+    nameCell.primaryAxisSizingMode = 'FIXED'
+    nameCell.counterAxisSizingMode = 'FIXED'
+    nameCell.resize(80, ROW_H)
+    nameCell.primaryAxisAlignItems = 'MIN'
+    nameCell.counterAxisAlignItems = 'CENTER'
+    nameCell.appendChild(txt(p.name, 12, C.textSecondary, 'Medium'))
+    row.appendChild(nameCell)
+
+    // Swatch cells
+    var swatchColors = [p.base, p.surface, p.primary, p.text, p.border]
+    for (var si = 0; si < swatchColors.length; si++) {
+      var cell = autoFrame('cell', 'row', 0, 0, 0)
+      cell.primaryAxisSizingMode = 'FIXED'
+      cell.counterAxisSizingMode = 'FIXED'
+      cell.resize(40, ROW_H)
+      cell.primaryAxisAlignItems = 'CENTER'
+      cell.counterAxisAlignItems = 'CENTER'
+
+      var swatch = rect('swatch', SWATCH, SWATCH, hexToRgb(swatchColors[si]), 1, null, R.sm)
+      // Add subtle border on very dark swatches so they're visible
+      swatch.strokes = solidFill(C.border)
+      swatch.strokeWeight = 1
+      swatch.strokeAlign = 'INSIDE'
+      cell.appendChild(swatch)
+      row.appendChild(cell)
+    }
+
+    // Mini button preview using planet's primary color
+    var btnPreview = autoFrame('btn', 'row', 0, 10, 0)
+    btnPreview.counterAxisSizingMode = 'FIXED'
+    btnPreview.resize(btnPreview.width || 1, 28)
+    btnPreview.primaryAxisAlignItems = 'CENTER'
+    btnPreview.counterAxisAlignItems = 'CENTER'
+    btnPreview.fills = solidFill(hexToRgb(p.primary))
+    btnPreview.cornerRadius = R.md
+    btnPreview.appendChild(txt('Btn', 11, hexToRgb(p.base), 'Medium'))
+    row.appendChild(btnPreview)
+
+    c.appendChild(row)
+
+    // Separator line between rows (except last)
+    if (pi < PLANETS.length - 1) {
+      var sep = rect('sep', 280, 1, C.border)
+      c.appendChild(sep)
+    }
+  }
+
+  return c
+}
+
 // ─── Stack ────────────────────────────────────────────────────────────────────
 
 function drawStack() {
@@ -471,7 +664,7 @@ function drawStack() {
 async function run() {
   await loadFonts()
 
-  var NAMES = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack']
+  var NAMES = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack','☑️ Checkbox','🪐 Planets']
   figma.currentPage.children.filter(function(n) { return NAMES.indexOf(n.name) !== -1 }).forEach(function(n) { n.remove() })
 
   var drawFns = [
@@ -483,6 +676,8 @@ async function run() {
     ['⏳ Spinner',    drawSpinner],
     ['📝 TextField',  drawTextField],
     ['📦 Stack',      drawStack],
+    ['☑️ Checkbox',   drawCheckbox],
+    ['🪐 Planets',    drawPlanets],
   ]
 
   var cards = []
@@ -516,7 +711,7 @@ async function run() {
   figma.viewport.scrollAndZoomIntoView(
     figma.currentPage.children.filter(function(n) { return NAMES.indexOf(n.name) !== -1 })
   )
-  figma.closePlugin('void-ui ' + cards.length + '/8 componentes')
+  figma.closePlugin('void-ui ' + cards.length + '/10 cards')
 }
 
 run().catch(function(err) { figma.closePlugin('ERROR: ' + err.message) })

@@ -1,0 +1,25 @@
+{
+  "name": "@open-void-ui/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server — exposes void-ui component library as context for Claude and Cursor",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "void-ui-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "generate": "node --loader ts-node/esm scripts/generate-data.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "ts-node": "^10.9.2",
+    "@types/node": "^20.0.0"
+  }
+}

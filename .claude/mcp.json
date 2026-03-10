@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "void-ui": {
+      "command": "node",
+      "args": ["E:/Work/void-ui/mcp-server/dist/index.js"],
+      "description": "void-ui component library — props, tokens, usage examples"
+    }
+  }
+}

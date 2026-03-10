@@ -100,6 +100,25 @@
   }
 }
 
+.variant-outlined {
+  background-color: transparent;
+  color:            var(--void-color-action-primary);
+  border-color:     var(--void-color-action-primary);
+
+  &:hover:not([aria-disabled='true']) {
+    background-color: var(--void-color-action-secondary);
+    border-color:     var(--void-color-action-primary-hover);
+    color:            var(--void-color-action-primary-hover);
+    box-shadow:       var(--void-shadow-glow);
+  }
+
+  &:active:not([aria-disabled='true']) {
+    background-color: var(--void-color-action-secondary-hover);
+    border-color:     var(--void-color-action-primary-active);
+    color:            var(--void-color-action-primary-active);
+  }
+}
+
 .variant-danger {
   background-color: var(--void-color-status-error);
   color:            var(--void-color-text-inverse);

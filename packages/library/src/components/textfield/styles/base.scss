@@ -1,0 +1,50 @@
+// textfield — base styles
+
+$textfield-transition: background-color, border-color, box-shadow, color;
+
+$textfield-sizes: (
+  'sm': (
+    'height':    28px,
+    'padding-x': var(--void-space-2),
+    'font-size': var(--void-font-size-sm),
+    'radius':    var(--void-radius-md),
+    'icon-size': 14px,
+  ),
+  'md': (
+    'height':    36px,
+    'padding-x': var(--void-space-3),
+    'font-size': var(--void-font-size-base),
+    'radius':    var(--void-radius-md),
+    'icon-size': 16px,
+  ),
+  'lg': (
+    'height':    44px,
+    'padding-x': var(--void-space-4),
+    'font-size': var(--void-font-size-md),
+    'radius':    var(--void-radius-lg),
+    'icon-size': 18px,
+  ),
+);
+
+$textfield-states: (
+  'default': (
+    'border':  var(--void-color-border-default),
+    'focus':   var(--void-color-border-focus),
+    'hint':    var(--void-color-text-muted),
+  ),
+  'error': (
+    'border':  var(--void-color-status-error),
+    'focus':   var(--void-color-status-error),
+    'hint':    var(--void-color-status-error),
+  ),
+  'success': (
+    'border':  var(--void-color-status-success),
+    'focus':   var(--void-color-status-success),
+    'hint':    var(--void-color-status-success),
+  ),
+  'warning': (
+    'border':  var(--void-color-status-warning),
+    'focus':   var(--void-color-status-warning),
+    'hint':    var(--void-color-status-warning),
+  ),
+);

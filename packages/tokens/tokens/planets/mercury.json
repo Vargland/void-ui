@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "mercury", "type": "other" },
+    "label": { "value": "Mercury", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#080808", "type": "color" },
+      "subtle":  { "value": "#0c0c0c", "type": "color" },
+      "surface": { "value": "#0f0f0f", "type": "color" },
+      "overlay": { "value": "#161616", "type": "color" },
+      "inverse": { "value": "#d8d8d8", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(200,200,200,0.09)", "type": "color" },
+      "subtle":  { "value": "rgba(200,200,200,0.05)", "type": "color" },
+      "strong":  { "value": "rgba(200,200,200,0.20)", "type": "color" },
+      "focus":   { "value": "#b0b0b0", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#d8d8d8", "type": "color" },
+      "secondary": { "value": "#888888", "type": "color" },
+      "muted":     { "value": "#444444", "type": "color" },
+      "disabled":  { "value": "#2a2a2a", "type": "color" },
+      "inverse":   { "value": "#080808", "type": "color" },
+      "accent":    { "value": "#b0b0b0", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#b0b0b0", "type": "color" },
+      "primary-hover":   { "value": "#cccccc", "type": "color" },
+      "primary-active":  { "value": "#969696", "type": "color" },
+      "secondary":       { "value": "rgba(176,176,176,0.10)", "type": "color" },
+      "secondary-hover": { "value": "rgba(176,176,176,0.16)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#77aa77", "type": "color" },
+      "warning": { "value": "#aaaa88", "type": "color" },
+      "error":   { "value": "#aa5555", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(176,176,176,0.20)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Oxanium', 'DM Mono', monospace", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "1px", "type": "borderRadius" }
+  }
+}

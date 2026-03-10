@@ -44,3 +44,4 @@ coverage/
 
 # Design references (internal only)
 docs/
+!apps/docs/

@@ -1,0 +1,63 @@
+/* ─── open-void-ui Docs — Global Styles ────────────────────────────────────── */
+
+/* Import base tokens (CSS custom properties) */
+@import '@open-void-ui/tokens/css';
+
+/* ─── Reset ─────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--void-color-background-base);
+  color: var(--void-color-text-primary);
+  font-family: var(--void-font-family-sans);
+  line-height: 1.6;
+  min-height: 100dvh;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--void-color-background-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--void-color-border-default);
+  border-radius: var(--void-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--void-color-text-muted);
+}
+
+/* ─── Typography utilities ───────────────────────────────────────────────────── */
+.text-muted {
+  color: var(--void-color-text-muted);
+}
+
+.font-mono {
+  font-family: var(--void-font-family-mono);
+}
+
+/* ─── Link reset ─────────────────────────────────────────────────────────────── */
+a {
+  color: inherit;
+  text-decoration: none;
+}

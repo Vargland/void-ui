@@ -1,0 +1,25 @@
+// void-ui — Checkbox base constants
+
+$checkbox-sizes: (
+  'sm': (
+    'box':        14px,
+    'icon':       8px,
+    'font-size':  var(--void-font-size-sm),
+    'gap':        var(--void-space-2),
+    'radius':     var(--void-radius-sm),
+  ),
+  'md': (
+    'box':        16px,
+    'icon':       10px,
+    'font-size':  var(--void-font-size-base),
+    'gap':        var(--void-space-2),
+    'radius':     var(--void-radius-sm),
+  ),
+  'lg': (
+    'box':        20px,
+    'icon':       12px,
+    'font-size':  var(--void-font-size-md),
+    'gap':        var(--void-space-3),
+    'radius':     var(--void-radius-md),
+  ),
+);

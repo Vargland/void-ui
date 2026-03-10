@@ -23,6 +23,9 @@ export type { SpinnerProps, SpinnerVariant, SpinnerSize } from './typings/compon
 export { TextField } from './components/textfield'
 export type { TextFieldProps, TextFieldSize, TextFieldState } from './typings/components/textfield'
 
+export { Checkbox } from './components/checkbox'
+export type { CheckboxProps, CheckboxSize } from './typings/components/checkbox'
+
 // ─── Contexts ────────────────────────────────────────────────────────────────
 export { VoidProvider, PlanetContext, usePlanet, DEFAULT_PLANET } from './contexts/planet'
 export type { PlanetName, PlanetContextValue } from './typings/contexts/planet'

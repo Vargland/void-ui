@@ -7,7 +7,8 @@
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "apps/*"
+    "apps/*",
+    "mcp-server"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
@@ -21,6 +22,8 @@
     "lint": "eslint . --ext .ts,.tsx",
     "generate": "npm run generate --workspace=packages/library",
     "clean": "npm run clean --workspaces --if-present && rm -rf node_modules",
+    "mcp": "npm run start --workspace=mcp-server",
+    "mcp:build": "npm run build --workspace=mcp-server",
     "figma:push": "node figma-sync/push-to-figma.js",
     "figma:pull": "node figma-sync/pull-from-figma.js",
     "figma:sync": "npm run figma:push && npm run build:tokens",

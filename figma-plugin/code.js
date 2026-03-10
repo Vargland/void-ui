@@ -33,7 +33,7 @@ async function loadFonts() {
   await Promise.all([
     figma.loadFontAsync({ family:'Inter', style:'Regular' }),
     figma.loadFontAsync({ family:'Inter', style:'Medium' }),
-    figma.loadFontAsync({ family:'Inter', style:'SemiBold' }),
+    figma.loadFontAsync({ family:'Inter', style:'Semi Bold' }),
     figma.loadFontAsync({ family:'Inter', style:'Bold' }),
   ])
 }
@@ -111,7 +111,7 @@ function cardHeader(parent, name, props) {
 
 function section(parent, label, dir, gap, crossAlign, builder) {
   const wrap = autoFrame(label, 'col', 8, 0, 0)
-  wrap.appendChild(txt(label, 10, C.textMuted, 'SemiBold'))
+  wrap.appendChild(txt(label, 10, C.textMuted, 'Semi Bold'))
   const inner = autoFrame('items', dir || 'row', gap || 8, 0, 0)
   inner.counterAxisAlignItems = crossAlign || 'CENTER'
   builder(inner)
@@ -230,7 +230,7 @@ function mkAvatar(size, shape, statusColor) {
   wrap.fills = solidFill(C.primary)
   wrap.cornerRadius = radius
 
-  var initials = txt('GR', Math.max(9, Math.floor(p / 3.2)), C.textInverse, 'SemiBold')
+  var initials = txt('GR', Math.max(9, Math.floor(p / 3.2)), C.textInverse, 'Semi Bold')
   initials.x = Math.floor(p * 0.18)
   initials.y = Math.floor(p * 0.26)
   wrap.appendChild(initials)
@@ -285,8 +285,8 @@ function drawTypography() {
     var scale = [
       [36,'4xl — The void','Bold'],
       [30,'3xl — The void','Bold'],
-      [24,'2xl — The void','SemiBold'],
-      [20,'xl — The void','SemiBold'],
+      [24,'2xl — The void','Semi Bold'],
+      [20,'xl — The void','Semi Bold'],
       [18,'lg — The void','Medium'],
       [16,'md — The void','Regular'],
       [14,'base — The void','Regular'],

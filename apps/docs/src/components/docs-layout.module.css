@@ -1,0 +1,11 @@
+/* ─── Docs Layout ────────────────────────────────────────────────────────────── */
+.shell {
+  display: flex;
+  min-height: 100dvh;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}

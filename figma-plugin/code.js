@@ -330,18 +330,25 @@ function mkSpinner(size) {
   wrap.fills = []
   wrap.clipsContent = false
 
-  // Track ring
-  const track = box({ name: 'track', w: p, h: p, radius: R.full })
+  // Track ring — use Ellipse (native circle, avoids strokeAlign issues on Rectangle)
+  const track = figma.createEllipse()
+  track.name = 'track'
+  track.resize(p, p)
   track.fills = []
   track.strokes = solid(C.borderDefault)
   track.strokeWeight = sw
   track.strokeAlign = 'INSIDE'
   wrap.appendChild(track)
 
-  // Arc (colored quarter)
+  // Arc — small filled ellipse representing the spinning part
   const qs = Math.ceil(p / 2)
-  const arc = box({ name: 'arc', w: qs, h: qs, fill: C.actionPrimary, radius: Math.ceil(qs / 2) })
-  arc.x = 0; arc.y = 0
+  const arc = figma.createEllipse()
+  arc.name = 'arc'
+  arc.resize(qs, qs)
+  arc.fills = solid(C.actionPrimary)
+  arc.strokes = []
+  arc.x = 0
+  arc.y = 0
   wrap.appendChild(arc)
 
   return wrap

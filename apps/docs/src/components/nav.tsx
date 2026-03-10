@@ -35,6 +35,12 @@ export function Nav() {
         >
           Overview
         </Link>
+        <Link
+          href="/theming"
+          className={`${styles.link} ${pathname === '/theming' ? styles.active : ''}`}
+        >
+          Theming
+        </Link>
       </div>
 
       <div className={styles.section}>

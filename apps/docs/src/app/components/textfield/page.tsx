@@ -33,11 +33,11 @@ export default function TextFieldPage() {
             code={`<TextField
   label="Password"
   type="password"
-  helperText="Minimum 8 characters"
+  hint="Minimum 8 characters"
 />`}
           >
             <div style={{ width: '320px' }}>
-              <TextField label="Password" type="password" helperText="Minimum 8 characters" />
+              <TextField label="Password" type="password" hint="Minimum 8 characters" />
             </div>
           </ComponentDemo>
         </section>
@@ -50,7 +50,7 @@ export default function TextFieldPage() {
   label="Email"
   value="not-an-email"
   state="error"
-  helperText="Please enter a valid email address"
+  hint="Please enter a valid email address"
 />`}
           >
             <div style={{ width: '320px' }}>
@@ -58,7 +58,7 @@ export default function TextFieldPage() {
                 label="Email"
                 defaultValue="not-an-email"
                 state="error"
-                helperText="Please enter a valid email address"
+                hint="Please enter a valid email address"
               />
             </div>
           </ComponentDemo>
@@ -108,14 +108,20 @@ export default function TextFieldPage() {
                 <td>Field label</td>
               </tr>
               <tr>
-                <td><code>helperText</code></td>
+                <td><code>hint</code></td>
                 <td><code>string</code></td>
                 <td>—</td>
-                <td>Helper or error message</td>
+                <td>Helper text below the field</td>
+              </tr>
+              <tr>
+                <td><code>error</code></td>
+                <td><code>string</code></td>
+                <td>—</td>
+                <td>Error message (also sets state to error)</td>
               </tr>
               <tr>
                 <td><code>state</code></td>
-                <td><code>default | error | success</code></td>
+                <td><code>default | error | success | warning</code></td>
                 <td><code>default</code></td>
                 <td>Visual validation state</td>
               </tr>
@@ -126,16 +132,16 @@ export default function TextFieldPage() {
                 <td>Input size</td>
               </tr>
               <tr>
-                <td><code>iconBefore</code></td>
+                <td><code>prefix</code></td>
                 <td><code>ReactNode</code></td>
                 <td>—</td>
-                <td>Icon inside input, left</td>
+                <td>Element prepended inside the field</td>
               </tr>
               <tr>
-                <td><code>iconAfter</code></td>
+                <td><code>suffix</code></td>
                 <td><code>ReactNode</code></td>
                 <td>—</td>
-                <td>Icon inside input, right</td>
+                <td>Element appended inside the field</td>
               </tr>
             </tbody>
           </table>

@@ -466,10 +466,14 @@ async function run() {
   const cards = []
   for (const [name, fn] of drawFns) {
     try {
-      cards.push(fn())
+      console.log('drawing: ' + name)
+      const c = fn()
+      console.log('done: ' + name + ' w=' + c.width + ' h=' + c.height)
+      cards.push(c)
     } catch (e) {
-      figma.notify(`❌ ${name}: ${e.message}`, { timeout: 8000 })
-      console.error(name, e)
+      const msg = (e && e.message) ? e.message : String(e)
+      figma.notify('FAIL ' + name + ': ' + msg, { error: true, timeout: 10000 })
+      console.error('FAIL ' + name, e)
     }
   }
 

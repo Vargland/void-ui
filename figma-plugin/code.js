@@ -37,21 +37,21 @@ async function loadFonts() {
 }
 
 function solid(color, opacity) {
-  return [{ type: 'SOLID', color, opacity: opacity ?? 1 }]
+  return [{ type: 'SOLID', color, opacity: opacity || 1 }]
 }
 
 // AutoLayout frame, sizes to content by default
 function frame(opts) {
   const f = figma.createFrame()
-  f.name = opts.name ?? 'frame'
+  f.name = opts.name || 'frame'
   f.layoutMode = opts.dir === 'row' ? 'HORIZONTAL' : 'VERTICAL'
-  f.itemSpacing = opts.gap ?? 0
-  f.paddingLeft = f.paddingRight = opts.pH ?? 0
-  f.paddingTop = f.paddingBottom = opts.pV ?? 0
+  f.itemSpacing = opts.gap || 0
+  f.paddingLeft = f.paddingRight = opts.pH || 0
+  f.paddingTop = f.paddingBottom = opts.pV || 0
   f.primaryAxisSizingMode = opts.wFix ? 'FIXED' : 'AUTO'
   f.counterAxisSizingMode = opts.hFix ? 'FIXED' : 'AUTO'
-  f.primaryAxisAlignItems = opts.mainAlign ?? 'MIN'
-  f.counterAxisAlignItems = opts.crossAlign ?? 'MIN'
+  f.primaryAxisAlignItems = opts.mainAlign || 'MIN'
+  f.counterAxisAlignItems = opts.crossAlign || 'MIN'
   f.fills = opts.fill ? solid(opts.fill, opts.fillOp) : []
   if (opts.border) { f.strokes = solid(opts.border); f.strokeWeight = 1; f.strokeAlign = 'INSIDE' }
   if (opts.radius !== undefined) f.cornerRadius = opts.radius
@@ -64,19 +64,19 @@ function frame(opts) {
 
 function text(str, size, color, weight) {
   const n = figma.createText()
-  n.fontName = { family: 'Inter', style: weight ?? 'Regular' }
-  n.fontSize = size ?? 14
+  n.fontName = { family: 'Inter', style: weight || 'Regular' }
+  n.fontSize = size || 14
   n.characters = String(str)
-  n.fills = solid(color ?? C.textPrimary)
+  n.fills = solid(color || C.textPrimary)
   return n
 }
 
 function box(opts) {
   const r = figma.createRectangle()
-  r.name = opts.name ?? 'rect'
+  r.name = opts.name || 'rect'
   r.resize(Math.max(1, opts.w), Math.max(1, opts.h))
   r.fills = opts.fill ? solid(opts.fill, opts.fillOp) : []
-  if (opts.border) { r.strokes = solid(opts.border); r.strokeWeight = opts.sw ?? 1; r.strokeAlign = 'INSIDE' }
+  if (opts.border) { r.strokes = solid(opts.border); r.strokeWeight = opts.sw || 1; r.strokeAlign = 'INSIDE' }
   if (opts.radius !== undefined) r.cornerRadius = opts.radius
   if (opts.opacity !== undefined) r.opacity = opts.opacity
   return r
@@ -93,7 +93,7 @@ function card(name) {
 function section(parent, label, dir, gap, builder) {
   const wrap = frame({ name: label, dir: 'col', gap: 8 })
   wrap.appendChild(text(label, 10, C.textMuted, 'SemiBold'))
-  const inner = frame({ name: 'items', dir: dir ?? 'row', gap: gap ?? 8, crossAlign: 'CENTER' })
+  const inner = frame({ name: 'items', dir: dir || 'row', gap: gap || 8, crossAlign: 'CENTER' })
   builder(inner)
   wrap.appendChild(inner)
   parent.appendChild(wrap)
@@ -203,7 +203,7 @@ function drawBadge() {
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
 function mkAvatar(size, shape, statusColor) {
-  const p = { xs:24, sm:32, md:40, lg:48, xl:64 }[size] ?? 40
+  const p = { xs:24, sm:32, md:40, lg:48, xl:64 }[size] || 40
   const radius = shape === 'square' ? R.sm : shape === 'rounded' ? R.lg : R.full
 
   // Use a plain frame (not autolayout) so we can position the status dot
@@ -321,7 +321,7 @@ function drawDivider() {
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 
 function mkSpinner(size) {
-  const p = { xs:16, sm:20, md:24, lg:32, xl:40 }[size] ?? 24
+  const p = { xs:16, sm:20, md:24, lg:32, xl:40 }[size] || 24
   const sw = Math.max(2, Math.floor(p / 10))
 
   const wrap = figma.createFrame()
@@ -363,8 +363,8 @@ function drawSpinner() {
 
 function mkTextField(state, size) {
   const heights = { sm:32, md:40, lg:48 }
-  const h = heights[size] ?? 40
-  const borderC = { default:C.borderDefault, error:C.error, success:C.success, warning:C.warning }[state] ?? C.borderDefault
+  const h = heights[size] || 40
+  const borderC = { default:C.borderDefault, error:C.error, success:C.success, warning:C.warning }[state] || C.borderDefault
   const hintC   = state === 'default' ? C.textMuted : borderC
   const hintTxt = state === 'error' ? '✗ Error message' : 'Hint text'
 

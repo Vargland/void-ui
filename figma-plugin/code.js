@@ -431,6 +431,90 @@ function drawTextField() {
   return c
 }
 
+// ─── Checkbox ─────────────────────────────────────────────────────────────────
+
+function mkCheckbox(state, size, label) {
+  var boxSizes = { sm:14, md:16, lg:20 }
+  var fontSizes = { sm:13, md:14, lg:16 }
+  var gaps = { sm:8, md:8, lg:12 }
+  var b = boxSizes[size] || 16
+  var fs = fontSizes[size] || 14
+  var gap = gaps[size] || 8
+
+  var row = autoFrame('Checkbox/' + state, 'row', gap, 0, 0)
+  row.counterAxisAlignItems = 'CENTER'
+
+  // Box
+  var box = rect('box', b, b, null, 1, C.border, R.sm)
+  if (state === 'checked') {
+    box.fills = solidFill(C.primary)
+    box.strokes = solidFill(C.primary)
+    // Checkmark as small rect approximation
+    var check = rect('check', Math.floor(b * 0.55), Math.floor(b * 0.35), C.textInverse, 1, null, 1)
+    // Use a plain frame to hold box + check with absolute positioning
+    var boxWrap = plainFrame('box-wrap', b, b)
+    boxWrap.fills = solidFill(C.primary)
+    boxWrap.cornerRadius = R.sm
+    check.x = Math.floor(b * 0.2)
+    check.y = Math.floor(b * 0.32)
+    boxWrap.appendChild(check)
+    row.appendChild(boxWrap)
+  } else if (state === 'indeterminate') {
+    var boxWrap2 = plainFrame('box-wrap', b, b)
+    boxWrap2.fills = solidFill(C.primary)
+    boxWrap2.cornerRadius = R.sm
+    var dash = rect('dash', Math.floor(b * 0.55), 2, C.textInverse, 1, null, 1)
+    dash.x = Math.floor(b * 0.22)
+    dash.y = Math.floor(b * 0.43)
+    boxWrap2.appendChild(dash)
+    row.appendChild(boxWrap2)
+  } else if (state === 'error') {
+    box.strokes = solidFill(C.error)
+    row.appendChild(box)
+  } else if (state === 'disabled') {
+    row.opacity = 0.4
+    row.appendChild(box)
+  } else {
+    row.appendChild(box)
+  }
+
+  if (label) row.appendChild(txt(label, fs, C.textPrimary, 'Medium'))
+  return row
+}
+
+function drawCheckbox() {
+  var c = card('☑️ Checkbox')
+  cardHeader(c, 'Checkbox', 'label · description · error · size · indeterminate · disabled')
+
+  section(c, 'STATES', 'row', 12, 'CENTER', function(row) {
+    row.appendChild(mkCheckbox('unchecked',    'md', 'Unchecked'))
+    row.appendChild(mkCheckbox('checked',      'md', 'Checked'))
+    row.appendChild(mkCheckbox('indeterminate','md', 'Indeterminate'))
+    row.appendChild(mkCheckbox('error',        'md', 'Error'))
+    row.appendChild(mkCheckbox('disabled',     'md', 'Disabled'))
+  })
+
+  section(c, 'SIZES', 'row', 16, 'CENTER', function(row) {
+    row.appendChild(mkCheckbox('checked', 'sm', 'Small'))
+    row.appendChild(mkCheckbox('checked', 'md', 'Medium'))
+    row.appendChild(mkCheckbox('checked', 'lg', 'Large'))
+  })
+
+  section(c, 'WITH DESCRIPTION', 'col', 8, 'MIN', function(col) {
+    var item = autoFrame('item', 'row', 8, 0, 0)
+    item.counterAxisAlignItems = 'MIN'
+    var box = rect('box', 16, 16, null, 1, C.border, R.sm)
+    item.appendChild(box)
+    var textCol = autoFrame('text', 'col', 2, 0, 0)
+    textCol.appendChild(txt('Send me updates', 14, C.textPrimary, 'Medium'))
+    textCol.appendChild(txt('We will only send relevant product news.', 12, C.textMuted, 'Regular'))
+    item.appendChild(textCol)
+    col.appendChild(item)
+  })
+
+  return c
+}
+
 // ─── Stack ────────────────────────────────────────────────────────────────────
 
 function drawStack() {
@@ -471,7 +555,7 @@ function drawStack() {
 async function run() {
   await loadFonts()
 
-  var NAMES = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack']
+  var NAMES = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack','☑️ Checkbox']
   figma.currentPage.children.filter(function(n) { return NAMES.indexOf(n.name) !== -1 }).forEach(function(n) { n.remove() })
 
   var drawFns = [
@@ -483,6 +567,7 @@ async function run() {
     ['⏳ Spinner',    drawSpinner],
     ['📝 TextField',  drawTextField],
     ['📦 Stack',      drawStack],
+    ['☑️ Checkbox',   drawCheckbox],
   ]
 
   var cards = []
@@ -516,7 +601,7 @@ async function run() {
   figma.viewport.scrollAndZoomIntoView(
     figma.currentPage.children.filter(function(n) { return NAMES.indexOf(n.name) !== -1 })
   )
-  figma.closePlugin('void-ui ' + cards.length + '/8 componentes')
+  figma.closePlugin('void-ui ' + cards.length + '/9 componentes')
 }
 
 run().catch(function(err) { figma.closePlugin('ERROR: ' + err.message) })

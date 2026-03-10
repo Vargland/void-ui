@@ -1,14 +1,16 @@
 {
-  "name": "@void-ui/tokens",
+  "name": "@open-void-ui/tokens",
   "version": "0.1.0",
-  "description": "Design tokens for void-ui — the single source of truth",
+  "description": "Design tokens for open-void-ui — the single source of truth",
   "author": "Germán Román",
   "license": "MIT",
+  "type": "module",
   "main": "dist/tokens.js",
   "exports": {
     ".": "./dist/tokens.js",
     "./css": "./dist/variables.css",
-    "./scss": "./dist/tokens.scss"
+    "./scss": "./dist/tokens.scss",
+    "./planets/*": "./dist/planets/*.css"
   },
   "files": [
     "dist"

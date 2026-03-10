@@ -1,0 +1,52 @@
+{
+  "planet": {
+    "name": { "value": "neptune", "type": "other" },
+    "label": { "value": "Neptune", "type": "other" }
+  },
+  "color": {
+    "background": {
+      "base":    { "value": "#020412", "type": "color" },
+      "subtle":  { "value": "#030618", "type": "color" },
+      "surface": { "value": "#040820", "type": "color" },
+      "overlay": { "value": "#060c2c", "type": "color" },
+      "inverse": { "value": "#b0b8ff", "type": "color" }
+    },
+    "border": {
+      "default": { "value": "rgba(80,100,255,0.12)", "type": "color" },
+      "subtle":  { "value": "rgba(80,100,255,0.06)", "type": "color" },
+      "strong":  { "value": "rgba(80,100,255,0.26)", "type": "color" },
+      "focus":   { "value": "#6070ff", "type": "color" }
+    },
+    "text": {
+      "primary":   { "value": "#b0b8ff", "type": "color" },
+      "secondary": { "value": "#5060d0", "type": "color" },
+      "muted":     { "value": "#28306a", "type": "color" },
+      "disabled":  { "value": "#141840", "type": "color" },
+      "inverse":   { "value": "#020412", "type": "color" },
+      "accent":    { "value": "#6070ff", "type": "color" }
+    },
+    "action": {
+      "primary":         { "value": "#6070ff", "type": "color" },
+      "primary-hover":   { "value": "#7888ff", "type": "color" },
+      "primary-active":  { "value": "#4858e8", "type": "color" },
+      "secondary":       { "value": "rgba(96,112,255,0.13)", "type": "color" },
+      "secondary-hover": { "value": "rgba(96,112,255,0.22)", "type": "color" }
+    },
+    "status": {
+      "success": { "value": "#4090e0", "type": "color" },
+      "warning": { "value": "#c0a040", "type": "color" },
+      "error":   { "value": "#e04060", "type": "color" }
+    }
+  },
+  "shadow": {
+    "glow": { "value": "0 0 20px rgba(96,112,255,0.28)", "type": "boxShadow" }
+  },
+  "font": {
+    "family": {
+      "sans": { "value": "'Barlow Condensed', system-ui, sans-serif", "type": "fontFamilies" }
+    }
+  },
+  "radius": {
+    "md": { "value": "2px", "type": "borderRadius" }
+  }
+}

@@ -1,11 +1,23 @@
 import type { Preview } from '@storybook/react'
 import { create } from '@storybook/theming/create'
 import '../src/static/styles/reset.css'
-import '@void-ui/tokens/css'
+import '@open-void-ui/tokens/css'
+import '@open-void-ui/tokens/planets/mercury'
+import '@open-void-ui/tokens/planets/venus'
+import '@open-void-ui/tokens/planets/earth'
+import '@open-void-ui/tokens/planets/moon'
+import '@open-void-ui/tokens/planets/mars'
+import '@open-void-ui/tokens/planets/jupiter'
+import '@open-void-ui/tokens/planets/saturn'
+import '@open-void-ui/tokens/planets/europa'
+import '@open-void-ui/tokens/planets/uranus'
+import '@open-void-ui/tokens/planets/neptune'
+import '@open-void-ui/tokens/planets/io'
+import '@open-void-ui/tokens/planets/nostromo'
 
 const voidTheme = create({
   base:       'dark',
-  brandTitle: 'void-ui',
+  brandTitle: 'open-void-ui',
   brandUrl:   'https://github.com/Vargland/void-ui',
 })
 
@@ -26,6 +38,15 @@ const preview: Preview = {
     },
     docs: {
       theme: voidTheme,
+    },
+    options: {
+      storySort: {
+        order: [
+          'void-ui',       // Welcome page group (sits first)
+          'Layout',        // Stack, etc.
+          'Components',    // all component stories
+        ],
+      },
     },
   },
 }

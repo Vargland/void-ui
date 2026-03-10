@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@void-ui/tokens": ["../tokens/dist/tokens.js"]
+      "@open-void-ui/tokens": ["../tokens/dist/tokens.js"]
     }
   },
   "include": ["src", ".storybook"],

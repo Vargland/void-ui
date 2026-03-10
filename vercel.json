@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm install",
+  "buildCommand": "npm run build --workspace=@open-void-ui/tokens && npm run build --workspace=@open-void-ui/library && npm run build --workspace=@open-void-ui/docs",
+  "outputDirectory": "apps/docs/.next",
+  "framework": "nextjs"
+}

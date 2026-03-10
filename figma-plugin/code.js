@@ -1,498 +1,464 @@
 /**
- * void-ui Figma Plugin
- * Draws all 8 components with exact token values from packages/tokens/dist/variables.css
- *
- * Install: Figma Desktop → Plugins → Development → Import plugin from manifest
- * Select:  figma-plugin/manifest.json
+ * void-ui Figma Plugin v2
+ * Uses AutoLayout frames — colors, radius and spacing from exact token values
  */
 
-// ─── Resolved token values (from dist/variables.css) ─────────────────────────
+// ─── Tokens ───────────────────────────────────────────────────────────────────
 
-const T = {
-  // Primitives
-  neutral0:   { r:0.039, g:0.039, b:0.039 }, // #0a0a0a  — bg base
-  neutral50:  { r:0.067, g:0.067, b:0.067 }, // #111111
-  neutral100: { r:0.102, g:0.102, b:0.102 }, // #1a1a1a  — surface
-  neutral150: { r:0.141, g:0.141, b:0.141 }, // #242424  — overlay
-  neutral200: { r:0.180, g:0.180, b:0.180 }, // #2e2e2e  — border, action-secondary
-  neutral300: { r:0.239, g:0.239, b:0.239 }, // #3d3d3d  — border-strong
-  neutral400: { r:0.322, g:0.322, b:0.322 }, // #525252  — text-disabled
-  neutral500: { r:0.451, g:0.451, b:0.451 }, // #737373  — text-muted
-  neutral600: { r:0.639, g:0.639, b:0.639 }, // #a3a3a3  — text-secondary
-  neutral700: { r:0.831, g:0.831, b:0.831 }, // #d4d4d4
-  neutral900: { r:0.961, g:0.961, b:0.961 }, // #f5f5f5  — text-primary, white
-
-  void600:    { r:0.400, g:0.400, b:1.000 }, // #6666ff  — action-primary
-  void700:    { r:0.533, g:0.533, b:1.000 }, // #8888ff  — action-primary-hover
-  void500:    { r:0.267, g:0.267, b:0.867 }, // #4444dd  — action-primary-active
-
-  success500: { r:0.133, g:0.773, b:0.369 }, // #22c55e
-  warning500: { r:0.961, g:0.620, b:0.043 }, // #f59e0b
-  error500:   { r:0.937, g:0.267, b:0.267 }, // #ef4444
+const C = {
+  bg:               { r:0.039, g:0.039, b:0.039 }, // #0a0a0a
+  surface:          { r:0.102, g:0.102, b:0.102 }, // #1a1a1a
+  overlay:          { r:0.141, g:0.141, b:0.141 }, // #242424
+  borderDefault:    { r:0.180, g:0.180, b:0.180 }, // #2e2e2e
+  borderStrong:     { r:0.239, g:0.239, b:0.239 }, // #3d3d3d
+  textPrimary:      { r:0.961, g:0.961, b:0.961 }, // #f5f5f5
+  textSecondary:    { r:0.639, g:0.639, b:0.639 }, // #a3a3a3
+  textMuted:        { r:0.451, g:0.451, b:0.451 }, // #737373
+  textDisabled:     { r:0.322, g:0.322, b:0.322 }, // #525252
+  textInverse:      { r:0.039, g:0.039, b:0.039 }, // #0a0a0a
+  actionPrimary:    { r:0.400, g:0.400, b:1.000 }, // #6666ff
+  actionPrimaryHv:  { r:0.533, g:0.533, b:1.000 }, // #8888ff
+  actionPrimaryAct: { r:0.267, g:0.267, b:0.867 }, // #4444dd
+  actionSecondary:  { r:0.180, g:0.180, b:0.180 }, // #2e2e2e
+  success:          { r:0.133, g:0.773, b:0.369 }, // #22c55e
+  warning:          { r:0.961, g:0.620, b:0.043 }, // #f59e0b
+  error:            { r:0.937, g:0.267, b:0.267 }, // #ef4444
+  info:             { r:0.400, g:0.400, b:1.000 }, // #6666ff
 }
 
-// Semantic aliases
-const S = {
-  bg:               T.neutral0,
-  surface:          T.neutral100,
-  overlay:          T.neutral150,
-  borderDefault:    T.neutral200,
-  borderSubtle:     T.neutral150,
-  borderStrong:     T.neutral300,
-  borderFocus:      T.void600,
-  textPrimary:      T.neutral900,
-  textSecondary:    T.neutral600,
-  textMuted:        T.neutral500,
-  textDisabled:     T.neutral400,
-  textInverse:      T.neutral0,
-  textAccent:       T.void600,
-  actionPrimary:    T.void600,
-  actionPrimaryHv:  T.void700,
-  actionPrimaryAct: T.void500,
-  actionSecondary:  T.neutral200,
-  actionSecondaryHv:T.neutral300,
-  statusSuccess:    T.success500,
-  statusWarning:    T.warning500,
-  statusError:      T.error500,
+const R = { none:0, sm:2, md:4, lg:8, xl:12, full:9999 }
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function rgb(c, a) {
+  if (!c) return []
+  return [{ type: 'SOLID', color: c, opacity: a !== undefined ? a : 1 }]
 }
-
-// Spacing (px values from --void-space-*)
-const SPACE = { 0:0, 1:4, 2:8, 3:12, 4:16, 5:20, 6:24, 8:32, 10:40, 12:48, 16:64 }
-
-// Radius (px from --void-radius-*)
-const RADIUS = { none:0, sm:2, md:4, lg:8, xl:12, full:9999 }
-
-// Font sizes (px from --void-font-size-*)
-const FS = { xs:11, sm:13, base:14, md:16, lg:18, xl:20, '2xl':24, '3xl':30, '4xl':36 }
-
-// Button sizes (from base.scss)
-const BTN = {
-  sm: { h:28, px:SPACE[3], fs:FS.sm,  icon:14, gap:SPACE[1], r:RADIUS.md },
-  md: { h:36, px:SPACE[4], fs:FS.base,icon:16, gap:SPACE[2], r:RADIUS.md },
-  lg: { h:44, px:SPACE[6], fs:FS.md,  icon:18, gap:SPACE[2], r:RADIUS.lg },
-}
-
-// ─── Font loading ─────────────────────────────────────────────────────────────
 
 async function loadFonts() {
   await Promise.all([
     figma.loadFontAsync({ family: 'Inter', style: 'Regular' }),
     figma.loadFontAsync({ family: 'Inter', style: 'Medium' }),
-    figma.loadFontAsync({ family: 'Inter', style: 'Semi Bold' }),
+    figma.loadFontAsync({ family: 'Inter', style: 'SemiBold' }),
     figma.loadFontAsync({ family: 'Inter', style: 'Bold' }),
   ])
 }
 
-// ─── Node helpers ─────────────────────────────────────────────────────────────
-
-function solid(c, a = 1) { return [{ type: 'SOLID', color: c, opacity: a }] }
-
-function mkFrame(name, x, y, w, h) {
+// AutoLayout frame — sizes itself to content
+function af(name, dir, gap, pH, pV, fill, fillOpacity, border, radius) {
   const f = figma.createFrame()
-  f.name = name; f.x = x; f.y = y; f.resize(w, h)
-  f.fills = solid(S.surface)
-  f.strokes = solid(S.borderDefault); f.strokeWeight = 1
-  f.cornerRadius = RADIUS.xl
+  f.name = name || 'frame'
+  f.layoutMode = dir === 'row' ? 'HORIZONTAL' : 'VERTICAL'
+  f.primaryAxisSizingMode = 'AUTO'
+  f.counterAxisSizingMode = 'AUTO'
+  f.itemSpacing = gap || 0
+  f.paddingLeft = pH || 0; f.paddingRight = pH || 0
+  f.paddingTop = pV || 0;  f.paddingBottom = pV || 0
+  f.fills = fill ? rgb(fill, fillOpacity) : []
+  if (border) { f.strokes = rgb(border); f.strokeWeight = 1; f.strokeAlign = 'INSIDE' }
+  if (radius !== undefined) f.cornerRadius = radius
   f.clipsContent = false
   return f
 }
 
-function mkRect(parent, name, x, y, w, h, fill, stroke, radius = RADIUS.md, opacity = 1) {
+// Text node
+function t(content, size, color, weight) {
+  const n = figma.createText()
+  n.fontName = { family: 'Inter', style: weight || 'Regular' }
+  n.fontSize = size || 14
+  n.characters = String(content)
+  n.fills = rgb(color || C.textPrimary)
+  return n
+}
+
+// Rectangle
+function rct(name, w, h, fill, fillOp, border, radius) {
   const r = figma.createRectangle()
-  parent.appendChild(r)
-  r.name = name; r.x = x; r.y = y; r.resize(Math.max(1,w), Math.max(1,h))
-  r.fills = fill ? solid(fill, opacity) : []
-  if (stroke) { r.strokes = solid(stroke); r.strokeWeight = 1 }
-  r.cornerRadius = radius
+  r.name = name || 'rect'
+  r.resize(Math.max(1, w), Math.max(1, h))
+  r.fills = fill ? rgb(fill, fillOp) : []
+  if (border) { r.strokes = rgb(border); r.strokeWeight = 1; r.strokeAlign = 'INSIDE' }
+  if (radius !== undefined) r.cornerRadius = radius
   return r
 }
 
-function mkText(parent, content, x, y, size, color, weight = 'Regular') {
-  const t = figma.createText()
-  parent.appendChild(t)
-  t.fontName = { family: 'Inter', style: weight }
-  t.fontSize = size
-  t.characters = String(content)
-  t.fills = solid(color)
-  t.x = x; t.y = y
-  return t
+// Button component
+function btn(label, bg, fg, border, h, px, fs, radius, opacity) {
+  const f = af('Button', 'row', 6, px, 0, bg, 1, border, radius)
+  f.primaryAxisAlignItems = 'CENTER'
+  f.counterAxisAlignItems = 'CENTER'
+  f.counterAxisSizingMode = 'FIXED'
+  f.resize(10, h) // height fixed, width AUTO
+  f.primaryAxisSizingMode = 'AUTO'
+  f.appendChild(t(label, fs, fg, 'Medium'))
+  if (opacity !== undefined && opacity < 1) f.opacity = opacity
+  return f
 }
 
-function sectionLbl(parent, content, x, y) {
-  return mkText(parent, content, x, y, 10, S.textMuted, 'Semi Bold')
+// Card (component showcase wrapper)
+function card(name) {
+  const f = af(name, 'col', 0, 24, 24, C.surface, 1, C.borderDefault, R.xl)
+  return f
 }
 
-function componentHeader(parent, name, props) {
-  mkText(parent, name, SPACE[8], SPACE[8], FS.xl, S.textPrimary, 'Bold')
-  mkText(parent, props, SPACE[8], SPACE[8] + 28, FS.xs, S.textMuted, 'Regular')
+// Row of items with a label above
+function section(label, dir) {
+  const wrap = af('section', 'col', 6, 0, 0, null, 1, null, 0)
+  wrap.appendChild(t(label, 10, C.textMuted, 'SemiBold'))
+  const inner = af('items', dir || 'row', 8, 0, 0, null, 1, null, 0)
+  inner.counterAxisAlignItems = 'CENTER'
+  wrap.appendChild(inner)
+  return { wrap, inner }
+}
+
+function header(parent, name, props) {
+  const col = af('header', 'col', 4, 0, 0, null, 1, null, 0)
+  col.appendChild(t(name, 18, C.textPrimary, 'Bold'))
+  col.appendChild(t(props, 11, C.textMuted, 'Regular'))
+  parent.appendChild(col)
+  // spacer
+  const sp = rct('sp', 1, 16, null)
+  parent.appendChild(sp)
+}
+
+function addSec(parent, label, dir, builder) {
+  const { wrap, inner } = section(label, dir)
+  builder(inner)
+  parent.appendChild(wrap)
+  const sp = rct('sp', 1, 4, null)
+  parent.appendChild(sp)
 }
 
 // ─── Button ───────────────────────────────────────────────────────────────────
 
-function drawButton(page) {
-  const PAD = SPACE[8]
-  const f = mkFrame('🔘 Button', 0, 0, 780, 480)
-  page.appendChild(f)
-  componentHeader(f, 'Button', 'variant · size · loading · iconBefore · iconAfter · fullWidth · as')
+function drawButton() {
+  const c = card('🔘 Button')
+  header(c, 'Button', 'variant · size · loading · iconBefore · iconAfter · fullWidth · as')
 
-  // ── Variants
-  sectionLbl(f, 'VARIANTS', PAD, 90)
-  const variants = [
-    { name:'primary',   bg:S.actionPrimary,   fg:S.textInverse,  border:null              },
-    { name:'secondary', bg:S.actionSecondary,  fg:S.textPrimary,  border:S.borderDefault   },
-    { name:'ghost',     bg:null,               fg:S.textPrimary,  border:null              },
-    { name:'outlined',  bg:null,               fg:S.actionPrimary,border:S.actionPrimary   },
-    { name:'danger',    bg:S.statusError,      fg:S.textInverse,  border:null              },
-  ]
-  let cx = PAD
-  for (const v of variants) {
-    const lbl = v.name.charAt(0).toUpperCase() + v.name.slice(1)
-    const w = BTN.md.px * 2 + lbl.length * 8
-    mkRect(f, `Button/${v.name}/md`, cx, 106, w, BTN.md.h, v.bg, v.border, BTN.md.r)
-    mkText(f, lbl, cx + BTN.md.px - 4, 106 + (BTN.md.h - BTN.md.fs) / 2, BTN.md.fs, v.fg, 'Medium')
-    cx += w + SPACE[2]
-  }
+  addSec(c, 'VARIANTS', 'row', (row) => {
+    row.appendChild(btn('Primary',   C.actionPrimary,  C.textInverse,  null,             36, 16, 14, R.md))
+    row.appendChild(btn('Secondary', C.actionSecondary, C.textPrimary,  C.borderDefault,  36, 16, 14, R.md))
+    row.appendChild(btn('Ghost',     null,              C.textPrimary,  null,             36, 16, 14, R.md))
+    row.appendChild(btn('Outlined',  null,              C.actionPrimary, C.actionPrimary, 36, 16, 14, R.md))
+    row.appendChild(btn('Danger',    C.error,           C.textInverse,  null,             36, 16, 14, R.md))
+  })
 
-  // ── Sizes
-  sectionLbl(f, 'SIZES', PAD, 170)
-  cx = PAD
-  for (const [s, cfg] of Object.entries(BTN)) {
-    const lbl = s.toUpperCase()
-    const w = cfg.px * 2 + lbl.length * 8
-    mkRect(f, `Button/primary/${s}`, cx, 186, w, cfg.h, S.actionPrimary, null, cfg.r)
-    mkText(f, lbl, cx + cfg.px - 4, 186 + (cfg.h - cfg.fs) / 2, cfg.fs, S.textInverse, 'Medium')
-    cx += w + SPACE[2]
-  }
+  addSec(c, 'SIZES', 'row', (row) => {
+    row.appendChild(btn('SM', C.actionPrimary, C.textInverse, null, 28, 12, 13, R.md))
+    row.appendChild(btn('MD', C.actionPrimary, C.textInverse, null, 36, 16, 14, R.md))
+    row.appendChild(btn('LG', C.actionPrimary, C.textInverse, null, 44, 24, 16, R.lg))
+  })
 
-  // ── States
-  sectionLbl(f, 'STATES', PAD, 254)
-  const states = [
-    { lbl:'Default',    bg:S.actionPrimary,    fg:S.textInverse, op:1   },
-    { lbl:'Hover',      bg:S.actionPrimaryHv,  fg:S.textInverse, op:1   },
-    { lbl:'Active',     bg:S.actionPrimaryAct, fg:S.textInverse, op:1   },
-    { lbl:'Disabled',   bg:S.actionPrimary,    fg:S.textInverse, op:0.4 },
-    { lbl:'Loading ↻',  bg:S.actionPrimaryHv,  fg:S.textInverse, op:1   },
-  ]
-  cx = PAD
-  for (const st of states) {
-    const w = 106
-    const r = mkRect(f, `Button/primary/md/${st.lbl.toLowerCase()}`, cx, 270, w, BTN.md.h, st.bg, null, BTN.md.r)
-    r.opacity = st.op
-    mkText(f, st.lbl, cx + BTN.md.px - 4, 270 + (BTN.md.h - BTN.md.fs) / 2, BTN.md.fs, st.fg, 'Medium')
-    cx += w + SPACE[2]
-  }
+  addSec(c, 'STATES', 'row', (row) => {
+    row.appendChild(btn('Default',  C.actionPrimary,    C.textInverse, null, 36, 16, 14, R.md, 1.0))
+    row.appendChild(btn('Hover',    C.actionPrimaryHv,  C.textInverse, null, 36, 16, 14, R.md, 1.0))
+    row.appendChild(btn('Active',   C.actionPrimaryAct, C.textInverse, null, 36, 16, 14, R.md, 1.0))
+    row.appendChild(btn('Disabled', C.actionPrimary,    C.textInverse, null, 36, 16, 14, R.md, 0.4))
+  })
 
-  // ── Icons
-  sectionLbl(f, 'WITH ICONS', PAD, 338)
-  cx = PAD
-  for (const [lbl, w] of [['← Before', 110],['After →', 110],['← Both →', 118]]) {
-    mkRect(f, 'Button/primary/icon', cx, 354, w, BTN.md.h, S.actionPrimary, null, BTN.md.r)
-    mkText(f, lbl, cx + BTN.md.px - 4, 354 + (BTN.md.h - BTN.md.fs) / 2, BTN.md.fs, S.textInverse, 'Medium')
-    cx += w + SPACE[2]
-  }
-
-  // ── Full width
-  sectionLbl(f, 'FULL WIDTH', PAD, 418)
-  mkRect(f, 'Button/primary/fullWidth', PAD, 434, 780 - PAD*2, BTN.md.h, S.actionPrimary, null, BTN.md.r)
-  mkText(f, 'Full Width Button', 780/2 - 56, 434 + (BTN.md.h - BTN.md.fs)/2, BTN.md.fs, S.textInverse, 'Medium')
-
-  return f
+  return c
 }
 
 // ─── Badge ────────────────────────────────────────────────────────────────────
 
-function drawBadge(page) {
-  const PAD = SPACE[8]
-  const f = mkFrame('🏷 Badge', 820, 0, 600, 340)
-  page.appendChild(f)
-  componentHeader(f, 'Badge', 'variant · tone · size · dot')
+function mkBadge(label, variant, toneColor) {
+  let fill = null, fillOp = 1, border = null, fg = toneColor
+  if (variant === 'solid')    { fill = toneColor; fg = C.textInverse }
+  if (variant === 'subtle')   { fill = toneColor; fillOp = 0.15 }
+  if (variant === 'outlined') { border = toneColor }
 
-  const tones = ['default','success','warning','error','info']
-  const toneC = {
-    default: S.textMuted,
-    success: S.statusSuccess,
-    warning: S.statusWarning,
-    error:   S.statusError,
-    info:    T.void600,
-  }
-  const BADGE_H = { sm:20, md:24 }
-  const BADGE_FS = { sm:FS.xs, md:FS.sm }
-  const BADGE_PX = { sm:SPACE[2], md:SPACE[3] }
-
-  // Variants × Tones
-  sectionLbl(f, 'VARIANTS × TONES', PAD, 90)
-  let row = 0
-  for (const v of ['solid','subtle','outlined']) {
-    mkText(f, v, PAD, 106 + row*60, FS.xs, S.textMuted, 'Medium')
-    let cx = PAD + 68
-    for (const t of tones) {
-      const c = toneC[t]
-      const w = 80; const h = BADGE_H.md
-      const bg   = v === 'solid' ? c : null
-      const border = v === 'outlined' ? c : null
-      const bgOp   = v === 'subtle' ? 0.15 : 1
-      const r = mkRect(f, `Badge/${v}/${t}`, cx, 118 + row*60, w, h, bg || (v==='subtle' ? c : null), border, RADIUS.full, v==='subtle' ? bgOp : 1)
-      if (v === 'subtle') r.fills = solid(c, 0.15)
-      const fg = v === 'solid' ? S.textInverse : c
-      mkText(f, t, cx + BADGE_PX.md, 118 + row*60 + (h - BADGE_FS.md)/2, BADGE_FS.md, fg, 'Medium')
-      cx += w + SPACE[2]
-    }
-    row++
-  }
-
-  // Sizes
-  sectionLbl(f, 'SIZES', PAD, 284)
-  let cx = PAD
-  for (const s of ['sm','md']) {
-    const h = BADGE_H[s]; const w = 56
-    mkRect(f, `Badge/solid/default/${s}`, cx, 300, w, h, S.textMuted, null, RADIUS.full)
-    mkText(f, s, cx + BADGE_PX[s], 300 + (h - BADGE_FS[s])/2, BADGE_FS[s], S.textInverse, 'Medium')
-    cx += 72
-  }
-
-  // Dot
-  sectionLbl(f, 'DOT', 280, 284)
-  cx = 316
-  for (const t of tones) {
-    mkRect(f, `Badge/dot/${t}`, cx, 302, 8, 8, toneC[t], null, RADIUS.full)
-    cx += 20
-  }
-
+  const f = af('Badge', 'row', 0, 8, 0, fill, fillOp, border, R.full)
+  f.primaryAxisAlignItems = 'CENTER'
+  f.counterAxisAlignItems = 'CENTER'
+  f.counterAxisSizingMode = 'FIXED'
+  f.resize(10, 22)
+  f.primaryAxisSizingMode = 'AUTO'
+  f.appendChild(t(label, 12, fg, 'Medium'))
   return f
+}
+
+function drawBadge() {
+  const c = card('🏷 Badge')
+  header(c, 'Badge', 'variant · tone · size · dot')
+
+  const tones = [
+    ['default', C.textMuted],
+    ['success', C.success],
+    ['warning', C.warning],
+    ['error',   C.error],
+    ['info',    C.info],
+  ]
+
+  for (const variant of ['solid', 'subtle', 'outlined']) {
+    addSec(c, variant.toUpperCase(), 'row', (row) => {
+      for (const [tone, color] of tones) {
+        row.appendChild(mkBadge(tone, variant, color))
+      }
+    })
+  }
+
+  addSec(c, 'DOT', 'row', (row) => {
+    for (const [, color] of tones) {
+      row.appendChild(rct('dot', 8, 8, color, 1, null, R.full))
+    }
+  })
+
+  return c
 }
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
-function drawAvatar(page) {
-  const PAD = SPACE[8]
-  const f = mkFrame('👤 Avatar', 0, 520, 560, 380)
-  page.appendChild(f)
-  componentHeader(f, 'Avatar', 'size · shape · status · src · initials')
+function mkAvatar(size, shape, statusColor) {
+  const p = { xs:24, sm:32, md:40, lg:48, xl:64 }[size] || 40
+  const radius = shape === 'square' ? R.sm : shape === 'rounded' ? R.lg : R.full
 
-  // Sizes
-  sectionLbl(f, 'SIZES', PAD, 90)
-  const avatarSizes = { xs:24, sm:32, md:40, lg:48, xl:64 }
-  let cx = PAD
-  for (const [s, p] of Object.entries(avatarSizes)) {
-    mkRect(f, `Avatar/${s}/circle`, cx, 106, p, p, S.actionPrimary, null, RADIUS.full)
-    mkText(f, 'GR', cx + Math.floor(p*.2), 106 + Math.floor(p*.28), Math.max(9, Math.floor(p/3.2)), S.textInverse, 'Semi Bold')
-    mkText(f, s, cx, 106+p+4, FS.xs, S.textMuted)
-    cx += p + SPACE[3]
+  const wrap = figma.createFrame()
+  wrap.name = `Avatar/${size}`
+  wrap.resize(p, p)
+  wrap.fills = rgb(C.actionPrimary)
+  wrap.cornerRadius = radius
+  wrap.clipsContent = false
+
+  const initials = t('GR', Math.max(9, Math.floor(p / 3.2)), C.textInverse, 'SemiBold')
+  initials.x = Math.floor(p * 0.18)
+  initials.y = Math.floor(p * 0.26)
+  wrap.appendChild(initials)
+
+  if (statusColor) {
+    const dot = rct('status', 10, 10, statusColor, 1, C.surface, R.full)
+    dot.strokes = rgb(C.surface)
+    dot.strokeWeight = 2
+    dot.x = p - 12
+    dot.y = p - 12
+    wrap.appendChild(dot)
   }
 
-  // Shapes
-  sectionLbl(f, 'SHAPES', PAD, 200)
-  cx = PAD
-  for (const [sh, r] of [['circle',RADIUS.full],['square',RADIUS.sm],['rounded',RADIUS.lg]]) {
-    mkRect(f, `Avatar/md/${sh}`, cx, 216, 40, 40, S.actionPrimary, null, r)
-    mkText(f, 'GR', cx + 10, 228, FS.sm, S.textInverse, 'Semi Bold')
-    mkText(f, sh, cx, 260, FS.xs, S.textMuted)
-    cx += 60
-  }
+  return wrap
+}
 
-  // Status
-  sectionLbl(f, 'STATUS', PAD, 282)
-  const statuses = { online:S.statusSuccess, offline:S.textMuted, busy:S.statusError, away:S.statusWarning }
-  cx = PAD
-  for (const [st, c] of Object.entries(statuses)) {
-    mkRect(f, `Avatar/md/${st}`, cx, 298, 40, 40, S.overlay, S.borderDefault, RADIUS.full)
-    mkText(f, 'GR', cx+10, 310, FS.sm, S.textPrimary, 'Medium')
-    mkRect(f, `Status/${st}`, cx+30, 328, 10, 10, c, null, RADIUS.full)
-    mkText(f, st, cx, 342, FS.xs, S.textMuted)
-    cx += 60
-  }
+function drawAvatar() {
+  const c = card('👤 Avatar')
+  header(c, 'Avatar', 'size · shape · status · src · initials')
 
-  return f
+  addSec(c, 'SIZES', 'row', (row) => {
+    row.counterAxisAlignItems = 'CENTER'
+    for (const s of ['xs','sm','md','lg','xl']) row.appendChild(mkAvatar(s, 'circle', null))
+  })
+
+  addSec(c, 'SHAPES', 'row', (row) => {
+    row.appendChild(mkAvatar('md', 'circle', null))
+    row.appendChild(mkAvatar('md', 'square', null))
+    row.appendChild(mkAvatar('md', 'rounded', null))
+  })
+
+  addSec(c, 'STATUS', 'row', (row) => {
+    row.appendChild(mkAvatar('md', 'circle', C.success))
+    row.appendChild(mkAvatar('md', 'circle', C.textMuted))
+    row.appendChild(mkAvatar('md', 'circle', C.error))
+    row.appendChild(mkAvatar('md', 'circle', C.warning))
+  })
+
+  return c
 }
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
-function drawTypography(page) {
-  const PAD = SPACE[8]
-  const f = mkFrame('✍️ Typography', 600, 520, 520, 580)
-  page.appendChild(f)
-  componentHeader(f, 'Typography', 'as · size · color · weight · leading · tracking · mono · truncate')
+function drawTypography() {
+  const c = card('✍️ Typography')
+  header(c, 'Typography', 'as · size · color · weight · leading · tracking · mono · truncate')
 
-  sectionLbl(f, 'SIZE SCALE', PAD, 90)
-  const scale = [
-    ['4xl',36,'Bold'],['3xl',30,'Bold'],['2xl',24,'Semi Bold'],
-    ['xl',20,'Semi Bold'],['lg',18,'Medium'],['md',16,'Regular'],
-    ['base',14,'Regular'],['sm',13,'Regular'],['xs',11,'Regular'],
-  ]
-  let cy = 106
-  for (const [s, px, w] of scale) {
-    mkText(f, `${s} — The void`, PAD, cy, px, S.textPrimary, w)
-    mkText(f, `${px}px`, 440, cy + (px-FS.xs)/2, FS.xs, S.textMuted)
-    cy += px + SPACE[2]
-  }
+  addSec(c, 'SIZE SCALE', 'col', (col) => {
+    col.itemSpacing = 8
+    const scale = [
+      [36,'4xl — The void','Bold'],
+      [30,'3xl — The void','Bold'],
+      [24,'2xl — The void','SemiBold'],
+      [20,'xl — The void','SemiBold'],
+      [18,'lg — The void','Medium'],
+      [16,'md — The void','Regular'],
+      [14,'base — The void','Regular'],
+      [13,'sm — The void','Regular'],
+      [11,'xs — The void','Regular'],
+    ]
+    for (const [sz, lbl, w] of scale) col.appendChild(t(lbl, sz, C.textPrimary, w))
+  })
 
-  sectionLbl(f, 'COLORS', PAD, cy + SPACE[2])
-  cy += 20
-  for (const [c, col] of [
-    ['primary',  S.textPrimary],
-    ['secondary',S.textSecondary],
-    ['muted',    S.textMuted],
-    ['disabled', S.textDisabled],
-    ['accent',   S.textAccent],
-  ]) {
-    mkText(f, `${c} — Sample text`, PAD, cy, FS.base, col)
-    cy += 24
-  }
+  addSec(c, 'COLORS', 'col', (col) => {
+    col.itemSpacing = 8
+    for (const [lbl, color] of [
+      ['primary — Sample text',   C.textPrimary],
+      ['secondary — Sample text', C.textSecondary],
+      ['muted — Sample text',     C.textMuted],
+      ['disabled — Sample text',  C.textDisabled],
+      ['accent — Sample text',    C.actionPrimary],
+    ]) col.appendChild(t(lbl, 14, color))
+  })
 
-  f.resize(520, cy + PAD)
-  return f
+  return c
 }
 
 // ─── Divider ──────────────────────────────────────────────────────────────────
 
-function drawDivider(page) {
-  const PAD = SPACE[8]
-  const W = 400
-  const f = mkFrame('➖ Divider', 0, 940, W + PAD*2, 300)
-  page.appendChild(f)
-  componentHeader(f, 'Divider', 'orientation · variant · label · labelAlign · flush')
+function drawDivider() {
+  const c = card('➖ Divider')
+  header(c, 'Divider', 'orientation · variant · label · labelAlign · flush')
 
-  sectionLbl(f, 'VARIANTS', PAD, 90)
-  let cy = 106
-  for (const v of ['solid','dashed','dotted']) {
-    mkText(f, v, PAD, cy, FS.xs, S.textMuted, 'Medium')
-    mkRect(f, `Divider/${v}`, PAD, cy + 14, W, 1, S.borderDefault, null, RADIUS.none)
-    cy += 40
-  }
+  addSec(c, 'LINES', 'col', (col) => {
+    col.itemSpacing = 12
+    for (const v of ['solid','dashed','dotted']) {
+      const row = af(v, 'col', 4, 0, 0, null, 1, null, 0)
+      row.appendChild(t(v, 11, C.textMuted, 'Medium'))
+      row.appendChild(rct(`line/${v}`, 320, 1, C.borderDefault))
+      col.appendChild(row)
+    }
+  })
 
-  sectionLbl(f, 'WITH LABEL', PAD, cy + SPACE[2])
-  cy += 20
-  mkRect(f, 'Divider/label/left', PAD, cy + 8, 110, 1, S.borderDefault, null, RADIUS.none)
-  mkText(f, 'Section', PAD + 118, cy, FS.sm, S.textMuted)
-  mkRect(f, 'Divider/label/right', PAD + 172, cy + 8, W - 172, 1, S.borderDefault, null, RADIUS.none)
-  cy += 36
+  addSec(c, 'WITH LABEL', 'row', (row) => {
+    row.counterAxisAlignItems = 'CENTER'
+    row.appendChild(rct('l', 80, 1, C.borderDefault))
+    row.appendChild(t('Section', 12, C.textMuted, 'Medium'))
+    row.appendChild(rct('r', 80, 1, C.borderDefault))
+  })
 
-  sectionLbl(f, 'VERTICAL', PAD, cy + SPACE[2])
-  cy += 20
-  mkRect(f, 'Divider/vertical/solid',  PAD,      cy, 1, 60, S.borderDefault, null, RADIUS.none)
-  mkRect(f, 'Divider/vertical/dashed', PAD + 16, cy, 1, 60, S.borderSubtle,  null, RADIUS.none)
+  addSec(c, 'VERTICAL', 'row', (row) => {
+    row.counterAxisAlignItems = 'MIN'
+    row.appendChild(rct('v1', 1, 48, C.borderDefault))
+    row.appendChild(rct('spacer', 8, 1, null))
+    row.appendChild(rct('v2', 1, 48, C.textMuted))
+  })
 
-  return f
+  return c
 }
 
 // ─── Spinner ──────────────────────────────────────────────────────────────────
 
-function drawSpinner(page) {
-  const PAD = SPACE[8]
-  const f = mkFrame('⏳ Spinner', 480, 940, 500, 300)
-  page.appendChild(f)
-  componentHeader(f, 'Spinner', 'variant · size')
+function mkSpinner(size) {
+  const p = { xs:16, sm:20, md:24, lg:32, xl:40 }[size] || 24
+  const sw = Math.max(2, Math.floor(p / 10))
 
-  sectionLbl(f, 'VARIANTS × SIZES', PAD, 90)
-  const spinSizes = { xs:16, sm:20, md:24, lg:32, xl:40 }
-  let row = 0
-  for (const v of ['ring','dots','pulse']) {
-    mkText(f, v, PAD, 106 + row*72, FS.xs, S.textMuted, 'Medium')
-    let cx = PAD + 48
-    for (const [s, p] of Object.entries(spinSizes)) {
-      // Track (muted ring)
-      mkRect(f, `Spinner/${v}/${s}/track`, cx, 118 + row*72, p, p, null, S.borderDefault, RADIUS.full)
-      // Arc (primary quarter)
-      const arc = Math.ceil(p/4)
-      mkRect(f, `Spinner/${v}/${s}/arc`, cx, 118 + row*72, arc, arc, S.actionPrimary, null, Math.ceil(arc/2))
-      mkText(f, s, cx, 118 + row*72 + p + 4, FS.xs, S.textMuted)
-      cx += p + SPACE[4]
-    }
-    row++
-  }
+  const wrap = figma.createFrame()
+  wrap.name = `Spinner/${size}`
+  wrap.resize(p, p)
+  wrap.fills = []
+  wrap.clipsContent = false
 
-  return f
+  // track: full circle border
+  const track = rct('track', p, p, null, 1, C.borderDefault, R.full)
+  track.fills = []
+  track.strokes = rgb(C.borderDefault)
+  track.strokeWeight = sw
+  track.strokeAlign = 'INSIDE'
+  wrap.appendChild(track)
+
+  // arc: colored quarter
+  const qs = Math.ceil(p / 2)
+  const arc = rct('arc', qs, qs, C.actionPrimary, 1, null, Math.ceil(qs / 2))
+  arc.x = 0; arc.y = 0
+  wrap.appendChild(arc)
+
+  return wrap
+}
+
+function drawSpinner() {
+  const c = card('⏳ Spinner')
+  header(c, 'Spinner', 'variant · size')
+
+  addSec(c, 'SIZES', 'row', (row) => {
+    row.counterAxisAlignItems = 'CENTER'
+    for (const s of ['xs','sm','md','lg','xl']) row.appendChild(mkSpinner(s))
+  })
+
+  return c
 }
 
 // ─── TextField ───────────────────────────────────────────────────────────────
 
-function drawTextField(page) {
-  const PAD = SPACE[8]
-  const TF_H = { sm:32, md:40, lg:48 }
-  const f = mkFrame('📝 TextField', 0, 1280, 820, 340)
-  page.appendChild(f)
-  componentHeader(f, 'TextField', 'size · state · label · hint · error · prefix · suffix · fullWidth')
+function mkTextField(state, size) {
+  const h = { sm:32, md:40, lg:48 }[size] || 40
+  const borderC = { default:C.borderDefault, error:C.error, success:C.success, warning:C.warning }[state] || C.borderDefault
+  const hintC   = state === 'default' ? C.textMuted : borderC
 
-  const stateC = {
-    default: S.borderDefault,
-    error:   S.statusError,
-    success: S.statusSuccess,
-    warning: S.statusWarning,
-  }
+  const col = af('tf', 'col', 4, 0, 0, null, 1, null, 0)
+  col.appendChild(t('Label', 11, C.textSecondary, 'Medium'))
 
-  // States
-  sectionLbl(f, 'STATES', PAD, 90)
-  let cx = PAD
-  for (const s of ['default','error','success','warning']) {
-    const w = 174
-    mkText(f, 'Label', cx, 106, FS.xs, S.textSecondary, 'Medium')
-    mkRect(f, `TextField/${s}`, cx, 120, w, TF_H.md, S.overlay, stateC[s], RADIUS.md)
-    mkText(f, 'Placeholder…', cx + SPACE[3], 120 + (TF_H.md - FS.base)/2, FS.base, S.textMuted)
-    const hintColor = s === 'default' ? S.textMuted : stateC[s]
-    const hintText  = s === 'error' ? '✗ Error message' : 'Hint text'
-    mkText(f, hintText, cx, 166, FS.xs, hintColor)
-    cx += w + SPACE[2]
-  }
+  // input
+  const inp = af('input', 'row', 0, 12, 0, C.overlay, 1, borderC, R.md)
+  inp.counterAxisAlignItems = 'CENTER'
+  inp.counterAxisSizingMode = 'FIXED'
+  inp.primaryAxisSizingMode = 'FIXED'
+  inp.resize(170, h)
+  inp.appendChild(t('Placeholder…', 14, C.textMuted, 'Regular'))
+  col.appendChild(inp)
 
-  // Sizes
-  sectionLbl(f, 'SIZES', PAD, 196)
-  cx = PAD
-  for (const [s, h] of Object.entries(TF_H)) {
-    const w = 174
-    mkRect(f, `TextField/default/${s}`, cx, 212, w, h, S.overlay, S.borderDefault, RADIUS.md)
-    mkText(f, s, cx + SPACE[3], 212 + (h - FS.base)/2, FS.base, S.textMuted)
-    cx += w + SPACE[2]
-  }
+  col.appendChild(t(state === 'error' ? '✗ Error message' : 'Hint text', 11, hintC, 'Regular'))
+  return col
+}
 
-  // With prefix / suffix
-  sectionLbl(f, 'PREFIX · SUFFIX', PAD, 284)
-  // Prefix
-  mkRect(f, 'TextField/prefix', PAD, 300, 220, TF_H.md, S.overlay, S.borderDefault, RADIUS.md)
-  mkText(f, '✉', PAD + SPACE[3], 300 + (TF_H.md - FS.base)/2 - 1, FS.base, S.textMuted)
-  mkText(f, 'user@example.com', PAD + SPACE[6], 300 + (TF_H.md - FS.base)/2, FS.base, S.textMuted)
-  // Suffix
-  mkRect(f, 'TextField/suffix', PAD + 236, 300, 220, TF_H.md, S.overlay, S.borderDefault, RADIUS.md)
-  mkText(f, 'Search…', PAD + 248, 300 + (TF_H.md - FS.base)/2, FS.base, S.textMuted)
-  mkText(f, '⌕', PAD + 424, 300 + (TF_H.md - FS.base)/2 - 1, FS.base, S.textMuted)
+function drawTextField() {
+  const c = card('📝 TextField')
+  header(c, 'TextField', 'size · state · label · hint · error · prefix · suffix · fullWidth')
 
-  return f
+  addSec(c, 'STATES', 'row', (row) => {
+    row.counterAxisAlignItems = 'MIN'
+    for (const s of ['default','error','success','warning']) row.appendChild(mkTextField(s, 'md'))
+  })
+
+  addSec(c, 'SIZES', 'row', (row) => {
+    row.counterAxisAlignItems = 'MIN'
+    for (const s of ['sm','md','lg']) row.appendChild(mkTextField('default', s))
+  })
+
+  return c
 }
 
 // ─── Stack ────────────────────────────────────────────────────────────────────
 
-function drawStack(page) {
-  const PAD = SPACE[8]
-  const f = mkFrame('📦 Stack', 860, 1280, 440, 300)
-  page.appendChild(f)
-  componentHeader(f, 'Stack', 'as · direction · gap · align · justify · wrap · full')
+function drawStack() {
+  const c = card('📦 Stack')
+  header(c, 'Stack', 'as · direction · gap · align · justify · wrap · full')
 
-  // Row
-  sectionLbl(f, 'ROW  gap=4 (16px)', PAD, 90)
-  let cx = PAD
-  for (let i = 1; i <= 4; i++) {
-    mkRect(f, `Stack/row/item${i}`, cx, 106, 68, 32, S.overlay, S.borderDefault, RADIUS.md)
-    mkText(f, `Item ${i}`, cx + SPACE[2], 106 + (32-FS.xs)/2, FS.xs, S.textSecondary)
-    cx += 68 + SPACE[4]
+  addSec(c, 'ROW  gap=4 (16px)', 'row', (row) => {
+    for (let i = 1; i <= 4; i++) {
+      const item = af(`item${i}`, 'row', 0, 12, 6, C.overlay, 1, C.borderDefault, R.md)
+      item.appendChild(t(`Item ${i}`, 11, C.textSecondary, 'Regular'))
+      row.appendChild(item)
+    }
+  })
+
+  addSec(c, 'COLUMN  gap=2 (8px)', 'col', (col) => {
+    col.itemSpacing = 8
+    for (let i = 1; i <= 3; i++) {
+      const item = af(`item${i}`, 'row', 0, 12, 6, C.overlay, 1, C.borderDefault, R.md)
+      item.appendChild(t(`Item ${i}`, 11, C.textSecondary, 'Regular'))
+      col.appendChild(item)
+    }
+  })
+
+  return c
+}
+
+// ─── Layout ───────────────────────────────────────────────────────────────────
+
+function layoutGrid(cards) {
+  const COLS = 3
+  const GAP  = 40
+  let col = 0, rowY = 0, rowMaxH = 0
+  const colX = [0, 0, 0]
+
+  for (const card of cards) {
+    figma.currentPage.appendChild(card)
+    card.x = colX[col]
+    card.y = rowY
+    rowMaxH = Math.max(rowMaxH, card.height)
+    colX[col] += card.width + GAP
+    col++
+    if (col >= COLS) {
+      col = 0
+      rowY += rowMaxH + GAP
+      rowMaxH = 0
+      colX[0] = 0; colX[1] = (cards[0] ? cards[0].width + GAP : 0) + (cards[3] ? cards[3].width + GAP : 0)
+    }
   }
-
-  // Column
-  sectionLbl(f, 'COLUMN  gap=2 (8px)', PAD, 162)
-  let cy = 178
-  for (let i = 1; i <= 3; i++) {
-    mkRect(f, `Stack/col/item${i}`, PAD, cy, 140, 28, S.overlay, S.borderDefault, RADIUS.md)
-    mkText(f, `Item ${i}`, PAD + SPACE[3], cy + (28-FS.xs)/2, FS.xs, S.textSecondary)
-    cy += 28 + SPACE[2]
-  }
-
-  // Justify variants
-  sectionLbl(f, 'JUSTIFY OPTIONS', 240, 162)
-  cy = 178
-  for (const j of ['start','center','end','space-between','space-around','space-evenly']) {
-    mkText(f, j, 240, cy, FS.xs, S.textMuted)
-    cy += 18
-  }
-
-  return f
 }
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
@@ -503,19 +469,36 @@ async function run() {
   const names = ['🔘 Button','🏷 Badge','👤 Avatar','✍️ Typography','➖ Divider','⏳ Spinner','📝 TextField','📦 Stack']
   figma.currentPage.children.filter(n => names.includes(n.name)).forEach(n => n.remove())
 
-  const page = figma.currentPage
+  const cards = [
+    drawButton(),
+    drawBadge(),
+    drawAvatar(),
+    drawTypography(),
+    drawDivider(),
+    drawSpinner(),
+    drawTextField(),
+    drawStack(),
+  ]
 
-  drawButton(page)
-  drawBadge(page)
-  drawAvatar(page)
-  drawTypography(page)
-  drawDivider(page)
-  drawSpinner(page)
-  drawTextField(page)
-  drawStack(page)
+  // Simple grid layout
+  const COLS = 3, GAP = 40
+  let col = 0, x = 0, y = 0, rowH = 0
+  const rowStartX = [0]
 
-  figma.viewport.scrollAndZoomIntoView(figma.currentPage.children)
-  figma.closePlugin('✅ void-ui — 8 components drawn with exact token values')
+  for (const card of cards) {
+    figma.currentPage.appendChild(card)
+    card.x = x
+    card.y = y
+    rowH = Math.max(rowH, card.height)
+    x += card.width + GAP
+    col++
+    if (col >= COLS) {
+      col = 0; x = 0; y += rowH + GAP; rowH = 0
+    }
+  }
+
+  figma.viewport.scrollAndZoomIntoView(figma.currentPage.children.filter(n => names.includes(n.name)))
+  figma.closePlugin('✅ void-ui — 8 componentes con AutoLayout y estilos exactos')
 }
 
 run().catch(err => figma.closePlugin(`❌ ${err.message}`))

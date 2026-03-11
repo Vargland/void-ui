@@ -24,8 +24,8 @@
   font-size:        var(--void-font-size-xs);
   font-weight:      var(--void-font-weight-medium);
   line-height:      1.4;
-  white-space:      normal;
-  word-break:       break-word;
+  white-space:      nowrap;
+  word-break:       normal;
   pointer-events:   none;
   box-shadow:       var(--void-shadow-md);
 

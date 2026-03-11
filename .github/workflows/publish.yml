@@ -1,0 +1,99 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - packages/tokens/package.json
+      - packages/library/package.json
+
+concurrency:
+  group: publish-${{ github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ─── Tokens ───────────────────────────────────────────────────────────
+
+      - name: Check if @open-void-ui/tokens version changed
+        id: tokens-changed
+        run: |
+          PKG_VERSION=$(node -p "require('./packages/tokens/package.json').version")
+          NPM_VERSION=$(npm view @open-void-ui/tokens version 2>/dev/null || echo "0.0.0")
+          echo "pkg=$PKG_VERSION" >> $GITHUB_OUTPUT
+          echo "npm=$NPM_VERSION" >> $GITHUB_OUTPUT
+          if [ "$PKG_VERSION" != "$NPM_VERSION" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build tokens
+        if: steps.tokens-changed.outputs.changed == 'true'
+        run: npm run build:tokens
+
+      - name: Publish @open-void-ui/tokens
+        if: steps.tokens-changed.outputs.changed == 'true'
+        run: npm publish --workspace=packages/tokens
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary — tokens
+        if: steps.tokens-changed.outputs.changed == 'true'
+        run: echo "✅ Published @open-void-ui/tokens@${{ steps.tokens-changed.outputs.pkg }}"
+
+      # ─── Library ──────────────────────────────────────────────────────────
+
+      - name: Check if @open-void-ui/library version changed
+        id: library-changed
+        run: |
+          PKG_VERSION=$(node -p "require('./packages/library/package.json').version")
+          NPM_VERSION=$(npm view @open-void-ui/library version 2>/dev/null || echo "0.0.0")
+          echo "pkg=$PKG_VERSION" >> $GITHUB_OUTPUT
+          echo "npm=$NPM_VERSION" >> $GITHUB_OUTPUT
+          if [ "$PKG_VERSION" != "$NPM_VERSION" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Test
+        if: steps.library-changed.outputs.changed == 'true'
+        run: npm run test --workspace=packages/library -- --run
+
+      - name: Build library
+        if: steps.library-changed.outputs.changed == 'true'
+        run: npm run build:library
+
+      - name: Publish @open-void-ui/library
+        if: steps.library-changed.outputs.changed == 'true'
+        run: npm publish --workspace=packages/library
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Summary — library
+        if: steps.library-changed.outputs.changed == 'true'
+        run: echo "✅ Published @open-void-ui/library@${{ steps.library-changed.outputs.pkg }}"
+
+      # ─── No changes ───────────────────────────────────────────────────────
+
+      - name: No publish needed
+        if: steps.tokens-changed.outputs.changed == 'false' && steps.library-changed.outputs.changed == 'false'
+        run: echo "⏭️ Versions unchanged — nothing to publish"

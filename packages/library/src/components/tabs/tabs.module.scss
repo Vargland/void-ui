@@ -1,0 +1,154 @@
+@use 'sass:map';
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
+.root {
+  display:        flex;
+  flex-direction: column;
+  width:          100%;
+}
+
+// ─── TabsList ─────────────────────────────────────────────────────────────────
+
+.tabsList {
+  display:     flex;
+  flex-direction: row;
+  align-items: stretch;
+  overflow-x:  auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// ─── Line variant tabsList ────────────────────────────────────────────────────
+
+.variantLine .tabsList {
+  border-bottom: 1.5px solid var(--void-color-border-default);
+  gap:           0;
+}
+
+// ─── Solid variant tabsList ───────────────────────────────────────────────────
+
+.variantSolid .tabsList {
+  background-color: var(--void-color-background-subtle);
+  border-radius:    var(--void-radius-md);
+  padding:          var(--void-space-1);
+  gap:              var(--void-space-1);
+}
+
+// ─── Trigger (shared) ─────────────────────────────────────────────────────────
+
+.trigger {
+  @include transition(color, background-color);
+
+  display:          inline-flex;
+  align-items:      center;
+  justify-content:  center;
+  gap:              var(--void-space-2);
+  flex-shrink:      0;
+  border:           none;
+  background:       none;
+  cursor:           pointer;
+  font-family:      var(--void-font-family-sans);
+  font-weight:      var(--void-font-weight-medium);
+  line-height:      var(--void-font-line-height-tight);
+  color:            var(--void-color-text-muted);
+  white-space:      nowrap;
+  position:         relative;
+  text-align:       center;
+  user-select:      none;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:hover:not(.triggerDisabled) {
+    color: var(--void-color-text-primary);
+  }
+
+  &.triggerDisabled {
+    opacity: 0.4;
+    cursor:  not-allowed;
+  }
+
+  &.triggerActive {
+    color: var(--void-color-action-primary);
+  }
+}
+
+// ─── Line variant trigger indicator ──────────────────────────────────────────
+
+.variantLine .trigger {
+  border-radius: var(--void-radius-sm) var(--void-radius-sm) 0 0;
+
+  // The underline indicator
+  &::after {
+    @include transition(background-color, width);
+
+    content:          '';
+    position:         absolute;
+    bottom:           -1.5px;
+    left:             0;
+    right:            0;
+    height:           2px;
+    background-color: transparent;
+    border-radius:    2px 2px 0 0;
+  }
+
+  &.triggerActive::after {
+    background-color: var(--void-color-action-primary);
+  }
+
+  &:hover:not(.triggerDisabled):not(.triggerActive)::after {
+    background-color: var(--void-color-border-default);
+  }
+}
+
+// ─── Solid variant trigger pill ───────────────────────────────────────────────
+
+.variantSolid .trigger {
+  border-radius:    var(--void-radius-sm);
+
+  &.triggerActive {
+    background-color: var(--void-color-background-surface);
+    color:            var(--void-color-action-primary);
+    box-shadow:       0 1px 3px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  &:hover:not(.triggerDisabled):not(.triggerActive) {
+    background-color: var(--void-color-action-primary-subtle);
+  }
+}
+
+// ─── Content panel ────────────────────────────────────────────────────────────
+
+.content {
+  padding-top: var(--void-space-4);
+  color:       var(--void-color-text-primary);
+  font-family: var(--void-font-family-sans);
+  font-size:   var(--void-font-size-base);
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $props in $tabs-sizes {
+  .size-#{$name} {
+    .trigger {
+      font-size: map.get($props, 'font-size');
+      padding:   map.get($props, 'padding-y') map.get($props, 'padding-x');
+    }
+
+    &.variantLine .trigger::after {
+      height: map.get($props, 'indicator-h');
+      bottom: calc(-1px * map.get($props, 'indicator-h') / 2);
+    }
+
+    &.variantSolid .trigger {
+      border-radius: map.get($props, 'pill-radius');
+    }
+  }
+}

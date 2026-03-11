@@ -1,0 +1,136 @@
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Root wrapper ─────────────────────────────────────────────────────────────
+
+.root {
+  position:    relative;
+  display:     inline-flex;
+  align-items: center;
+}
+
+// ─── Tooltip bubble ───────────────────────────────────────────────────────────
+
+.tooltip {
+  @include transition($tooltip-transition...);
+
+  position:         absolute;
+  z-index:          var(--void-z-index-tooltip, 1200);
+  padding:          var(--void-space-1) var(--void-space-2);
+  background-color: var(--void-color-background-inverse);
+  color:            var(--void-color-text-inverse);
+  border-radius:    var(--void-radius-sm);
+  font-family:      var(--void-font-family-sans);
+  font-size:        var(--void-font-size-xs);
+  font-weight:      var(--void-font-weight-medium);
+  line-height:      1.4;
+  white-space:      normal;
+  word-break:       break-word;
+  pointer-events:   none;
+  box-shadow:       var(--void-shadow-md);
+
+  // Hidden by default — fades in + scales up when .visible is applied
+  opacity:    0;
+  transform:  scale(0.9);
+  visibility: hidden;
+
+  &.visible {
+    opacity:    1;
+    transform:  scale(1);
+    visibility: visible;
+  }
+}
+
+// ─── Arrow ────────────────────────────────────────────────────────────────────
+
+.arrow {
+  position:         absolute;
+  width:            10px;
+  height:           10px;
+  background-color: var(--void-color-background-inverse);
+  pointer-events:   none;
+}
+
+// ─── Placement: top ──────────────────────────────────────────────────────────
+
+.placementTop {
+  // Tooltip sits above the trigger
+  bottom:    calc(100% + #{$tooltip-offset});
+  left:      50%;
+  transform: translateX(-50%) scale(0.9);
+
+  transform-origin: bottom center;
+
+  &.visible {
+    transform: translateX(-50%) scale(1);
+  }
+
+  .arrow {
+    bottom:    #{-$arrow-size + 4px};
+    left:      50%;
+    transform: translateX(-50%) rotate(45deg);
+  }
+}
+
+// ─── Placement: bottom ───────────────────────────────────────────────────────
+
+.placementBottom {
+  // Tooltip sits below the trigger
+  top:       calc(100% + #{$tooltip-offset});
+  left:      50%;
+  transform: translateX(-50%) scale(0.9);
+
+  transform-origin: top center;
+
+  &.visible {
+    transform: translateX(-50%) scale(1);
+  }
+
+  .arrow {
+    top:       #{-$arrow-size + 4px};
+    left:      50%;
+    transform: translateX(-50%) rotate(45deg);
+  }
+}
+
+// ─── Placement: left ─────────────────────────────────────────────────────────
+
+.placementLeft {
+  // Tooltip sits to the left of the trigger
+  right:     calc(100% + #{$tooltip-offset});
+  top:       50%;
+  transform: translateY(-50%) scale(0.9);
+
+  transform-origin: right center;
+
+  &.visible {
+    transform: translateY(-50%) scale(1);
+  }
+
+  .arrow {
+    right:     #{-$arrow-size + 4px};
+    top:       50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+}
+
+// ─── Placement: right ────────────────────────────────────────────────────────
+
+.placementRight {
+  // Tooltip sits to the right of the trigger
+  left:      calc(100% + #{$tooltip-offset});
+  top:       50%;
+  transform: translateY(-50%) scale(0.9);
+
+  transform-origin: left center;
+
+  &.visible {
+    transform: translateY(-50%) scale(1);
+  }
+
+  .arrow {
+    left:      #{-$arrow-size + 4px};
+    top:       50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+}

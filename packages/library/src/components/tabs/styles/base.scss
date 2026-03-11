@@ -1,0 +1,28 @@
+// void-ui — Tabs base constants
+
+$tabs-sizes: (
+  'sm': (
+    'font-size':      var(--void-font-size-sm),
+    'padding-x':      var(--void-space-3),
+    'padding-y':      var(--void-space-1),
+    'gap':            var(--void-space-1),
+    'indicator-h':    2px,
+    'pill-radius':    var(--void-radius-sm),
+  ),
+  'md': (
+    'font-size':      var(--void-font-size-base),
+    'padding-x':      var(--void-space-4),
+    'padding-y':      var(--void-space-2),
+    'gap':            var(--void-space-2),
+    'indicator-h':    2px,
+    'pill-radius':    var(--void-radius-sm),
+  ),
+  'lg': (
+    'font-size':      var(--void-font-size-base),
+    'padding-x':      var(--void-space-5),
+    'padding-y':      var(--void-space-3),
+    'gap':            var(--void-space-2),
+    'indicator-h':    3px,
+    'pill-radius':    var(--void-radius-md),
+  ),
+);

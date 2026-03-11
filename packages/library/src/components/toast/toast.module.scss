@@ -1,0 +1,314 @@
+@use 'sass:map';
+@use './styles/base' as *;
+@use '../../helpers/styles/mixins' as *;
+
+// ─── Keyframes ────────────────────────────────────────────────────────────────
+
+@keyframes void-toast-slide-in-right {
+  from {
+    transform: translateX(calc(100% + #{$toast-offset}));
+    opacity:   0;
+  }
+  to {
+    transform: translateX(0);
+    opacity:   1;
+  }
+}
+
+@keyframes void-toast-slide-in-left {
+  from {
+    transform: translateX(calc(-100% - #{$toast-offset}));
+    opacity:   0;
+  }
+  to {
+    transform: translateX(0);
+    opacity:   1;
+  }
+}
+
+@keyframes void-toast-slide-in-top {
+  from {
+    transform: translateY(calc(-100% - #{$toast-offset}));
+    opacity:   0;
+  }
+  to {
+    transform: translateY(0);
+    opacity:   1;
+  }
+}
+
+@keyframes void-toast-slide-in-bottom {
+  from {
+    transform: translateY(calc(100% + #{$toast-offset}));
+    opacity:   0;
+  }
+  to {
+    transform: translateY(0);
+    opacity:   1;
+  }
+}
+
+@keyframes void-toast-slide-out {
+  from {
+    opacity:   1;
+    transform: translateX(0) scale(1);
+    max-height: 200px;
+    margin-bottom: var(--void-space-2);
+  }
+  to {
+    opacity:   0;
+    transform: translateX(calc(100% + #{$toast-offset})) scale(0.95);
+    max-height: 0;
+    margin-bottom: 0;
+  }
+}
+
+@keyframes void-toast-progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+
+.toast {
+  position:         relative;
+  display:          flex;
+  align-items:      flex-start;
+  gap:              var(--void-space-3);
+  min-width:        $toast-min-width;
+  max-width:        $toast-max-width;
+  padding:          var(--void-space-3) var(--void-space-4);
+  background-color: var(--void-color-background-surface);
+  border:           1px solid var(--void-color-border-default);
+  border-radius:    var(--void-radius-md);
+  box-shadow:       var(--void-shadow-lg);
+  font-family:      var(--void-font-family-sans);
+  overflow:         hidden;
+  will-change:      transform, opacity;
+  animation:        void-toast-slide-in-right $toast-slide-duration cubic-bezier(0.21, 1.02, 0.73, 1) both;
+
+  &.exiting {
+    animation: void-toast-slide-out $toast-dismiss-duration ease-in both;
+    pointer-events: none;
+  }
+}
+
+// ─── Icon ─────────────────────────────────────────────────────────────────────
+
+.icon {
+  @include flex-center;
+  flex-shrink: 0;
+  width:       $toast-icon-size;
+  height:      $toast-icon-size;
+  font-size:   var(--void-font-size-base);
+  font-weight: var(--void-font-weight-medium);
+  line-height: 1;
+  margin-top:  1px;
+}
+
+// ─── Content ──────────────────────────────────────────────────────────────────
+
+.content {
+  flex:        1;
+  min-width:   0;
+  display:     flex;
+  flex-direction: column;
+  gap:         var(--void-space-1);
+}
+
+.title {
+  font-size:   var(--void-font-size-sm);
+  font-weight: var(--void-font-weight-medium);
+  color:       var(--void-color-text-primary);
+  line-height: 1.4;
+  @include truncate;
+}
+
+.description {
+  font-size:   var(--void-font-size-sm);
+  color:       var(--void-color-text-muted);
+  line-height: 1.5;
+}
+
+// ─── Actions ──────────────────────────────────────────────────────────────────
+
+.actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--void-space-2);
+  margin-top:  var(--void-space-1);
+}
+
+.action {
+  display:          inline-flex;
+  align-items:      center;
+  padding:          var(--void-space-1) var(--void-space-2);
+  background:       transparent;
+  border:           1px solid var(--void-color-border-default);
+  border-radius:    var(--void-radius-md);
+  font-family:      var(--void-font-family-sans);
+  font-size:        var(--void-font-size-sm);
+  font-weight:      var(--void-font-weight-medium);
+  color:            var(--void-color-text-primary);
+  cursor:           pointer;
+  @include transition(background-color, border-color, color);
+
+  &:hover {
+    background-color: var(--void-color-background-base);
+    border-color:     var(--void-color-action-primary);
+    color:            var(--void-color-action-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ─── Close button ─────────────────────────────────────────────────────────────
+
+.closeBtn {
+  @include flex-center;
+  flex-shrink:   0;
+  width:         24px;
+  height:        24px;
+  padding:       0;
+  background:    transparent;
+  border:        none;
+  border-radius: var(--void-radius-md);
+  color:         var(--void-color-text-muted);
+  cursor:        pointer;
+  font-size:     16px;
+  line-height:   1;
+  @include transition(background-color, color);
+
+  &:hover {
+    background-color: var(--void-color-background-base);
+    color:            var(--void-color-text-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ─── Progress bar ─────────────────────────────────────────────────────────────
+
+.progress {
+  position:         absolute;
+  bottom:           0;
+  left:             0;
+  right:            0;
+  height:           3px;
+  background-color: transparent;
+  overflow:         hidden;
+}
+
+.progressBar {
+  height:           100%;
+  width:            100%;
+  transform-origin: left center;
+  background-color: var(--void-color-action-primary);
+}
+
+// ─── Variant modifiers ────────────────────────────────────────────────────────
+
+@each $variant, $props in $toast-variants {
+  .variant-#{$variant} {
+    .icon {
+      color: map.get($props, 'icon-color');
+    }
+
+    .progressBar {
+      background-color: map.get($props, 'progress-color');
+    }
+
+    border-left: 3px solid map.get($props, 'accent-color');
+  }
+}
+
+.variant-default {
+  border-left-color: var(--void-color-border-default);
+}
+
+// ─── Container ────────────────────────────────────────────────────────────────
+
+.container {
+  position:    fixed;
+  z-index:     $toast-z-index;
+  display:     flex;
+  flex-direction: column;
+  gap:         var(--void-space-2);
+  padding:     $toast-offset;
+  pointer-events: none;
+
+  > * {
+    pointer-events: all;
+  }
+}
+
+// ─── Position modifiers ───────────────────────────────────────────────────────
+
+.position-top-right {
+  top:   0;
+  right: 0;
+  align-items: flex-end;
+
+  .toast {
+    animation-name: void-toast-slide-in-right;
+  }
+}
+
+.position-top-left {
+  top:  0;
+  left: 0;
+  align-items: flex-start;
+
+  .toast {
+    animation-name: void-toast-slide-in-left;
+  }
+}
+
+.position-bottom-right {
+  bottom: 0;
+  right:  0;
+  align-items: flex-end;
+  flex-direction: column-reverse;
+
+  .toast {
+    animation-name: void-toast-slide-in-right;
+  }
+}
+
+.position-bottom-left {
+  bottom: 0;
+  left:   0;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+
+  .toast {
+    animation-name: void-toast-slide-in-left;
+  }
+}
+
+.position-top-center {
+  top:       0;
+  left:      50%;
+  transform: translateX(-50%);
+  align-items: center;
+
+  .toast {
+    animation-name: void-toast-slide-in-top;
+  }
+}
+
+.position-bottom-center {
+  bottom:    0;
+  left:      50%;
+  transform: translateX(-50%);
+  align-items: center;
+  flex-direction: column-reverse;
+
+  .toast {
+    animation-name: void-toast-slide-in-bottom;
+  }
+}

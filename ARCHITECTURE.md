@@ -328,20 +328,20 @@ Phase 4 — MCP server                                          ✅ DONE
   ✓ Validated with Claude Code (stdio transport)
   ✓ .claude/mcp.json configured
 
-Phase 5 — CI/CD                                               🔄 IN PROGRESS
+Phase 5 — CI/CD                                               ✅ DONE
   ✓ ci.yml      — test + build on every PR
   ✓ publish.yml — auto npm publish on version bump merged to main
   ✓ code-review.yml — Claude AI reviews every non-draft PR
-  ⬜ Add NPM_TOKEN + ANTHROPIC_API_KEY secrets to GitHub repo
-  ⬜ Bump versions to 0.3.0 and merge to trigger first auto-publish
+  ✓ NPM_TOKEN + ANTHROPIC_API_KEY secrets configured in GitHub repo
+  ✓ Published @open-void-ui/tokens@0.3.0 + @open-void-ui/library@0.3.0
 
-Phase 6 — Scale components                                    ⬜ NEXT
-  ⬜ Select — dropdown, searchable, multi-select
-  ⬜ Modal / Dialog
-  ⬜ Toast / Notification
-  ⬜ Tooltip
-  ⬜ Tabs
-  ⬜ Table
+Phase 6 — Scale components                                    🔄 IN PROGRESS
+  ✓ Select — dropdown, searchable, clearable, keyboard nav
+  ✓ Modal / Dialog — focus trap, Escape key, portal, aria
+  ✓ Toast / Notification — variants, auto-dismiss, positions, useToast hook
+  ✓ Tooltip — placement, delay, aria-describedby
+  ✓ Tabs — keyboard nav, accessible, variants
+  ✓ Table — sortable, striped, bordered, caption
   ⬜ DatePicker (packages/dates)
   ⬜ Icons (packages/icons)
 ```

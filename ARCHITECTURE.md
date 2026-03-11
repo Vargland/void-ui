@@ -3,11 +3,19 @@
 ```
 void-ui/
 ├── packages/
-│   ├── library/          ← main React components
-│   ├── tokens/           ← design tokens (source of truth)
-│   ├── icons/            ← iconography (SVG + font)
-│   └── dates/            ← date components (separate package, optional)
-├── mcp-server/           ← MCP server for Claude/Cursor integration
+│   ├── library/          ← @open-void-ui/library — React components
+│   ├── tokens/           ← @open-void-ui/tokens — design tokens (source of truth)
+│   ├── icons/            ← @open-void-ui/icons — iconography (pending)
+│   └── dates/            ← @open-void-ui/dates — date components (pending)
+├── mcp-server/           ← @open-void-ui/mcp-server — MCP server for Claude/Cursor
+├── figma-plugin/         ← Figma plugin — renders all components on canvas
+├── apps/
+│   └── docs/             ← @open-void-ui/docs — Next.js 14 docs site
+├── .github/
+│   └── workflows/
+│       ├── ci.yml        ← lint + test + build on every PR
+│       ├── publish.yml   ← auto npm publish on version bump to main
+│       └── code-review.yml ← Claude AI review on every PR
 ├── .storybook/           ← global Storybook config
 ├── package.json          ← workspace root
 └── void-ui.code-workspace
@@ -16,10 +24,11 @@ void-ui/
 ### Why a monorepo
 
 Each sub-package is published separately on npm:
-- `@void-ui/library` — the components
-- `@void-ui/tokens` — the tokens (usable without React)
-- `@void-ui/icons` — the icons
-- `@void-ui/dates` — date components (optional, heavy dependency)
+- `@open-void-ui/library` — the components (requires React 18+)
+- `@open-void-ui/tokens` — the tokens (framework-agnostic, plain CSS)
+- `@open-void-ui/mcp-server` — AI context server (Claude / Cursor)
+- `@open-void-ui/icons` — icons (pending)
+- `@open-void-ui/dates` — date components (pending, heavy dependency)
 
 This allows a consumer to install only what they need.
 
@@ -138,19 +147,74 @@ icons/
 ```
 mcp-server/
 ├── src/
-│   ├── index.ts            ← MCP server entry point
-│   ├── tools.ts            ← tools exposed to Claude/Cursor
-│   ├── resources.ts        ← resources (components, tokens, docs)
-│   ├── constants.ts        ← server constants
-│   ├── types.ts            ← server types
-│   └── utils.ts            ← utilities
-├── scripts/
-│   ├── generate-data.ts    ← generates the library snapshot for the MCP
-│   └── sync-version.js     ← syncs versions across packages
-└── README.md + SETUP_GUIDE.md
+│   ├── index.ts            ← MCP server entry point (stdio transport)
+│   ├── tools.ts            ← 4 tools: list-components, get-component, get-tokens, generate-usage
+│   ├── resources.ts        ← resources: void-ui://components/{name}, void-ui://tokens
+│   ├── data.ts             ← full props + token values for all components
+│   ├── constants.ts        ← component name tuple type
+│   └── types.ts            ← ComponentMeta, TokenMeta, LibrarySnapshot
+├── dist/                   ← compiled output (after npm run mcp:build)
+└── README.md
 ```
 
 The MCP server exposes the full library as context for Claude and Cursor. When Claude "knows" void-ui, it generates code that uses the components correctly instead of making up its own.
+
+**Setup — Claude Code:**
+```sh
+claude mcp add void-ui node /path/to/void-ui/mcp-server/dist/index.js
+```
+
+**Setup — Cursor** (`.cursor/mcp.json`):
+```json
+{ "mcpServers": { "void-ui": { "command": "node", "args": ["/path/to/mcp-server/dist/index.js"] } } }
+```
+
+---
+
+## figma-plugin — Canvas renderer
+
+```
+figma-plugin/
+├── code.js       ← single-file plugin (Figma sandbox, no DOM/CSS/React)
+├── manifest.json ← plugin entry point (never changes)
+└── README.md
+```
+
+Renders all components on the Figma canvas with exact token values.
+Re-run the plugin any time to regenerate all cards (old ones are removed first).
+
+**Current cards:** Button · Badge · Avatar · Typography · Divider · Spinner · TextField · Stack · Checkbox · Planets palette
+
+**Adding a new component:**
+1. Add `drawMyComponent()` in `code.js` following the existing pattern
+2. Register it in the `drawFns` array inside `run()`
+3. No manifest changes needed — `manifest.json` always points to `code.js`
+
+---
+
+## .github/workflows — CI/CD
+
+```
+.github/workflows/
+├── ci.yml           ← runs on every PR: install → build tokens → test → build library → build mcp
+├── publish.yml      ← runs on main: publishes to npm only if version in package.json changed
+└── code-review.yml  ← runs on every non-draft PR: Claude reviews diff and posts comment
+```
+
+### Secrets required (GitHub repo → Settings → Secrets → Actions)
+
+| Secret | Used by | How to get |
+|--------|---------|------------|
+| `NPM_TOKEN` | `publish.yml` | npmjs.com → Access Tokens → Automation token |
+| `ANTHROPIC_API_KEY` | `code-review.yml` | console.anthropic.com → API Keys |
+
+### Publish flow
+
+The publish workflow compares the version in `package.json` vs what's live on npm.
+To release a new version:
+1. Bump version in `packages/tokens/package.json` and/or `packages/library/package.json`
+2. Commit and merge to main
+3. The workflow publishes automatically — no manual `npm publish` needed
 
 ---
 
@@ -233,31 +297,53 @@ Command: `npm run generate` → prompts for the name → generates the full stru
 ## Implementation roadmap for void-ui
 
 ```
-Phase 1 — Foundation
+Phase 1 — Foundation                                          ✅ DONE
   ✓ Repo on GitHub
-  → Monorepo setup (npm workspaces)
-  → packages/tokens (base.json + theme.json + build)
-  → packages/library (empty structure + Storybook config + Vitest)
+  ✓ Monorepo setup (npm workspaces)
+  ✓ packages/tokens (base.json + theme.json + build.js + 12 planet themes)
+  ✓ packages/library (structure + Storybook 8 + Vitest + CSS Modules)
+  ✓ Published @open-void-ui/tokens@0.2.0 + @open-void-ui/library@0.2.0
 
-Phase 2 — First complete component
-  → Button (with full structure: component, types, stories, test, docs)
-  → Validate that the full pipeline works before adding more
+Phase 2 — Components                                          ✅ DONE
+  ✓ Button   — 5 variants · 3 sizes · loading · icons · polymorphic
+  ✓ Badge    — solid/subtle/outlined × 5 tones
+  ✓ Avatar   — sizes · shapes · status badge
+  ✓ Typography — 9 sizes · 4 weights · polymorphic
+  ✓ Divider  — horizontal/vertical · variants · label
+  ✓ Stack    — flex layout utility
+  ✓ Spinner  — ring variant · 5 sizes
+  ✓ TextField — label · hint · error · prefix/suffix · states
+  ✓ Checkbox — controlled/uncontrolled · indeterminate · error · 3 sizes
+  ✓ Storybook deployed on Vercel
+  ✓ apps/docs — Next.js 14 docs website
 
-Phase 3 — Figma sync
-  → Connect Figma Variables with tokens/base.json via MCP
+Phase 3 — Figma                                               ✅ DONE
+  ✓ Figma plugin — renders all 9 components + Planets palette on canvas
+  ✓ Figma MCP (official) connected — reads Figma nodes for design→code flow
 
-Phase 4 — MCP server
-  → mcp-server with tools and resources
-  → Validate with Claude Code and Cursor
+Phase 4 — MCP server                                          ✅ DONE
+  ✓ mcp-server/ with 4 tools: list-components, get-component,
+    get-tokens, generate-usage
+  ✓ Resources: void-ui://components/{name}, void-ui://tokens
+  ✓ Validated with Claude Code (stdio transport)
+  ✓ .claude/mcp.json configured
 
-Phase 5 — CI/CD
-  → GitHub Actions: lint + test + build on every PR
-  → AI code review on PRs
-  → Automatic npm publish on merge to main
+Phase 5 — CI/CD                                               🔄 IN PROGRESS
+  ✓ ci.yml      — test + build on every PR
+  ✓ publish.yml — auto npm publish on version bump merged to main
+  ✓ code-review.yml — Claude AI reviews every non-draft PR
+  ⬜ Add NPM_TOKEN + ANTHROPIC_API_KEY secrets to GitHub repo
+  ⬜ Bump versions to 0.3.0 and merge to trigger first auto-publish
 
-Phase 6 — Scale components
-  → Plop templates to generate components
-  → Add components one by one, with quality
+Phase 6 — Scale components                                    ⬜ NEXT
+  ⬜ Select — dropdown, searchable, multi-select
+  ⬜ Modal / Dialog
+  ⬜ Toast / Notification
+  ⬜ Tooltip
+  ⬜ Tabs
+  ⬜ Table
+  ⬜ DatePicker (packages/dates)
+  ⬜ Icons (packages/icons)
 ```
 
 ---

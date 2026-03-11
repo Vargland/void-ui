@@ -1,0 +1,123 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, ready_for_review]
+
+concurrency:
+  group: code-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Claude Code Review
+    runs-on: ubuntu-latest
+    # Skip draft PRs and dependabot
+    if: |
+      github.event.pull_request.draft == false &&
+      github.actor != 'dependabot[bot]'
+
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR diff
+        id: diff
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          DIFF=$(git diff origin/${{ github.base_ref }}...HEAD \
+            -- '*.ts' '*.tsx' '*.scss' '*.js' \
+            ':!*.test.ts' ':!*.test.tsx' ':!*.stories.tsx' ':!dist/*' \
+            | head -c 20000)
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Get changed files
+        id: files
+        run: |
+          FILES=$(git diff origin/${{ github.base_ref }}...HEAD --name-only \
+            -- '*.ts' '*.tsx' '*.scss' ':!*.test.*' ':!*.stories.*' ':!dist/*')
+          echo "list=$FILES" >> $GITHUB_OUTPUT
+
+      - name: Claude code review
+        id: claude-review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_BODY="${{ github.event.pull_request.body }}"
+          FILES="${{ steps.files.outputs.list }}"
+          DIFF='${{ steps.diff.outputs.diff }}'
+
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d "$(jq -n \
+              --arg title "$PR_TITLE" \
+              --arg body "$PR_BODY" \
+              --arg files "$FILES" \
+              --arg diff "$DIFF" \
+              '{
+                model: "claude-opus-4-5",
+                max_tokens: 1024,
+                messages: [{
+                  role: "user",
+                  content: "You are a senior frontend engineer reviewing a PR for void-ui, a React component library using TypeScript, CSS Modules, SCSS, and design tokens.\n\nPR title: \($title)\nPR description: \($body)\n\nChanged files:\n\($files)\n\nDiff:\n\($diff)\n\nReview this code focusing on:\n1. Component API consistency (props naming, TypeScript types, barrel exports)\n2. SCSS / token usage — always use --void-* custom properties, never hardcode values\n3. Accessibility — aria attributes, keyboard navigation, focus management\n4. Test coverage — are the key behaviors tested?\n5. void-ui conventions — typings in src/typings/, one component per directory, hooks if >50 lines logic\n\nBe concise and specific. Format your response in markdown with these sections:\n### Summary\nOne sentence overall assessment.\n\n### Issues\nOnly real problems worth fixing. If none, write \"None\".\n\n### Suggestions\nOptional improvements. If none, write \"None\".\n\nDo not praise obvious things. Keep it under 400 words."
+                }]
+              }')"
+
+          REVIEW=$(echo "$RESPONSE" | jq -r '.content[0].text // "Review unavailable."')
+          echo "review<<EOF" >> $GITHUB_OUTPUT
+          echo "$REVIEW" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post review comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const review = `${{ steps.claude-review.outputs.review }}`;
+            const files = `${{ steps.files.outputs.list }}`;
+
+            const body = [
+              '## 🤖 Claude Code Review',
+              '',
+              review,
+              '',
+              '---',
+              `*Reviewed files: \`${files.replace(/\n/g, '` `')}\`*`,
+              `*Model: claude-opus-4-5 — [void-ui](https://github.com/Vargland/void-ui)*`
+            ].join('\n');
+
+            // Delete previous bot review comments to avoid clutter
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            for (const comment of comments.data) {
+              if (comment.user.login === 'github-actions[bot]' &&
+                  comment.body.includes('Claude Code Review')) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id,
+                });
+              }
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });

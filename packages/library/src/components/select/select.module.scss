@@ -1,0 +1,259 @@
+@use 'sass:map';
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+
+.root {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--void-space-1);
+  position:       relative;
+}
+
+// ─── Label ────────────────────────────────────────────────────────────────────
+
+.label {
+  font-family:  var(--void-font-family-sans);
+  font-size:    var(--void-font-size-sm);
+  font-weight:  var(--void-font-weight-medium);
+  color:        var(--void-color-text-primary);
+  line-height:  var(--void-font-line-height-tight);
+}
+
+// ─── Trigger ──────────────────────────────────────────────────────────────────
+
+.trigger {
+  @include transition(border-color, box-shadow, background-color);
+
+  display:          flex;
+  align-items:      center;
+  gap:              var(--void-space-2);
+  width:            100%;
+  border:           1.5px solid var(--void-color-border-default);
+  border-radius:    var(--void-radius-md);
+  background-color: var(--void-color-background-surface);
+  color:            var(--void-color-text-primary);
+  font-family:      var(--void-font-family-sans);
+  cursor:           pointer;
+  text-align:       left;
+  user-select:      none;
+
+  &:hover:not(.triggerDisabled) {
+    border-color: var(--void-color-border-strong);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: 0;
+  }
+
+  &.triggerOpen {
+    border-color: var(--void-color-border-focus);
+  }
+
+  &.triggerDisabled {
+    opacity: 0.4;
+    cursor:  not-allowed;
+  }
+
+  &.triggerError {
+    border-color: var(--void-color-status-error);
+  }
+}
+
+.triggerContent {
+  flex:        1;
+  min-width:   0;
+
+  @include truncate;
+}
+
+.placeholder {
+  color: var(--void-color-text-muted);
+}
+
+.startIcon {
+  flex-shrink: 0;
+  display:     flex;
+  align-items: center;
+  color:       var(--void-color-text-muted);
+}
+
+.chevron {
+  flex-shrink: 0;
+  display:     flex;
+  align-items: center;
+  color:       var(--void-color-text-muted);
+  transition:  transform var(--void-transition-fast);
+
+  .triggerOpen & {
+    transform: rotate(180deg);
+  }
+}
+
+.clearBtn {
+  flex-shrink:      0;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  background:       none;
+  border:           none;
+  padding:          0;
+  cursor:           pointer;
+  color:            var(--void-color-text-muted);
+  border-radius:    var(--void-radius-sm);
+
+  &:hover {
+    color: var(--void-color-text-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ─── Dropdown ─────────────────────────────────────────────────────────────────
+
+.dropdown {
+  position:         absolute;
+  top:              calc(100% + var(--void-space-1));
+  left:             0;
+  right:            0;
+  z-index:          var(--void-z-index-dropdown, 200);
+  background-color: var(--void-color-background-surface);
+  border:           1.5px solid var(--void-color-border-default);
+  border-radius:    var(--void-radius-md);
+  box-shadow:       var(--void-shadow-lg);
+  overflow:         hidden;
+}
+
+// ─── Search input ─────────────────────────────────────────────────────────────
+
+.searchWrapper {
+  padding:       var(--void-space-2);
+  border-bottom: 1px solid var(--void-color-border-default);
+}
+
+.searchInput {
+  width:            100%;
+  border:           1.5px solid var(--void-color-border-default);
+  border-radius:    var(--void-radius-sm);
+  background-color: var(--void-color-background-base);
+  color:            var(--void-color-text-primary);
+  font-family:      var(--void-font-family-sans);
+  font-size:        var(--void-font-size-sm);
+  padding:          var(--void-space-1) var(--void-space-2);
+  outline:          none;
+
+  &:focus {
+    border-color: var(--void-color-border-focus);
+  }
+
+  &::placeholder {
+    color: var(--void-color-text-muted);
+  }
+}
+
+// ─── Options list ─────────────────────────────────────────────────────────────
+
+.list {
+  overflow-y: auto;
+  max-height: 240px;
+  padding:    var(--void-space-1);
+}
+
+.option {
+  @include transition(background-color);
+
+  display:       flex;
+  flex-direction: column;
+  gap:           2px;
+  width:         100%;
+  border:        none;
+  background:    none;
+  text-align:    left;
+  cursor:        pointer;
+  border-radius: var(--void-radius-sm);
+  color:         var(--void-color-text-primary);
+  font-family:   var(--void-font-family-sans);
+
+  &:hover:not(.optionDisabled) {
+    background-color: var(--void-color-background-subtle);
+  }
+
+  &.optionSelected {
+    background-color: var(--void-color-action-primary-subtle);
+    color:            var(--void-color-action-primary);
+    font-weight:      var(--void-font-weight-medium);
+  }
+
+  &.optionHighlighted:not(.optionSelected) {
+    background-color: var(--void-color-background-subtle);
+  }
+
+  &.optionDisabled {
+    opacity: 0.4;
+    cursor:  not-allowed;
+  }
+}
+
+.optionLabel {
+  font-size:   var(--void-font-size-base);
+  line-height: var(--void-font-line-height-tight);
+}
+
+.optionDescription {
+  font-size: var(--void-font-size-sm);
+  color:     var(--void-color-text-muted);
+
+  .optionSelected & {
+    color: var(--void-color-action-primary);
+    opacity: 0.8;
+  }
+}
+
+.empty {
+  padding:     var(--void-space-4);
+  text-align:  center;
+  font-family: var(--void-font-family-sans);
+  font-size:   var(--void-font-size-sm);
+  color:       var(--void-color-text-muted);
+}
+
+// ─── Hint / Error ─────────────────────────────────────────────────────────────
+
+.hint {
+  font-family: var(--void-font-family-sans);
+  font-size:   var(--void-font-size-sm);
+  color:       var(--void-color-text-muted);
+  line-height: var(--void-font-line-height-normal);
+}
+
+.hintError {
+  color: var(--void-color-status-error);
+}
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $props in $select-sizes {
+  .size-#{$name} {
+    .trigger {
+      height:      map.get($props, 'height');
+      font-size:   map.get($props, 'font-size');
+      padding:     map.get($props, 'padding-y') map.get($props, 'padding-x');
+      gap:         map.get($props, 'gap');
+    }
+
+    .startIcon svg,
+    .chevron svg,
+    .clearBtn svg {
+      width:  map.get($props, 'icon-size');
+      height: map.get($props, 'icon-size');
+    }
+
+    .option {
+      padding: map.get($props, 'padding-y') map.get($props, 'padding-x');
+    }
+  }
+}

@@ -1,0 +1,232 @@
+@use 'sass:map';
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Wrapper ──────────────────────────────────────────────────────────────────
+
+.wrapper {
+  width:      100%;
+  overflow-x: auto;
+  border-radius: var(--void-radius-md);
+}
+
+// ─── Table ────────────────────────────────────────────────────────────────────
+
+.table {
+  width:           100%;
+  border-collapse: collapse;
+  border-spacing:  0;
+  font-family:     var(--void-font-family-sans);
+  font-size:       var(--void-font-size-sm);
+  line-height:     var(--void-font-line-height-normal);
+  color:           var(--void-color-text-primary);
+  background-color: var(--void-color-background-surface);
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+
+.thead {}
+
+.tbody {}
+
+.tfoot {
+  border-top: 1px solid var(--void-color-border-default);
+
+  .td {
+    color:       var(--void-color-text-muted);
+    font-size:   var(--void-font-size-xs);
+    font-weight: var(--void-font-weight-medium);
+  }
+}
+
+// ─── Sticky header ────────────────────────────────────────────────────────────
+
+.stickyHeader {
+  .thead {
+    position: sticky;
+    top:      0;
+    z-index:  1;
+  }
+}
+
+// ─── Rows ─────────────────────────────────────────────────────────────────────
+
+.tr {
+  @include transition($table-transition...);
+  border-bottom: 1px solid var(--void-color-border-default);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+// ─── Hoverable ───────────────────────────────────────────────────────────────
+
+.hoverable {
+  .tbody .tr {
+    &:hover {
+      background-color: var(--void-color-background-subtle);
+    }
+  }
+}
+
+// ─── Selected row ─────────────────────────────────────────────────────────────
+
+.trSelected {
+  background-color: var(--void-color-action-primary-subtle) !important;
+}
+
+// ─── Clickable row ────────────────────────────────────────────────────────────
+
+.trClickable {
+  cursor: pointer;
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: -2px;
+  }
+}
+
+// ─── Header cell (th) ────────────────────────────────────────────────────────
+
+.th {
+  padding:          var(--void-space-2) var(--void-space-4);
+  text-align:       left;
+  font-size:        var(--void-font-size-xs);
+  font-weight:      var(--void-font-weight-bold);
+  color:            var(--void-color-text-muted);
+  background-color: var(--void-color-background-subtle);
+  border-bottom:    1px solid var(--void-color-border-default);
+  white-space:      nowrap;
+  user-select:      none;
+}
+
+// ─── Sortable header ─────────────────────────────────────────────────────────
+
+.thSortable {
+  cursor: pointer;
+
+  &:hover {
+    color:            var(--void-color-text-primary);
+    background-color: var(--void-color-background-base);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    outline-offset: -2px;
+  }
+}
+
+.thContent {
+  display:     inline-flex;
+  align-items: center;
+  gap:         var(--void-space-1);
+}
+
+// ─── Sort icon ───────────────────────────────────────────────────────────────
+
+.sortIcon {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           12px;
+  height:          12px;
+  flex-shrink:     0;
+  color:           var(--void-color-text-muted);
+  @include transition(color, transform);
+
+  svg {
+    width:  100%;
+    height: 100%;
+  }
+}
+
+.sortIconAsc {
+  color:     var(--void-color-action-primary);
+  transform: rotate(0deg);
+}
+
+.sortIconDesc {
+  color:     var(--void-color-action-primary);
+  transform: rotate(180deg);
+}
+
+// ─── Data cell (td) ──────────────────────────────────────────────────────────
+
+.td {
+  padding: var(--void-space-2) var(--void-space-4);
+}
+
+// ─── Numeric cell ────────────────────────────────────────────────────────────
+
+.tdNumeric {
+  text-align:  right;
+  font-family: var(--void-font-family-mono);
+  font-size:   var(--void-font-size-sm);
+}
+
+// ─── Alignment modifiers ─────────────────────────────────────────────────────
+
+.alignLeft   { text-align: left; }
+.alignCenter { text-align: center; }
+.alignRight  { text-align: right; }
+
+// ─── Sizes ────────────────────────────────────────────────────────────────────
+
+@each $name, $props in $table-sizes {
+  .size-#{$name} {
+    .th,
+    .td {
+      padding-top:    map.get($props, 'padding-y');
+      padding-bottom: map.get($props, 'padding-y');
+      padding-left:   map.get($props, 'padding-x');
+      padding-right:  map.get($props, 'padding-x');
+      font-size:      map.get($props, 'font-size');
+    }
+
+    .th {
+      // th font-size is always one step smaller than td
+      font-size: var(--void-font-size-xs);
+    }
+  }
+}
+
+// ─── Variant: default (horizontal dividers only) ─────────────────────────────
+
+.variant-default {
+  .th,
+  .td {
+    border-left:  none;
+    border-right: none;
+  }
+}
+
+// ─── Variant: striped ────────────────────────────────────────────────────────
+
+.variant-striped {
+  .tbody .tr:nth-child(even) {
+    background-color: var(--void-color-background-subtle);
+  }
+
+  .th,
+  .td {
+    border-left:  none;
+    border-right: none;
+  }
+}
+
+// ─── Variant: bordered ───────────────────────────────────────────────────────
+
+.variant-bordered {
+  border: 1px solid var(--void-color-border-default);
+  border-radius: var(--void-radius-md);
+
+  .th,
+  .td {
+    border: 1px solid var(--void-color-border-default);
+  }
+
+  .tr {
+    border-bottom: none;
+  }
+}

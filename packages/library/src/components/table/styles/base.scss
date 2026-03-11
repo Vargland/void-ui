@@ -1,0 +1,22 @@
+// table — base styles
+// Shared tokens consumed by table.module.scss
+
+$table-transition: background-color, color, border-color, opacity;
+
+$table-sizes: (
+  'sm': (
+    'padding-y':   var(--void-space-1),
+    'padding-x':   var(--void-space-3),
+    'font-size':   var(--void-font-size-xs),
+  ),
+  'md': (
+    'padding-y':   var(--void-space-2),
+    'padding-x':   var(--void-space-4),
+    'font-size':   var(--void-font-size-sm),
+  ),
+  'lg': (
+    'padding-y':   var(--void-space-3),
+    'padding-x':   var(--void-space-5),
+    'font-size':   var(--void-font-size-base),
+  ),
+);

@@ -1,0 +1,52 @@
+// toast — base styles
+
+// ─── Animation timings ────────────────────────────────────────────────────────
+
+$toast-slide-duration:    280ms;
+$toast-dismiss-duration:  200ms;
+$toast-progress-easing:   linear;
+
+// ─── Dimensions ───────────────────────────────────────────────────────────────
+
+$toast-min-width:  280px;
+$toast-max-width:  420px;
+$toast-icon-size:  20px;
+$toast-gap:        var(--void-space-3);
+
+// ─── Z-index ──────────────────────────────────────────────────────────────────
+
+$toast-z-index: var(--void-z-index-toast, 1100);
+
+// ─── Container offset from viewport edge ─────────────────────────────────────
+
+$toast-offset: var(--void-space-4);
+
+// ─── Variant color map ────────────────────────────────────────────────────────
+
+$toast-variants: (
+  'default': (
+    'icon-color':    var(--void-color-text-muted),
+    'accent-color':  var(--void-color-border-default),
+    'progress-color': var(--void-color-action-primary),
+  ),
+  'success': (
+    'icon-color':    var(--void-color-status-success),
+    'accent-color':  var(--void-color-status-success),
+    'progress-color': var(--void-color-status-success),
+  ),
+  'error': (
+    'icon-color':    var(--void-color-status-error),
+    'accent-color':  var(--void-color-status-error),
+    'progress-color': var(--void-color-status-error),
+  ),
+  'warning': (
+    'icon-color':    var(--void-color-status-warning),
+    'accent-color':  var(--void-color-status-warning),
+    'progress-color': var(--void-color-status-warning),
+  ),
+  'info': (
+    'icon-color':    var(--void-color-status-info),
+    'accent-color':  var(--void-color-status-info),
+    'progress-color': var(--void-color-status-info),
+  ),
+);

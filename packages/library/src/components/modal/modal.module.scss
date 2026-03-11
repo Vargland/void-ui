@@ -1,0 +1,144 @@
+@use 'sass:map';
+@use '../../helpers/styles/mixins' as *;
+@use './styles/base' as *;
+
+// ─── Overlay ──────────────────────────────────────────────────────────────────
+
+.overlay {
+  position:        fixed;
+  inset:           0;
+  z-index:         var(--void-z-index-modal, 1000);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--void-space-4);
+  background:      color-mix(in srgb, var(--void-color-background-base) 60%, transparent);
+  backdrop-filter: blur(4px);
+  animation:       overlayFadeIn var(--void-transition-normal) ease forwards;
+
+  @keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+
+// ─── Dialog ───────────────────────────────────────────────────────────────────
+
+.dialog {
+  position:        relative;
+  display:         flex;
+  flex-direction:  column;
+  width:           100%;
+  max-height:      calc(100vh - var(--void-space-8));
+  background:      var(--void-color-background-surface);
+  border:          1px solid var(--void-color-border-default);
+  border-radius:   var(--void-radius-lg);
+  box-shadow:      var(--void-shadow-xl);
+  font-family:     var(--void-font-family-sans);
+  outline:         none;
+  animation:       dialogSlideUp var(--void-transition-normal) ease forwards;
+
+  @keyframes dialogSlideUp {
+    from {
+      opacity:   0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity:   1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// ─── Size modifiers ───────────────────────────────────────────────────────────
+
+@each $name, $props in $modal-sizes {
+  .size-#{$name} {
+    max-width: map.get($props, 'max-width');
+
+    @if $name == 'full' {
+      max-height:    100vh;
+      height:        100vh;
+      border-radius: 0;
+    }
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--void-space-3);
+  padding:         var(--void-space-4) var(--void-space-5);
+  border-bottom:   1px solid var(--void-color-border-default);
+  flex-shrink:     0;
+}
+
+// ─── Title ────────────────────────────────────────────────────────────────────
+
+.title {
+  flex:        1;
+  font-size:   var(--void-font-size-md);
+  font-weight: var(--void-font-weight-bold);
+  color:       var(--void-color-text-primary);
+  line-height: var(--void-font-line-height-tight);
+  margin:      0;
+}
+
+// ─── Close button ─────────────────────────────────────────────────────────────
+
+.closeBtn {
+  @include flex-center;
+  @include transition(background-color, color);
+
+  flex-shrink:   0;
+  width:         32px;
+  height:        32px;
+  padding:       0;
+  background:    transparent;
+  border:        1px solid transparent;
+  border-radius: var(--void-radius-sm);
+  color:         var(--void-color-text-muted);
+  cursor:        pointer;
+  appearance:    none;
+
+  svg {
+    width:  16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: var(--void-color-background-overlay);
+    color:      var(--void-color-text-primary);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────────
+
+.body {
+  flex:       1;
+  overflow-y: auto;
+  padding:    var(--void-space-5);
+  color:      var(--void-color-text-primary);
+  font-size:  var(--void-font-size-base);
+  line-height: var(--void-font-line-height-normal);
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+
+.footer {
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-end;
+  gap:             var(--void-space-2);
+  padding:         var(--void-space-4) var(--void-space-5);
+  border-top:      1px solid var(--void-color-border-default);
+  flex-shrink:     0;
+}

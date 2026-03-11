@@ -26,12 +26,59 @@ export type { TextFieldProps, TextFieldSize, TextFieldState } from './typings/co
 export { Checkbox } from './components/checkbox'
 export type { CheckboxProps, CheckboxSize } from './typings/components/checkbox'
 
+export { Select } from './components/select'
+export type { SelectProps, SelectOption, SelectSize } from './typings/components/select'
+
+export { Modal } from './components/modal'
+export type { ModalProps, ModalSize } from './typings/components/modal'
+
+export { Tooltip } from './components/tooltip'
+export type { TooltipProps, TooltipPlacement } from './typings/components/tooltip'
+
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/tabs'
+export type {
+  TabsVariant,
+  TabsSize,
+  TabsProps,
+  TabsListProps,
+  TabsTriggerProps,
+  TabsContentProps,
+  TabsContextValue,
+} from './typings/components/tabs'
+
+export { Table, TableHead, TableBody, TableFooter, TableRow, TableHeader, TableCell } from './components/table'
+export type {
+  TableProps,
+  TableHeadProps,
+  TableBodyProps,
+  TableFooterProps,
+  TableRowProps,
+  TableHeaderProps,
+  TableCellProps,
+  TableVariant,
+  TableSize,
+  TableAlign,
+  SortDirection,
+} from './typings/components/table'
+
+export { Toast, ToastContainer } from './components/toast'
+export type {
+  ToastProps,
+  ToastContainerProps,
+  ToastVariant,
+  ToastPosition,
+  ToastItem,
+  ToastAction,
+  ToastOptions,
+  UseToastReturn,
+} from './typings/components/toast'
+
 // ─── Contexts ────────────────────────────────────────────────────────────────
 export { VoidProvider, PlanetContext, usePlanet, DEFAULT_PLANET } from './contexts/planet'
 export type { PlanetName, PlanetContextValue } from './typings/contexts/planet'
 
 // ─── Hooks ───────────────────────────────────────────────────────────────────
-// export { useToast } from './hooks/use-toast'
+export { useToast } from './hooks/use-toast'
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 import './static/styles/reset.css'

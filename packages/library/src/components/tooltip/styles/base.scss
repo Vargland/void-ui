@@ -1,0 +1,43 @@
+// tooltip — base styles
+// Shared tokens consumed by tooltip.module.scss
+
+$tooltip-transition: opacity, transform;
+
+// Arrow size (half-diagonal of the rotated square)
+$arrow-size: 6px;
+
+// Offset between trigger edge and tooltip box (includes arrow)
+$tooltip-offset: #{$arrow-size + 6px};
+
+// Placement transform origins — used for scale animation
+$tooltip-origins: (
+  'top':    'bottom center',
+  'bottom': 'top center',
+  'left':   'right center',
+  'right':  'left center',
+);
+
+// Arrow position per placement
+// Each entry: which pseudo-element edge to pin + translate values
+$arrow-placements: (
+  'top': (
+    'bottom':    -#{$arrow-size},
+    'left':      50%,
+    'transform': 'translateX(-50%) rotate(45deg)',
+  ),
+  'bottom': (
+    'top':       -#{$arrow-size},
+    'left':      50%,
+    'transform': 'translateX(-50%) rotate(45deg)',
+  ),
+  'left': (
+    'right':     -#{$arrow-size},
+    'top':       50%,
+    'transform': 'translateY(-50%) rotate(45deg)',
+  ),
+  'right': (
+    'left':      -#{$arrow-size},
+    'top':       50%,
+    'transform': 'translateY(-50%) rotate(45deg)',
+  ),
+);

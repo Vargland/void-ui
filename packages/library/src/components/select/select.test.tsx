@@ -24,6 +24,7 @@ describe('Select', () => {
 
   it('opens dropdown on click', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} />)
     await user.click(screen.getByRole('combobox'))
     expect(screen.getByRole('listbox')).toBeInTheDocument()
@@ -31,6 +32,7 @@ describe('Select', () => {
 
   it('closes dropdown when option selected', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} />)
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText('Earth'))
@@ -40,6 +42,7 @@ describe('Select', () => {
   it('calls onChange with selected value', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} onChange={onChange} />)
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText('Earth'))
@@ -48,6 +51,7 @@ describe('Select', () => {
 
   it('shows selected option label in trigger', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} />)
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText('Mars'))
@@ -62,6 +66,7 @@ describe('Select', () => {
   it('does not select disabled options', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} onChange={onChange} />)
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText('Jupiter'))
@@ -91,6 +96,7 @@ describe('Select', () => {
 
   it('renders searchable input when searchable=true', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} searchable />)
     await user.click(screen.getByRole('combobox'))
     expect(screen.getByPlaceholderText('Search…')).toBeInTheDocument()
@@ -98,6 +104,7 @@ describe('Select', () => {
 
   it('filters options by search query', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} searchable />)
     await user.click(screen.getByRole('combobox'))
     await user.type(screen.getByPlaceholderText('Search…'), 'mar')
@@ -107,6 +114,7 @@ describe('Select', () => {
 
   it('shows empty message when no options match', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} searchable emptyMessage="Nothing here" />)
     await user.click(screen.getByRole('combobox'))
     await user.type(screen.getByPlaceholderText('Search…'), 'zzz')
@@ -121,6 +129,7 @@ describe('Select', () => {
   it('clears value when clear button clicked', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} value="earth" clearable onChange={onChange} />)
     await user.click(screen.getByLabelText('Clear selection'))
     expect(onChange).toHaveBeenCalledWith('')
@@ -128,6 +137,7 @@ describe('Select', () => {
 
   it('closes on Escape key', async () => {
     const user = userEvent.setup()
+
     render(<Select options={OPTIONS} />)
     await user.click(screen.getByRole('combobox'))
     expect(screen.getByRole('listbox')).toBeInTheDocument()
@@ -138,6 +148,7 @@ describe('Select', () => {
   it('wraps in planet scope when planet prop provided', () => {
     render(<Select options={OPTIONS} planet="mars" data-testid="sel" />)
     const wrapper = screen.getByTestId('sel').closest('[data-void-planet]')
+
     expect(wrapper).toHaveAttribute('data-void-planet', 'mars')
   })
 })

@@ -50,6 +50,7 @@ describe('Spinner', () => {
   it('renders 3 dot elements for dots variant', () => {
     render(<Spinner variant="dots" />)
     const dots = screen.getByTestId('spinner').querySelectorAll('[class*="dot"]')
+
     expect(dots.length).toBe(3)
   })
 

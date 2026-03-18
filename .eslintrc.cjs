@@ -35,6 +35,31 @@ module.exports = {
 
     // General
     'no-console': ['warn', { allow: ['warn', 'error'] }],
+
+    // ─── void-ui Code Conventions ────────────────────────────────────────────
+
+    // No !! double-negation — use Boolean() instead
+    'no-extra-boolean-cast': ['error', { enforceForLogicalOperands: true }],
+
+    // All if/else/for/while bodies must use braces — no single-line ifs
+    'curly': ['error', 'all'],
+
+    // Blank line between declarations (const, let, var, function, class, if, return, etc.)
+    // Does NOT apply to imports (they are excluded by default)
+    'padding-line-between-statements': [
+      'error',
+      // blank line BEFORE return
+      { blankLine: 'always', prev: '*', next: 'return' },
+      // blank line AFTER const/let/var blocks
+      { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
+      { blankLine: 'any',    prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
+      // blank line BEFORE if
+      { blankLine: 'always', prev: '*', next: 'if' },
+      // blank line AFTER if
+      { blankLine: 'always', prev: 'if', next: '*' },
+      // blank line BEFORE function declarations
+      { blankLine: 'always', prev: '*', next: 'function' },
+    ],
   },
   settings: {
     react: {

@@ -152,6 +152,7 @@ describe('Table', () => {
   it('calls onClick when a clickable row is clicked', async () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
+
     render(
       <Table>
         <TableBody>
@@ -179,12 +180,14 @@ describe('Table', () => {
       </Table>,
     )
     const header = screen.getByTestId('sort-header')
+
     expect(header.querySelector('svg')).toBeInTheDocument()
   })
 
   it('calls onSort callback when sortable header is clicked', async () => {
     const user = userEvent.setup()
     const onSort = vi.fn()
+
     render(
       <Table>
         <TableHead>
@@ -316,6 +319,7 @@ describe('Table', () => {
     )
     const table = screen.getByTestId('planet-table')
     const wrapper = table.closest('[data-void-planet]')
+
     expect(wrapper).toHaveAttribute('data-void-planet', 'mars')
   })
 

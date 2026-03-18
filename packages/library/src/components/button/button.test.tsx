@@ -52,6 +52,7 @@ describe('Button', () => {
   it('is disabled when disabled prop is true', () => {
     render(<Button disabled>Test</Button>)
     const btn = screen.getByRole('button')
+
     expect(btn).toBeDisabled()
     expect(btn).toHaveAttribute('aria-disabled', 'true')
   })
@@ -59,6 +60,7 @@ describe('Button', () => {
   it('does not fire onClick when disabled', async () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
+
     render(<Button disabled onClick={onClick}>Test</Button>)
     await user.click(screen.getByRole('button'))
     expect(onClick).not.toHaveBeenCalled()
@@ -79,6 +81,7 @@ describe('Button', () => {
   it('does not fire onClick when loading', async () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
+
     render(<Button loading onClick={onClick}>Test</Button>)
     await user.click(screen.getByRole('button'))
     expect(onClick).not.toHaveBeenCalled()
@@ -89,6 +92,7 @@ describe('Button', () => {
   it('fires onClick when clicked', async () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
+
     render(<Button onClick={onClick}>Click</Button>)
     await user.click(screen.getByRole('button'))
     expect(onClick).toHaveBeenCalledTimes(1)

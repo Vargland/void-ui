@@ -60,12 +60,14 @@ describe('Tabs', () => {
   it('renders all tab triggers', () => {
     render(<BasicTabs />)
     const tabs = screen.getAllByRole('tab')
+
     expect(tabs).toHaveLength(3)
   })
 
   it('renders all tab panels', () => {
     render(<BasicTabs />)
     const panels = screen.getAllByRole('tabpanel', { hidden: true })
+
     expect(panels).toHaveLength(3)
   })
 
@@ -87,6 +89,7 @@ describe('Tabs', () => {
 
   it('switches active tab on trigger click', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     await user.click(screen.getByRole('tab', { name: 'Tab 2' }))
     expect(screen.getByText('Content 2')).not.toHaveAttribute('hidden')
@@ -95,6 +98,7 @@ describe('Tabs', () => {
 
   it('sets aria-selected=true on the active trigger', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     await user.click(screen.getByRole('tab', { name: 'Tab 2' }))
     expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveAttribute('aria-selected', 'true')
@@ -112,6 +116,7 @@ describe('Tabs', () => {
   it('calls onChange with the new value when a trigger is clicked (controlled)', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
+
     render(<BasicTabs value="tab1" onChange={onChange} />)
     await user.click(screen.getByRole('tab', { name: 'Tab 2' }))
     expect(onChange).toHaveBeenCalledWith('tab2')
@@ -123,6 +128,7 @@ describe('Tabs', () => {
   it('does not switch to a disabled tab on click', async () => {
     const onChange = vi.fn()
     const user = userEvent.setup()
+
     render(<BasicTabs onChange={onChange} />)
     await user.click(screen.getByRole('tab', { name: 'Tab 3' }))
     expect(onChange).not.toHaveBeenCalled()
@@ -138,6 +144,7 @@ describe('Tabs', () => {
 
   it('moves focus to the next tab with ArrowRight', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     screen.getByRole('tab', { name: 'Tab 1' }).focus()
     await user.keyboard('{ArrowRight}')
@@ -146,6 +153,7 @@ describe('Tabs', () => {
 
   it('moves focus to the previous tab with ArrowLeft', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     screen.getByRole('tab', { name: 'Tab 2' }).focus()
     await user.keyboard('{ArrowLeft}')
@@ -154,6 +162,7 @@ describe('Tabs', () => {
 
   it('moves focus to the first tab with Home', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     screen.getByRole('tab', { name: 'Tab 2' }).focus()
     await user.keyboard('{Home}')
@@ -162,6 +171,7 @@ describe('Tabs', () => {
 
   it('moves focus to the last enabled tab with End', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     screen.getByRole('tab', { name: 'Tab 1' }).focus()
     await user.keyboard('{End}')
@@ -174,6 +184,7 @@ describe('Tabs', () => {
 
   it('wraps focus from last to first tab with ArrowRight', async () => {
     const user = userEvent.setup()
+
     render(<BasicTabs />)
     screen.getByRole('tab', { name: 'Tab 2' }).focus()
     await user.keyboard('{ArrowRight}')
@@ -223,6 +234,7 @@ describe('Tabs', () => {
   it('wraps in planet scope when planet prop provided', () => {
     render(<BasicTabs planet="mars" />)
     const wrapper = screen.getByTestId('tabs').closest('[data-void-planet]')
+
     expect(wrapper).toHaveAttribute('data-void-planet', 'mars')
   })
 
@@ -231,6 +243,7 @@ describe('Tabs', () => {
   it('keeps inactive panel in the DOM but hidden', () => {
     render(<BasicTabs defaultValue="tab1" />)
     const panel2 = screen.getByText('Content 2').closest('[role="tabpanel"]')
+
     expect(panel2).toBeInTheDocument()
     expect(panel2).toHaveAttribute('hidden')
   })

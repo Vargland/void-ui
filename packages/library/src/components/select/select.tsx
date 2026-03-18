@@ -76,13 +76,15 @@ export function Select({
   // ─── Close on outside click ──────────────────────────────────────────────
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) {return}
+
     function handleClick(e: MouseEvent) {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
         setIsOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
+
     return () => document.removeEventListener('mousedown', handleClick)
   }, [isOpen])
 
@@ -92,8 +94,10 @@ export function Select({
     if (isOpen && searchable) {
       setTimeout(() => searchRef.current?.focus(), 0)
     }
+
     if (isOpen) {
       const idx = filteredOptions.findIndex(o => o.value === currentValue)
+
       setHighlightedIndex(idx >= 0 ? idx : 0)
     }
   }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -101,7 +105,8 @@ export function Select({
   // ─── Handlers ────────────────────────────────────────────────────────────
 
   const selectOption = useCallback((value: string) => {
-    if (!isControlled) setInternalValue(value)
+    if (!isControlled) {setInternalValue(value)}
+
     onChange?.(value)
     setIsOpen(false)
     setSearchQuery('')
@@ -110,7 +115,9 @@ export function Select({
 
   const clearSelection = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!isControlled) setInternalValue('')
+
+    if (!isControlled) {setInternalValue('')}
+
     onChange?.('')
   }, [isControlled, onChange])
 
@@ -123,6 +130,7 @@ export function Select({
         break
       case 'ArrowDown':
         e.preventDefault()
+
         if (!isOpen) {
           setIsOpen(true)
         } else {
@@ -130,6 +138,7 @@ export function Select({
             Math.min(prev + 1, filteredOptions.length - 1)
           )
         }
+
         break
       case 'ArrowUp':
         e.preventDefault()
@@ -155,9 +164,11 @@ export function Select({
         break
       case 'Enter':
         e.preventDefault()
+
         if (filteredOptions[highlightedIndex] && !filteredOptions[highlightedIndex].disabled) {
           selectOption(filteredOptions[highlightedIndex].value)
         }
+
         break
       case 'Escape':
         setIsOpen(false)

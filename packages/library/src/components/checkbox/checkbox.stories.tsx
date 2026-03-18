@@ -103,6 +103,7 @@ export const WithError: Story = {
 export const Controlled: Story = {
   render: () => {
     const [checked, setChecked] = useState(false)
+
     return (
       <Stack direction="column" gap={3} align="start">
         <Checkbox

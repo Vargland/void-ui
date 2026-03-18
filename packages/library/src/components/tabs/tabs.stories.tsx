@@ -134,6 +134,7 @@ export const Sizes: Story = {
 export const Controlled: Story = {
   render: () => {
     const [active, setActive] = useState('details')
+
     return (
       <Stack direction="column" gap={4}>
         <Tabs value={active} onChange={setActive}>
@@ -270,6 +271,7 @@ export const ManyTabs: Story = {
       'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon',
       'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa',
     ]
+
     return (
       <div style={{ maxWidth: 480 }}>
         <Tabs defaultValue="Alpha">

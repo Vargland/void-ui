@@ -12,6 +12,7 @@ function renderModal(props: Partial<Parameters<typeof Modal>[0]> = {}) {
     title:   'Test Modal',
     ...props,
   }
+
   return render(<Modal {...defaults} />)
 }
 
@@ -75,8 +76,10 @@ describe('Modal', () => {
     renderModal({ title: 'Labelled Modal' })
     const dialog = screen.getByRole('dialog')
     const labelledById = dialog.getAttribute('aria-labelledby')
+
     expect(labelledById).toBeTruthy()
     const titleEl = document.getElementById(labelledById!)
+
     expect(titleEl).toHaveTextContent('Labelled Modal')
   })
 
@@ -84,8 +87,10 @@ describe('Modal', () => {
     renderModal({ description: 'This is the description' })
     const dialog = screen.getByRole('dialog')
     const describedById = dialog.getAttribute('aria-describedby')
+
     expect(describedById).toBeTruthy()
     const descEl = document.getElementById(describedById!)
+
     expect(descEl).toHaveTextContent('This is the description')
   })
 
@@ -104,6 +109,7 @@ describe('Modal', () => {
   it('calls onClose when overlay is clicked and closeOnOverlayClick is true', async () => {
     const user     = userEvent.setup()
     const onClose  = vi.fn()
+
     renderModal({ onClose, closeOnOverlayClick: true })
     await user.click(screen.getByTestId('modal-overlay'))
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -112,6 +118,7 @@ describe('Modal', () => {
   it('does not call onClose when overlay is clicked and closeOnOverlayClick is false', async () => {
     const user    = userEvent.setup()
     const onClose = vi.fn()
+
     renderModal({ onClose, closeOnOverlayClick: false })
     await user.click(screen.getByTestId('modal-overlay'))
     expect(onClose).not.toHaveBeenCalled()
@@ -120,6 +127,7 @@ describe('Modal', () => {
   it('does not call onClose when the dialog itself is clicked', async () => {
     const user    = userEvent.setup()
     const onClose = vi.fn()
+
     renderModal({ onClose, closeOnOverlayClick: true })
     await user.click(screen.getByRole('dialog'))
     expect(onClose).not.toHaveBeenCalled()
@@ -130,6 +138,7 @@ describe('Modal', () => {
   it('calls onClose when Escape is pressed and closeOnEscape is true', async () => {
     const user    = userEvent.setup()
     const onClose = vi.fn()
+
     renderModal({ onClose, closeOnEscape: true })
     await user.keyboard('{Escape}')
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -138,6 +147,7 @@ describe('Modal', () => {
   it('does not call onClose when Escape is pressed and closeOnEscape is false', async () => {
     const user    = userEvent.setup()
     const onClose = vi.fn()
+
     renderModal({ onClose, closeOnEscape: false })
     await user.keyboard('{Escape}')
     expect(onClose).not.toHaveBeenCalled()
@@ -148,6 +158,7 @@ describe('Modal', () => {
   it('calls onClose when the close button is clicked', async () => {
     const user    = userEvent.setup()
     const onClose = vi.fn()
+
     renderModal({ onClose, title: 'Dialog' })
     await user.click(screen.getByTestId('modal-close'))
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -168,6 +179,7 @@ describe('Modal', () => {
   it('restores body overflow when unmounted', () => {
     document.body.style.overflow = 'auto'
     const { unmount } = renderModal({ isOpen: true })
+
     unmount()
     expect(document.body.style.overflow).toBe('auto')
   })
@@ -225,6 +237,7 @@ describe('Modal', () => {
   it('renders a close button that is focusable', () => {
     renderModal({ title: 'Focusable' })
     const closeBtn = screen.getByTestId('modal-close')
+
     expect(closeBtn).toBeInTheDocument()
     expect(closeBtn.tagName).toBe('BUTTON')
   })

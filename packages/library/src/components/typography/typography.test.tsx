@@ -21,8 +21,9 @@ describe('Typography', () => {
   })
 
   it('renders heading tags', () => {
-    ;(['h1','h2','h3','h4','h5','h6'] as const).forEach(tag => {
+    (['h1','h2','h3','h4','h5','h6'] as const).forEach(tag => {
       const { unmount } = render(<Typography as={tag}>{tag}</Typography>)
+
       expect(screen.getByTestId('typography').tagName).toBe(tag.toUpperCase())
       unmount()
     })

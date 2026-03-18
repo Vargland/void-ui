@@ -23,9 +23,11 @@ const TabsContext = createContext<TabsContextValue | null>(null)
 
 function useTabsContext(): TabsContextValue {
   const ctx = useContext(TabsContext)
+
   if (!ctx) {
     throw new Error('Tabs compound components must be used inside <Tabs>.')
   }
+
   return ctx
 }
 
@@ -50,7 +52,8 @@ export function Tabs({
 
   const setActiveValue = useCallback(
     (value: string) => {
-      if (!isControlled) setInternalValue(value)
+      if (!isControlled) {setInternalValue(value)}
+
       onChange?.(value)
     },
     [isControlled, onChange],
@@ -91,14 +94,16 @@ export function TabsList({
 
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     const list = listRef.current
-    if (!list) return
+
+    if (!list) {return}
 
     const triggers = Array.from(
       list.querySelectorAll<HTMLButtonElement>(
         '[role="tab"]:not([disabled])',
       ),
     )
-    if (triggers.length === 0) return
+
+    if (triggers.length === 0) {return}
 
     const focused = document.activeElement as HTMLButtonElement
     const currentIndex = triggers.indexOf(focused)
@@ -107,12 +112,14 @@ export function TabsList({
       case 'ArrowRight': {
         e.preventDefault()
         const next = (currentIndex + 1) % triggers.length
+
         triggers[next]!.focus()
         break
       }
       case 'ArrowLeft': {
         e.preventDefault()
         const prev = (currentIndex - 1 + triggers.length) % triggers.length
+
         triggers[prev]!.focus()
         break
       }
@@ -159,7 +166,7 @@ export function TabsTrigger({
   const panelId = `${idPrefix}-panel-${value}`
 
   const handleClick = useCallback(() => {
-    if (!disabled) setActiveValue(value)
+    if (!disabled) {setActiveValue(value)}
   }, [disabled, setActiveValue, value])
 
   return (

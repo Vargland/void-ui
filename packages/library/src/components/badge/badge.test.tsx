@@ -66,6 +66,7 @@ describe('Badge', () => {
   it('renders dot mode without children', () => {
     render(<Badge dot data-testid="dot-badge">ignored</Badge>)
     const badge = screen.getByTestId('dot-badge')
+
     expect(badge.className).toMatch(/dot/)
     expect(badge).toBeEmptyDOMElement()
   })
@@ -75,6 +76,7 @@ describe('Badge', () => {
   it('wraps in planet scope when planet prop is provided', () => {
     render(<Badge planet="mars">Mars</Badge>)
     const badge = screen.getByTestId('badge')
+
     expect(badge.closest('[data-void-planet="mars"]')).toBeInTheDocument()
   })
 

@@ -71,6 +71,7 @@ export const Disabled: Story = {
 export const Controlled: Story = {
   render: () => {
     const [value, setValue] = useState('earth')
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 320 }}>
         <Select

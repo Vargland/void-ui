@@ -157,10 +157,12 @@ export const WithSorting: Story = {
     }
 
     const sorted = [...ASTRONAUTS].sort((a, b) => {
-      if (!sortField) return 0
+      if (!sortField) {return 0}
+
       const av = a[sortField]
       const bv = b[sortField]
-      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av) - (bv as number)
+
       return sortDir === 'asc' ? cmp : -cmp
     })
 

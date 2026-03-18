@@ -40,20 +40,23 @@ export function Modal({
   // ─── Focus trap & body scroll lock ────────────────────────────────────────
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) {return}
 
     // Store element that had focus before the modal opened
     previousFocus.current = document.activeElement as HTMLElement
 
     // Lock body scroll
     const previousOverflow = document.body.style.overflow
+
     document.body.style.overflow = 'hidden'
 
     // Focus first focusable element inside the dialog
     const frame = requestAnimationFrame(() => {
-      if (!dialogRef.current) return
+      if (!dialogRef.current) {return}
+
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)
       const first = focusable[0]
+
       if (first) {
         first.focus()
       } else {
@@ -75,7 +78,8 @@ export function Modal({
   // ─── Escape key (document-level listener) ────────────────────────────────
 
   useEffect(() => {
-    if (!isOpen || !closeOnEscape) return
+    if (!isOpen || !closeOnEscape) {return}
+
     function handleEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         event.stopPropagation()
@@ -83,6 +87,7 @@ export function Modal({
       }
     }
     document.addEventListener('keydown', handleEscape)
+
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, closeOnEscape, onClose])
 
@@ -97,6 +102,7 @@ export function Modal({
 
         if (focusable.length === 0) {
           event.preventDefault()
+
           return
         }
 
@@ -132,7 +138,7 @@ export function Modal({
 
   // ─── Guard ────────────────────────────────────────────────────────────────
 
-  if (!isOpen) return null
+  if (!isOpen) {return null}
 
   // ─── Dialog ───────────────────────────────────────────────────────────────
 

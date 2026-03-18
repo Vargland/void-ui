@@ -50,6 +50,7 @@ describe('Checkbox', () => {
   it('associates label with input via htmlFor/id', () => {
     render(<Checkbox label="Accept" id="my-cb" />)
     const label = screen.getByText('Accept')
+
     expect(label).toHaveAttribute('for', 'my-cb')
     expect(screen.getByTestId('checkbox')).toHaveAttribute('id', 'my-cb')
   })
@@ -58,8 +59,10 @@ describe('Checkbox', () => {
     render(<Checkbox label="Auto ID" />)
     const input = screen.getByTestId('checkbox')
     const id = input.getAttribute('id')
+
     expect(id).toBeTruthy()
     const label = screen.getByText('Auto ID')
+
     expect(label).toHaveAttribute('for', id)
   })
 
@@ -83,6 +86,7 @@ describe('Checkbox', () => {
   it('does not fire onChange when disabled', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()
+
     render(<Checkbox disabled onChange={onChange} label="Test" />)
     await user.click(screen.getByText('Test'))
     expect(onChange).not.toHaveBeenCalled()
@@ -103,6 +107,7 @@ describe('Checkbox', () => {
   it('fires onChange when clicked', async () => {
     const user = userEvent.setup()
     const onChange = vi.fn()
+
     render(<Checkbox label="Click me" onChange={onChange} />)
     await user.click(screen.getByText('Click me'))
     expect(onChange).toHaveBeenCalledTimes(1)

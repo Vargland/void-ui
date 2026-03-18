@@ -41,6 +41,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false)
+
     return (
       <div data-void-planet={args.planet ?? 'mercury'}>
         <Button onClick={() => setOpen(true)}>Open Modal</Button>

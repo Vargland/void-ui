@@ -25,6 +25,7 @@ describe('TextField', () => {
     render(<TextField label="Email" />)
     const label = screen.getByText('Email')
     const input = screen.getByTestId('textfield-native')
+
     expect(label).toHaveAttribute('for', input.id)
   })
 
@@ -143,6 +144,7 @@ describe('TextField', () => {
 
   it('fires onChange when user types', async () => {
     const onChange = vi.fn()
+
     render(<TextField onChange={onChange} />)
     await userEvent.type(screen.getByTestId('textfield-native'), 'hello')
     expect(onChange).toHaveBeenCalled()

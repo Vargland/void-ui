@@ -13,6 +13,7 @@ let _counter = 0
 
 function generateId(): string {
   _counter += 1
+
   return `toast-${Date.now()}-${_counter}`
 }
 
@@ -53,7 +54,9 @@ export function useToast(): UseToastReturn {
       ...(options.description !== undefined && { description: options.description }),
       ...(options.action !== undefined && { action: options.action }),
     }
+
     setToasts(prev => [...prev, item])
+
     return id
   }, [])
 
@@ -64,6 +67,7 @@ export function useToast(): UseToastReturn {
     options: ToastOptions & { variant?: ToastVariant } = {},
   ): string => {
     const { variant = 'default', ...rest } = options
+
     return add(title, variant, rest)
   }, [add]) as ToastMethods
 

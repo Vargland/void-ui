@@ -98,6 +98,7 @@ describe('Toast', () => {
   it('calls onClose when close button is clicked', async () => {
     const user    = userEvent.setup()
     const onClose = vi.fn()
+
     render(<Toast title="Closeable" onClose={onClose} duration={0} />)
     await user.click(screen.getByTestId('toast-close'))
     // onClose fires after the exit animation delay (200ms)
@@ -122,6 +123,7 @@ describe('Toast', () => {
   it('calls action.onClick when action button is clicked', async () => {
     const user     = userEvent.setup()
     const onClick  = vi.fn()
+
     render(<Toast title="With action" action={{ label: 'Retry', onClick }} />)
     await user.click(screen.getByTestId('toast-action'))
     expect(onClick).toHaveBeenCalledTimes(1)
@@ -144,6 +146,7 @@ describe('Toast', () => {
   it('calls onClose after duration elapses', async () => {
     vi.useFakeTimers()
     const onClose = vi.fn()
+
     render(<Toast title="Auto dismiss" duration={1000} onClose={onClose} />)
     act(() => { vi.advanceTimersByTime(1000) })
     act(() => { vi.advanceTimersByTime(250) })
@@ -154,6 +157,7 @@ describe('Toast', () => {
   it('does not call onClose when duration is 0', async () => {
     vi.useFakeTimers()
     const onClose = vi.fn()
+
     render(<Toast title="No auto" duration={0} onClose={onClose} />)
     act(() => { vi.advanceTimersByTime(10000) })
     expect(onClose).not.toHaveBeenCalled()
@@ -202,8 +206,10 @@ describe('ToastContainer', () => {
   it('calls onDismiss with the correct toast id when close is clicked', async () => {
     const user      = userEvent.setup()
     const onDismiss = vi.fn()
+
     render(<ToastContainer toasts={mockToasts} onDismiss={onDismiss} />)
     const closeButtons = screen.getAllByRole('button', { name: /dismiss/i })
+
     await user.click(closeButtons[0])
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 250))
@@ -236,6 +242,7 @@ describe('ToastContainer', () => {
   it('renders empty container when toasts array is empty', () => {
     render(<ToastContainer toasts={[]} onDismiss={vi.fn()} />)
     const container = screen.getByTestId('toast-container')
+
     expect(container.querySelectorAll('[role="alert"]')).toHaveLength(0)
   })
 })
@@ -246,12 +253,14 @@ describe('useToast', () => {
 
   it('initializes with empty toasts array', () => {
     const { result } = renderHook(() => useToast())
+
     expect(result.current.toasts).toEqual([])
   })
 
   it('toast() adds a toast and returns an id', () => {
     const { result } = renderHook(() => useToast())
     let id: string
+
     act(() => {
       id = result.current.toast('Hello world')
     })
@@ -263,6 +272,7 @@ describe('useToast', () => {
 
   it('toast.success() adds a success toast', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast.success('Done!') })
     expect(result.current.toasts[0].variant).toBe('success')
     expect(result.current.toasts[0].title).toBe('Done!')
@@ -270,30 +280,35 @@ describe('useToast', () => {
 
   it('toast.error() adds an error toast', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast.error('Something failed') })
     expect(result.current.toasts[0].variant).toBe('error')
   })
 
   it('toast.warning() adds a warning toast', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast.warning('Watch out') })
     expect(result.current.toasts[0].variant).toBe('warning')
   })
 
   it('toast.info() adds an info toast', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast.info('Just so you know') })
     expect(result.current.toasts[0].variant).toBe('info')
   })
 
   it('toast() with variant option sets the variant', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast('Custom', { variant: 'warning' }) })
     expect(result.current.toasts[0].variant).toBe('warning')
   })
 
   it('toast() with description sets the description', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast('Title', { description: 'More info' }) })
     expect(result.current.toasts[0].description).toBe('More info')
   })
@@ -301,6 +316,7 @@ describe('useToast', () => {
   it('dismiss() removes a specific toast', () => {
     const { result } = renderHook(() => useToast())
     let id: string
+
     act(() => { id = result.current.toast('Remove me') })
     act(() => { result.current.dismiss(id!) })
     expect(result.current.toasts).toHaveLength(0)
@@ -309,6 +325,7 @@ describe('useToast', () => {
   it('dismiss() only removes the targeted toast', () => {
     const { result } = renderHook(() => useToast())
     let id1: string
+
     act(() => { id1 = result.current.toast('Keep me') })
     act(() => { result.current.toast('Also keep') })
     act(() => { result.current.dismiss(id1!) })
@@ -318,6 +335,7 @@ describe('useToast', () => {
 
   it('dismissAll() removes all toasts', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => {
       result.current.toast('One')
       result.current.toast('Two')
@@ -330,22 +348,26 @@ describe('useToast', () => {
 
   it('each toast has a unique id', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => {
       result.current.toast('One')
       result.current.toast('Two')
     })
     const ids = result.current.toasts.map(t => t.id)
+
     expect(new Set(ids).size).toBe(2)
   })
 
   it('toast() uses default duration of 5000', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast('Hello') })
     expect(result.current.toasts[0].duration).toBe(5000)
   })
 
   it('toast() respects custom duration', () => {
     const { result } = renderHook(() => useToast())
+
     act(() => { result.current.toast('Hello', { duration: 0 }) })
     expect(result.current.toasts[0].duration).toBe(0)
   })

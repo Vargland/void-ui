@@ -76,7 +76,9 @@ export function Select({
   // ─── Close on outside click ──────────────────────────────────────────────
 
   useEffect(() => {
-    if (!isOpen) {return}
+    if (!isOpen) {
+                   return
+                 }
 
     function handleClick(e: MouseEvent) {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
@@ -105,18 +107,25 @@ export function Select({
   // ─── Handlers ────────────────────────────────────────────────────────────
 
   const selectOption = useCallback((value: string) => {
-    if (!isControlled) {setInternalValue(value)}
+    if (!isControlled) {
+                         setInternalValue ( value )
+                       }
 
     onChange?.(value)
+
     setIsOpen(false)
+
     setSearchQuery('')
+
     triggerRef.current?.focus()
   }, [isControlled, onChange])
 
   const clearSelection = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
 
-    if (!isControlled) {setInternalValue('')}
+    if (!isControlled) {
+                         setInternalValue ( '' )
+                       }
 
     onChange?.('')
   }, [isControlled, onChange])
@@ -126,6 +135,7 @@ export function Select({
       case 'Enter':
       case ' ':
         e.preventDefault()
+
         setIsOpen(prev => !prev)
         break
       case 'ArrowDown':
@@ -142,6 +152,7 @@ export function Select({
         break
       case 'ArrowUp':
         e.preventDefault()
+
         setHighlightedIndex(prev => Math.max(prev - 1, 0))
         break
       case 'Escape':
@@ -154,12 +165,14 @@ export function Select({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
+
         setHighlightedIndex(prev =>
           Math.min(prev + 1, filteredOptions.length - 1)
         )
         break
       case 'ArrowUp':
         e.preventDefault()
+
         setHighlightedIndex(prev => Math.max(prev - 1, 0))
         break
       case 'Enter':
@@ -172,6 +185,7 @@ export function Select({
         break
       case 'Escape':
         setIsOpen(false)
+
         triggerRef.current?.focus()
         break
     }
@@ -252,6 +266,7 @@ export function Select({
                 value={searchQuery}
                 onChange={e => {
                   setSearchQuery(e.target.value)
+
                   setHighlightedIndex(0)
                 }}
                 placeholder="Search…"

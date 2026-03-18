@@ -49,11 +49,13 @@ describe('Tabs', () => {
 
   it('renders without crashing', () => {
     render(<BasicTabs />)
+
     expect(screen.getByTestId('tabs')).toBeInTheDocument()
   })
 
   it('renders the tablist', () => {
     render(<BasicTabs />)
+
     expect(screen.getByRole('tablist')).toBeInTheDocument()
   })
 
@@ -75,13 +77,17 @@ describe('Tabs', () => {
 
   it('activates the defaultValue tab on mount', () => {
     render(<BasicTabs defaultValue="tab1" />)
+
     expect(screen.getByText('Content 1')).not.toHaveAttribute('hidden')
+
     expect(screen.getByText('Content 2')).toHaveAttribute('hidden')
   })
 
   it('activates a different defaultValue tab', () => {
     render(<BasicTabs defaultValue="tab2" />)
+
     expect(screen.getByText('Content 2')).not.toHaveAttribute('hidden')
+
     expect(screen.getByText('Content 1')).toHaveAttribute('hidden')
   })
 
@@ -91,8 +97,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     await user.click(screen.getByRole('tab', { name: 'Tab 2' }))
+
     expect(screen.getByText('Content 2')).not.toHaveAttribute('hidden')
+
     expect(screen.getByText('Content 1')).toHaveAttribute('hidden')
   })
 
@@ -100,8 +109,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     await user.click(screen.getByRole('tab', { name: 'Tab 2' }))
+
     expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveAttribute('aria-selected', 'true')
+
     expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveAttribute('aria-selected', 'false')
   })
 
@@ -109,7 +121,9 @@ describe('Tabs', () => {
 
   it('respects controlled value', () => {
     render(<BasicTabs value="tab2" onChange={vi.fn()} />)
+
     expect(screen.getByText('Content 2')).not.toHaveAttribute('hidden')
+
     expect(screen.getByText('Content 1')).toHaveAttribute('hidden')
   })
 
@@ -118,8 +132,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs value="tab1" onChange={onChange} />)
+
     await user.click(screen.getByRole('tab', { name: 'Tab 2' }))
+
     expect(onChange).toHaveBeenCalledWith('tab2')
+
     expect(onChange).toHaveBeenCalledTimes(1)
   })
 
@@ -130,13 +147,17 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs onChange={onChange} />)
+
     await user.click(screen.getByRole('tab', { name: 'Tab 3' }))
+
     expect(onChange).not.toHaveBeenCalled()
+
     expect(screen.getByText('Content 1')).not.toHaveAttribute('hidden')
   })
 
   it('renders a disabled trigger with disabled attribute', () => {
     render(<BasicTabs />)
+
     expect(screen.getByRole('tab', { name: 'Tab 3' })).toBeDisabled()
   })
 
@@ -146,8 +167,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     screen.getByRole('tab', { name: 'Tab 1' }).focus()
+
     await user.keyboard('{ArrowRight}')
+
     expect(screen.getByRole('tab', { name: 'Tab 2' })).toHaveFocus()
   })
 
@@ -155,8 +179,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     screen.getByRole('tab', { name: 'Tab 2' }).focus()
+
     await user.keyboard('{ArrowLeft}')
+
     expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveFocus()
   })
 
@@ -164,8 +191,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     screen.getByRole('tab', { name: 'Tab 2' }).focus()
+
     await user.keyboard('{Home}')
+
     expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveFocus()
   })
 
@@ -173,8 +203,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     screen.getByRole('tab', { name: 'Tab 1' }).focus()
+
     await user.keyboard('{End}')
+
     // Tab 3 is disabled so it is excluded from keyboard navigation
     // the last reachable trigger in the DOM is Tab 2 (enabled), Tab 3 is disabled
     // ArrowRight / End skips disabled, so expect Tab 2
@@ -186,8 +219,11 @@ describe('Tabs', () => {
     const user = userEvent.setup()
 
     render(<BasicTabs />)
+
     screen.getByRole('tab', { name: 'Tab 2' }).focus()
+
     await user.keyboard('{ArrowRight}')
+
     expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveFocus()
   })
 
@@ -199,11 +235,13 @@ describe('Tabs', () => {
     const panel = screen.getByText('Content 1').closest('[role="tabpanel"]')
 
     expect(trigger).toHaveAttribute('aria-controls', panel?.id)
+
     expect(panel).toHaveAttribute('aria-labelledby', trigger.id)
   })
 
   it('sets tablist aria-label', () => {
     render(<BasicTabs />)
+
     expect(screen.getByRole('tablist')).toHaveAttribute('aria-label', 'Demo tabs')
   })
 
@@ -211,11 +249,13 @@ describe('Tabs', () => {
 
   it('renders line variant without crashing', () => {
     render(<BasicTabs variant="line" />)
+
     expect(screen.getByTestId('tabs')).toBeInTheDocument()
   })
 
   it('renders solid variant without crashing', () => {
     render(<BasicTabs variant="solid" />)
+
     expect(screen.getByTestId('tabs')).toBeInTheDocument()
   })
 
@@ -225,6 +265,7 @@ describe('Tabs', () => {
     'renders size "%s" without crashing',
     (size) => {
       render(<BasicTabs size={size} />)
+
       expect(screen.getByTestId('tabs')).toBeInTheDocument()
     },
   )
@@ -245,6 +286,7 @@ describe('Tabs', () => {
     const panel2 = screen.getByText('Content 2').closest('[role="tabpanel"]')
 
     expect(panel2).toBeInTheDocument()
+
     expect(panel2).toHaveAttribute('hidden')
   })
 
@@ -257,6 +299,7 @@ describe('Tabs', () => {
         <TabsContent value="a">A content</TabsContent>
       </Tabs>,
     )
+
     expect(screen.getByTestId('my-tabs')).toBeInTheDocument()
   })
 })

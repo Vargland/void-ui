@@ -199,6 +199,7 @@ export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(
             ? (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
+
                   onSort?.()
                 }
               }

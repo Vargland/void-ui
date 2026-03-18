@@ -40,7 +40,9 @@ export function Modal({
   // ─── Focus trap & body scroll lock ────────────────────────────────────────
 
   useEffect(() => {
-    if (!isOpen) {return}
+    if (!isOpen) {
+                   return
+                 }
 
     // Store element that had focus before the modal opened
     previousFocus.current = document.activeElement as HTMLElement
@@ -52,7 +54,9 @@ export function Modal({
 
     // Focus first focusable element inside the dialog
     const frame = requestAnimationFrame(() => {
-      if (!dialogRef.current) {return}
+      if (!dialogRef.current) {
+                                return
+                              }
 
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)
       const first = focusable[0]
@@ -66,6 +70,7 @@ export function Modal({
 
     return () => {
       cancelAnimationFrame(frame)
+
       document.body.style.overflow = previousOverflow
 
       // Restore focus to the element that was active before opening
@@ -78,11 +83,14 @@ export function Modal({
   // ─── Escape key (document-level listener) ────────────────────────────────
 
   useEffect(() => {
-    if (!isOpen || !closeOnEscape) {return}
+    if (!isOpen || !closeOnEscape) {
+                                     return
+                                   }
 
     function handleEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         event.stopPropagation()
+
         onClose()
       }
     }
@@ -112,11 +120,13 @@ export function Modal({
         if (event.shiftKey) {
           if (document.activeElement === first) {
             event.preventDefault()
+
             last.focus()
           }
         } else {
           if (document.activeElement === last) {
             event.preventDefault()
+
             first.focus()
           }
         }
@@ -138,7 +148,9 @@ export function Modal({
 
   // ─── Guard ────────────────────────────────────────────────────────────────
 
-  if (!isOpen) {return null}
+  if (!isOpen) {
+                 return null
+               }
 
   // ─── Dialog ───────────────────────────────────────────────────────────────
 

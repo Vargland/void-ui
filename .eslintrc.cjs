@@ -1,3 +1,4 @@
+
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
@@ -20,7 +21,7 @@ module.exports = {
     project: ['./tsconfig.base.json', './packages/*/tsconfig.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['@typescript-eslint', 'react', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'void-ui'],
   rules: {
     // React
     'react/react-in-jsx-scope': 'off',
@@ -44,8 +45,11 @@ module.exports = {
     // All if/else/for/while bodies must use braces — no single-line ifs
     'curly': ['error', 'all'],
 
-    // Blank line between declarations (const, let, var, function, class, if, return, etc.)
-    // Does NOT apply to imports (they are excluded by default)
+    // Block body must not be on a single line — if (!x) { return } is invalid
+    'void-ui/no-single-line-block': 'error',
+
+    // Blank line between statements — applies to declarations and expressions
+    // Does NOT apply to imports (excluded by default)
     'padding-line-between-statements': [
       'error',
       // blank line BEFORE return
@@ -59,6 +63,8 @@ module.exports = {
       { blankLine: 'always', prev: 'if', next: '*' },
       // blank line BEFORE function declarations
       { blankLine: 'always', prev: '*', next: 'function' },
+      // blank line between consecutive expressions (e.g. render(), await calls in tests)
+      { blankLine: 'always', prev: 'expression', next: 'expression' },
     ],
   },
   settings: {

@@ -52,7 +52,9 @@ export function Tabs({
 
   const setActiveValue = useCallback(
     (value: string) => {
-      if (!isControlled) {setInternalValue(value)}
+      if (!isControlled) {
+                           setInternalValue ( value )
+                         }
 
       onChange?.(value)
     },
@@ -95,7 +97,9 @@ export function TabsList({
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
     const list = listRef.current
 
-    if (!list) {return}
+    if (!list) {
+                 return
+               }
 
     const triggers = Array.from(
       list.querySelectorAll<HTMLButtonElement>(
@@ -103,7 +107,9 @@ export function TabsList({
       ),
     )
 
-    if (triggers.length === 0) {return}
+    if (triggers.length === 0) {
+                                 return
+                               }
 
     const focused = document.activeElement as HTMLButtonElement
     const currentIndex = triggers.indexOf(focused)
@@ -125,11 +131,13 @@ export function TabsList({
       }
       case 'Home': {
         e.preventDefault()
+
         triggers[0]!.focus()
         break
       }
       case 'End': {
         e.preventDefault()
+
         triggers[triggers.length - 1]!.focus()
         break
       }
@@ -166,7 +174,9 @@ export function TabsTrigger({
   const panelId = `${idPrefix}-panel-${value}`
 
   const handleClick = useCallback(() => {
-    if (!disabled) {setActiveValue(value)}
+    if (!disabled) {
+                     setActiveValue ( value )
+                   }
   }, [disabled, setActiveValue, value])
 
   return (

@@ -19,7 +19,9 @@ export function Tooltip({
   const tooltipId             = useId()
 
   const show = useCallback(() => {
-    if (disabled) {return}
+    if (disabled) {
+                    return
+                  }
 
     timeoutRef.current = setTimeout(() => setVisible(true), delay)
   }, [disabled, delay])
@@ -27,6 +29,7 @@ export function Tooltip({
   const hide = useCallback(() => {
     if (timeoutRef.current !== null) {
       clearTimeout(timeoutRef.current)
+
       timeoutRef.current = null
     }
 

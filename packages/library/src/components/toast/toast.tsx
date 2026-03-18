@@ -34,9 +34,12 @@ export function Toast({
   // ─── Handle dismiss with exit animation ───────────────────────────────────
 
   function handleDismiss() {
-    if (exiting) {return}
+    if (exiting) {
+                   return
+                 }
 
     setExiting(true)
+
     // Wait for animation to complete before calling onClose
     setTimeout(() => {
       onClose?.()
@@ -46,7 +49,9 @@ export function Toast({
   // ─── Auto-dismiss timer ───────────────────────────────────────────────────
 
   useEffect(() => {
-    if (duration === 0) {return}
+    if (duration === 0) {
+                          return
+                        }
 
     timerRef.current = setTimeout(() => {
       handleDismiss()

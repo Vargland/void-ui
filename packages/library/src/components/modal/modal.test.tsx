@@ -24,16 +24,19 @@ describe('Modal', () => {
 
   it('renders the dialog when isOpen is true', () => {
     renderModal({ isOpen: true })
+
     expect(screen.getByTestId('modal')).toBeInTheDocument()
   })
 
   it('does not render when isOpen is false', () => {
     renderModal({ isOpen: false })
+
     expect(screen.queryByTestId('modal')).not.toBeInTheDocument()
   })
 
   it('renders the overlay when open', () => {
     renderModal({ isOpen: true })
+
     expect(screen.getByTestId('modal-overlay')).toBeInTheDocument()
   })
 
@@ -41,22 +44,27 @@ describe('Modal', () => {
 
   it('renders the title', () => {
     renderModal({ title: 'My Dialog Title' })
+
     expect(screen.getByText('My Dialog Title')).toBeInTheDocument()
   })
 
   it('renders children in the body', () => {
     renderModal({ children: <p>Body content here</p> })
+
     expect(screen.getByText('Body content here')).toBeInTheDocument()
   })
 
   it('renders footer when provided', () => {
     renderModal({ footer: <button>Confirm</button> })
+
     expect(screen.getByText('Confirm')).toBeInTheDocument()
+
     expect(screen.getByTestId('modal-footer')).toBeInTheDocument()
   })
 
   it('does not render footer when not provided', () => {
     renderModal({ footer: undefined })
+
     expect(screen.queryByTestId('modal-footer')).not.toBeInTheDocument()
   })
 
@@ -64,11 +72,13 @@ describe('Modal', () => {
 
   it('has role="dialog"', () => {
     renderModal()
+
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
   it('has aria-modal="true"', () => {
     renderModal()
+
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true')
   })
 
@@ -96,11 +106,13 @@ describe('Modal', () => {
 
   it('does not set aria-labelledby when title is not provided', () => {
     renderModal({ title: undefined })
+
     expect(screen.getByRole('dialog')).not.toHaveAttribute('aria-labelledby')
   })
 
   it('does not set aria-describedby when description is not provided', () => {
     renderModal({ description: undefined })
+
     expect(screen.getByRole('dialog')).not.toHaveAttribute('aria-describedby')
   })
 
@@ -111,7 +123,9 @@ describe('Modal', () => {
     const onClose  = vi.fn()
 
     renderModal({ onClose, closeOnOverlayClick: true })
+
     await user.click(screen.getByTestId('modal-overlay'))
+
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
@@ -120,7 +134,9 @@ describe('Modal', () => {
     const onClose = vi.fn()
 
     renderModal({ onClose, closeOnOverlayClick: false })
+
     await user.click(screen.getByTestId('modal-overlay'))
+
     expect(onClose).not.toHaveBeenCalled()
   })
 
@@ -129,7 +145,9 @@ describe('Modal', () => {
     const onClose = vi.fn()
 
     renderModal({ onClose, closeOnOverlayClick: true })
+
     await user.click(screen.getByRole('dialog'))
+
     expect(onClose).not.toHaveBeenCalled()
   })
 
@@ -140,7 +158,9 @@ describe('Modal', () => {
     const onClose = vi.fn()
 
     renderModal({ onClose, closeOnEscape: true })
+
     await user.keyboard('{Escape}')
+
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
@@ -149,7 +169,9 @@ describe('Modal', () => {
     const onClose = vi.fn()
 
     renderModal({ onClose, closeOnEscape: false })
+
     await user.keyboard('{Escape}')
+
     expect(onClose).not.toHaveBeenCalled()
   })
 
@@ -160,12 +182,15 @@ describe('Modal', () => {
     const onClose = vi.fn()
 
     renderModal({ onClose, title: 'Dialog' })
+
     await user.click(screen.getByTestId('modal-close'))
+
     expect(onClose).toHaveBeenCalledTimes(1)
   })
 
   it('renders the close button with aria-label', () => {
     renderModal({ title: 'Dialog' })
+
     expect(screen.getByLabelText('Close dialog')).toBeInTheDocument()
   })
 
@@ -173,6 +198,7 @@ describe('Modal', () => {
 
   it('locks body overflow when open', () => {
     renderModal({ isOpen: true })
+
     expect(document.body.style.overflow).toBe('hidden')
   })
 
@@ -181,6 +207,7 @@ describe('Modal', () => {
     const { unmount } = renderModal({ isOpen: true })
 
     unmount()
+
     expect(document.body.style.overflow).toBe('auto')
   })
 
@@ -190,12 +217,14 @@ describe('Modal', () => {
     'renders size "%s" without crashing',
     (size) => {
       renderModal({ size })
+
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     },
   )
 
   it('applies size class to the dialog', () => {
     renderModal({ size: 'lg' })
+
     expect(screen.getByTestId('modal').className).toMatch(/size-lg/)
   })
 
@@ -203,11 +232,13 @@ describe('Modal', () => {
 
   it('uses default data-testid="modal"', () => {
     renderModal()
+
     expect(screen.getByTestId('modal')).toBeInTheDocument()
   })
 
   it('uses custom data-testid', () => {
     renderModal({ 'data-testid': 'confirm-dialog' })
+
     expect(screen.getByTestId('confirm-dialog')).toBeInTheDocument()
   })
 
@@ -215,6 +246,7 @@ describe('Modal', () => {
 
   it('wraps content in planet scope when planet prop is provided', () => {
     renderModal({ planet: 'saturn' })
+
     expect(
       screen.getByTestId('modal').closest('[data-void-planet="saturn"]'),
     ).toBeInTheDocument()
@@ -222,6 +254,7 @@ describe('Modal', () => {
 
   it('does not add planet wrapper when planet prop is omitted', () => {
     renderModal({ planet: undefined })
+
     expect(document.querySelector('[data-void-planet]')).toBeNull()
   })
 
@@ -229,6 +262,7 @@ describe('Modal', () => {
 
   it('applies a custom className to the dialog', () => {
     renderModal({ className: 'my-modal' })
+
     expect(screen.getByTestId('modal').className).toMatch(/my-modal/)
   })
 
@@ -239,6 +273,7 @@ describe('Modal', () => {
     const closeBtn = screen.getByTestId('modal-close')
 
     expect(closeBtn).toBeInTheDocument()
+
     expect(closeBtn.tagName).toBe('BUTTON')
   })
 
@@ -246,6 +281,7 @@ describe('Modal', () => {
 
   it('does not render header section when title is not provided', () => {
     renderModal({ title: undefined })
+
     expect(screen.queryByTestId('modal-close')).not.toBeInTheDocument()
   })
 
@@ -253,6 +289,7 @@ describe('Modal', () => {
 
   it('renders modal body with testid', () => {
     renderModal({ children: <span>Content</span> })
+
     expect(screen.getByTestId('modal-body')).toBeInTheDocument()
   })
 })

@@ -152,12 +152,15 @@ export const WithSorting: Story = {
         setSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'))
       } else {
         setSortField(field)
+
         setSortDir('asc')
       }
     }
 
     const sorted = [...ASTRONAUTS].sort((a, b) => {
-      if (!sortField) {return 0}
+      if (!sortField) {
+                        return 0
+                      }
 
       const av = a[sortField]
       const bv = b[sortField]

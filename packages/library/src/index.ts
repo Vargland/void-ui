@@ -82,3 +82,4 @@ export { useToast } from './hooks/use-toast'
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 import './static/styles/reset.css'
+import './static/styles/utils.css'

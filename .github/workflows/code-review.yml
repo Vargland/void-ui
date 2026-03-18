@@ -51,11 +51,13 @@ jobs:
         id: claude-review
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          FILES: ${{ steps.files.outputs.list }}
+          PR_DIFF: ${{ steps.diff.outputs.diff }}
         run: |
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_BODY="${{ github.event.pull_request.body }}"
-          FILES="${{ steps.files.outputs.list }}"
-          DIFF='${{ steps.diff.outputs.diff }}'
+          # Write diff to file to avoid shell quoting issues with special chars
+          printf '%s' "$PR_DIFF" > /tmp/pr_diff.txt
 
           RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
             -H "x-api-key: $ANTHROPIC_API_KEY" \
@@ -65,7 +67,7 @@ jobs:
               --arg title "$PR_TITLE" \
               --arg body "$PR_BODY" \
               --arg files "$FILES" \
-              --arg diff "$DIFF" \
+              --rawfile diff /tmp/pr_diff.txt \
               '{
                 model: "claude-opus-4-5",
                 max_tokens: 1024,

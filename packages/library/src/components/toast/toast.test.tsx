@@ -417,7 +417,7 @@ describe('useToast', () => {
 
       result.current.toast('Two')
     })
-    const ids = result.current.toasts.map(t => t.id)
+    const ids = result.current.toasts.map(toast => toast.id)
 
     expect(new Set(ids).size).toBe(2)
   })

@@ -1,4 +1,4 @@
-import { useRef, useEffect, useId } from 'react'
+import * as React from 'react'
 import type { CheckboxProps } from '../../typings/components/checkbox'
 import { cn } from '../../helpers/classnames'
 import styles from './checkbox.module.scss'
@@ -18,11 +18,11 @@ export function Checkbox({
   planet,
   ...rest
 }: CheckboxProps) {
-  const autoId = useId()
+  const autoId = React.useId()
   const id = idProp ?? autoId
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (inputRef.current) {
       inputRef.current.indeterminate = indeterminate
     }

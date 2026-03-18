@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import * as React from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 import { Stack } from '../stack/stack'
 import { Typography } from '../typography/typography'
@@ -133,7 +133,7 @@ export const Sizes: Story = {
 
 export const Controlled: Story = {
   render: () => {
-    const [active, setActive] = useState('details')
+    const [active, setActive] = React.useState('details')
 
     return (
       <Stack direction="column" gap={4}>

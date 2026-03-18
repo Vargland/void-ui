@@ -1,4 +1,4 @@
-import { useState, useRef, useId, useCallback } from 'react'
+import * as React from 'react'
 import type { TooltipProps } from '../../typings/components/tooltip'
 import { cn } from '../../helpers/classnames'
 import styles from './tooltip.module.scss'
@@ -14,11 +14,11 @@ export function Tooltip({
   className,
   'data-testid': testId = 'tooltip',
 }: TooltipProps) {
-  const [visible, setVisible] = useState(false)
-  const timeoutRef            = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const tooltipId             = useId()
+  const [visible, setVisible] = React.useState(false)
+  const timeoutRef            = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tooltipId             = React.useId()
 
-  const show = useCallback(() => {
+  const show = React.useCallback(() => {
     if (disabled) {
                     return
                   }
@@ -26,7 +26,7 @@ export function Tooltip({
     timeoutRef.current = setTimeout(() => setVisible(true), delay)
   }, [disabled, delay])
 
-  const hide = useCallback(() => {
+  const hide = React.useCallback(() => {
     if (timeoutRef.current !== null) {
       clearTimeout(timeoutRef.current)
 

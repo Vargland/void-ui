@@ -48,6 +48,14 @@ module.exports = {
     // Block body must not be on a single line — if (!x) { return } is invalid
     'void-ui/no-single-line-block': 'error',
 
+    // Callback/arrow function parameters must be descriptive (min 3 chars)
+    // Bad: arr.map(e => ...)  Good: arr.map(item => ...)
+    'void-ui/no-short-callback-params': 'error',
+
+    // React hooks and APIs must use namespace import: import * as React from 'react'
+    // Bad: import { useState } from 'react'  Good: React.useState
+    'void-ui/no-react-named-imports': 'error',
+
     // Blank line between statements — applies to declarations and expressions
     // Does NOT apply to imports (excluded by default)
     'padding-line-between-statements': [

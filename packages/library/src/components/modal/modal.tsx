@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useCallback } from 'react'
+import * as React from 'react'
 import { createPortal } from 'react-dom'
 import type { ModalProps } from '../../typings/components/modal'
 import { cn } from '../../helpers/classnames'
@@ -32,14 +32,14 @@ export function Modal({
   className,
   'data-testid': testId = 'modal',
 }: ModalProps) {
-  const titleId       = useId()
-  const descriptionId = useId()
-  const dialogRef     = useRef<HTMLDivElement>(null)
-  const previousFocus = useRef<HTMLElement | null>(null)
+  const titleId       = React.useId()
+  const descriptionId = React.useId()
+  const dialogRef     = React.useRef<HTMLDivElement>(null)
+  const previousFocus = React.useRef<HTMLElement | null>(null)
 
   // ─── Focus trap & body scroll lock ────────────────────────────────────────
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isOpen) {
                    return
                  }
@@ -82,7 +82,7 @@ export function Modal({
 
   // ─── Escape key (document-level listener) ────────────────────────────────
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!isOpen || !closeOnEscape) {
                                      return
                                    }
@@ -101,12 +101,12 @@ export function Modal({
 
   // ─── Tab trap ────────────────────────────────────────────────────────────
 
-  const handleKeyDown = useCallback(
+  const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === 'Tab' && dialogRef.current) {
         const focusable = Array.from(
           dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS),
-        ).filter(el => !el.closest('[hidden]'))
+        ).filter(element => !element.closest('[hidden]'))
 
         if (focusable.length === 0) {
           event.preventDefault()
@@ -137,7 +137,7 @@ export function Modal({
 
   // ─── Overlay click ────────────────────────────────────────────────────────
 
-  const handleOverlayClick = useCallback(
+  const handleOverlayClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (closeOnOverlayClick && event.target === event.currentTarget) {
         onClose()

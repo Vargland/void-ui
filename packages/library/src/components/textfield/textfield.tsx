@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import * as React from 'react'
 import type { TextFieldProps } from '../../typings/components/textfield'
 import { cn } from '../../helpers/classnames'
 import styles from './textfield.module.scss'
@@ -20,7 +20,7 @@ export function TextField({
   'data-testid': testId = 'textfield',
   ...rest
 }: TextFieldProps) {
-  const autoId      = useId()
+  const autoId      = React.useId()
   const id          = idProp ?? autoId
   const activeState = error ? 'error' : (state ?? 'default')
   const hintText    = error ?? hint

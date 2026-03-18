@@ -1,12 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useId,
-  useRef,
-  useCallback,
-  type KeyboardEvent,
-} from 'react'
+import * as React from 'react'
 import type {
   TabsProps,
   TabsListProps,
@@ -19,10 +11,10 @@ import styles from './tabs.module.scss'
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
-const TabsContext = createContext<TabsContextValue | null>(null)
+const TabsContext = React.createContext<TabsContextValue | null>(null)
 
 function useTabsContext(): TabsContextValue {
-  const ctx = useContext(TabsContext)
+  const ctx = React.useContext(TabsContext)
 
   if (!ctx) {
     throw new Error('Tabs compound components must be used inside <Tabs>.')
@@ -44,13 +36,13 @@ export function Tabs({
   'data-testid': testId = 'tabs',
   planet,
 }: TabsProps) {
-  const idPrefix = useId()
+  const idPrefix = React.useId()
 
   const isControlled = valueProp !== undefined
-  const [internalValue, setInternalValue] = useState(defaultValue)
+  const [internalValue, setInternalValue] = React.useState(defaultValue)
   const activeValue = isControlled ? valueProp : internalValue
 
-  const setActiveValue = useCallback(
+  const setActiveValue = React.useCallback(
     (value: string) => {
       if (!isControlled) {
                            setInternalValue ( value )
@@ -92,9 +84,9 @@ export function TabsList({
   'aria-label': ariaLabel,
   'data-testid': testId = 'tabs-list',
 }: TabsListProps) {
-  const listRef = useRef<HTMLDivElement>(null)
+  const listRef = React.useRef<HTMLDivElement>(null)
 
-  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
     const list = listRef.current
 
     if (!list) {
@@ -114,29 +106,29 @@ export function TabsList({
     const focused = document.activeElement as HTMLButtonElement
     const currentIndex = triggers.indexOf(focused)
 
-    switch (e.key) {
+    switch (event.key) {
       case 'ArrowRight': {
-        e.preventDefault()
+        event.preventDefault()
         const next = (currentIndex + 1) % triggers.length
 
         triggers[next]!.focus()
         break
       }
       case 'ArrowLeft': {
-        e.preventDefault()
+        event.preventDefault()
         const prev = (currentIndex - 1 + triggers.length) % triggers.length
 
         triggers[prev]!.focus()
         break
       }
       case 'Home': {
-        e.preventDefault()
+        event.preventDefault()
 
         triggers[0]!.focus()
         break
       }
       case 'End': {
-        e.preventDefault()
+        event.preventDefault()
 
         triggers[triggers.length - 1]!.focus()
         break
@@ -173,7 +165,7 @@ export function TabsTrigger({
   const triggerId = `${idPrefix}-trigger-${value}`
   const panelId = `${idPrefix}-panel-${value}`
 
-  const handleClick = useCallback(() => {
+  const handleClick = React.useCallback(() => {
     if (!disabled) {
                      setActiveValue ( value )
                    }

@@ -118,6 +118,23 @@ describe('Tooltip', () => {
     expect(screen.getByTestId('tooltip-bubble').className).not.toMatch(/visible/)
   })
 
+  // ─── Keyboard dismiss ─────────────────────────────────────────────────────
+
+  it('hides tooltip on Escape key', () => {
+    renderTooltip({ delay: 0 })
+    const trigger = screen.getByTestId('tooltip')
+
+    fireEvent.mouseEnter(trigger)
+
+    act(() => { vi.advanceTimersByTime(0) })
+
+    expect(screen.getByTestId('tooltip-bubble').className).toMatch(/visible/)
+
+    fireEvent.keyDown(trigger, { key: 'Escape' })
+
+    expect(screen.getByTestId('tooltip-bubble').className).not.toMatch(/visible/)
+  })
+
   // ─── Visibility on focus / blur ───────────────────────────────────────────
 
   it('shows tooltip on keyboard focus', () => {

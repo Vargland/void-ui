@@ -113,6 +113,21 @@ describe('Typography', () => {
     expect(screen.getByTestId('typography').closest('[data-void-planet="venus"]')).toBeInTheDocument()
   })
 
+  it('planet override wrapper is a direct parent of the element', () => {
+    render(<Typography planet="mars">Mars text</Typography>)
+
+    const el = screen.getByTestId('typography')
+    const wrapper = el.parentElement
+
+    expect(wrapper?.getAttribute('data-void-planet')).toBe('mars')
+  })
+
+  it('does not apply a color class when no color prop is passed — color comes from planet token', () => {
+    render(<Typography planet="mars">Mars text</Typography>)
+
+    expect(screen.getByTestId('typography').className).not.toMatch(/color-/)
+  })
+
   it('renders without wrapper when no planet prop', () => {
     render(<Typography>No planet</Typography>)
 

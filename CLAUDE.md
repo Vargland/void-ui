@@ -104,6 +104,20 @@ export type { ButtonProps } from './typings/components/buttons'
 
 ---
 
+## ESLint — custom plugin
+
+A local ESLint plugin (`eslint-plugin-void-ui.cjs`) enforces project-specific conventions. It is loaded via `.eslintrc.cjs` with `plugins: ['void-ui']`.
+
+| Rule | What it enforces |
+|---|---|
+| `void-ui/no-single-line-block` | Block bodies must span multiple lines — `if (x) { return }` is invalid |
+| `void-ui/no-short-callback-params` | Callback params must be ≥ 3 chars — `arr.map(e => ...)` is invalid |
+| `void-ui/no-react-named-imports` | React APIs must use namespace import — `import * as React from 'react'` |
+
+Standard rules also enforced: `curly: all`, `no-extra-boolean-cast`, `padding-line-between-statements`.
+
+---
+
 ## Tokens
 
 - Base: `packages/tokens/tokens/base.json` (primitives)

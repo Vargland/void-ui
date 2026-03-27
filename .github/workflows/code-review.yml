@@ -56,28 +56,35 @@ jobs:
           FILES: ${{ steps.files.outputs.list }}
           PR_DIFF: ${{ steps.diff.outputs.diff }}
         run: |
-          # Write diff to file to avoid shell quoting issues with special chars
-          printf '%s' "$PR_DIFF" > /tmp/pr_diff.txt
+          # Write all inputs to files to avoid shell quoting issues with special chars
+          printf '%s' "$PR_DIFF"  > /tmp/pr_diff.txt
+          printf '%s' "$PR_TITLE" > /tmp/pr_title.txt
+          printf '%s' "$PR_BODY"  > /tmp/pr_body.txt
+          printf '%s' "$FILES"    > /tmp/pr_files.txt
+
+          # Build JSON payload entirely with jq — no subshell interpolation
+          jq -n \
+            --rawfile title /tmp/pr_title.txt \
+            --rawfile body  /tmp/pr_body.txt \
+            --rawfile files /tmp/pr_files.txt \
+            --rawfile diff  /tmp/pr_diff.txt \
+            '{
+              model: "claude-opus-4-5",
+              max_tokens: 1024,
+              messages: [{
+                role: "user",
+                content: "You are a senior frontend engineer reviewing a PR for void-ui, a React component library using TypeScript, CSS Modules, SCSS, and design tokens.\n\nPR title: \($title)\nPR description: \($body)\n\nChanged files:\n\($files)\n\nDiff:\n\($diff)\n\nReview this code focusing on:\n1. Component API consistency (props naming, TypeScript types, barrel exports)\n2. SCSS / token usage — always use --void-* custom properties, never hardcode values\n3. Accessibility — aria attributes, keyboard navigation, focus management\n4. Test coverage — are the key behaviors tested?\n5. void-ui conventions — typings in src/typings/, one component per directory, hooks if >50 lines logic\n\nBe concise and specific. Format your response in markdown with these sections:\n### Summary\nOne sentence overall assessment.\n\n### Issues\nOnly real problems worth fixing. If none, write \"None\".\n\n### Suggestions\nOptional improvements. If none, write \"None\".\n\nDo not praise obvious things. Keep it under 400 words."
+              }]
+            }' > /tmp/payload.json
 
           RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
             -H "x-api-key: $ANTHROPIC_API_KEY" \
             -H "anthropic-version: 2023-06-01" \
             -H "content-type: application/json" \
-            -d "$(jq -n \
-              --arg title "$PR_TITLE" \
-              --arg body "$PR_BODY" \
-              --arg files "$FILES" \
-              --rawfile diff /tmp/pr_diff.txt \
-              '{
-                model: "claude-opus-4-5",
-                max_tokens: 1024,
-                messages: [{
-                  role: "user",
-                  content: "You are a senior frontend engineer reviewing a PR for void-ui, a React component library using TypeScript, CSS Modules, SCSS, and design tokens.\n\nPR title: \($title)\nPR description: \($body)\n\nChanged files:\n\($files)\n\nDiff:\n\($diff)\n\nReview this code focusing on:\n1. Component API consistency (props naming, TypeScript types, barrel exports)\n2. SCSS / token usage — always use --void-* custom properties, never hardcode values\n3. Accessibility — aria attributes, keyboard navigation, focus management\n4. Test coverage — are the key behaviors tested?\n5. void-ui conventions — typings in src/typings/, one component per directory, hooks if >50 lines logic\n\nBe concise and specific. Format your response in markdown with these sections:\n### Summary\nOne sentence overall assessment.\n\n### Issues\nOnly real problems worth fixing. If none, write \"None\".\n\n### Suggestions\nOptional improvements. If none, write \"None\".\n\nDo not praise obvious things. Keep it under 400 words."
-                }]
-              }')"
+            -d @/tmp/payload.json)
 
           REVIEW=$(echo "$RESPONSE" | jq -r '.content[0].text // "Review unavailable."')
+          printf '%s' "$REVIEW" > /tmp/pr_review.txt
           echo "review<<EOF" >> $GITHUB_OUTPUT
           echo "$REVIEW" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

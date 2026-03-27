@@ -53,20 +53,12 @@
   left:   unset;
   right:  unset;
 
-  // Arrow has no valid anchor when position is computed dynamically — hide it
-  .arrow {
-    display: none;
-  }
 }
 
 // ─── Arrow ────────────────────────────────────────────────────────────────────
 
 .arrow {
-  position:         absolute;
-  width:            10px;
-  height:           10px;
-  background-color: var(--void-color-background-inverse);
-  pointer-events:   none;
+  display: none;
 }
 
 // ─── Placement: top ──────────────────────────────────────────────────────────
@@ -83,11 +75,6 @@
     transform: translateX(-50%) scale(1);
   }
 
-  .arrow {
-    bottom:    #{-$arrow-size + 4px};
-    left:      50%;
-    transform: translateX(-50%) rotate(45deg);
-  }
 }
 
 // ─── Placement: bottom ───────────────────────────────────────────────────────
@@ -102,12 +89,6 @@
 
   &.visible {
     transform: translateX(-50%) scale(1);
-  }
-
-  .arrow {
-    top:       #{-$arrow-size + 4px};
-    left:      50%;
-    transform: translateX(-50%) rotate(45deg);
   }
 }
 
@@ -124,12 +105,6 @@
   &.visible {
     transform: translateY(-50%) scale(1);
   }
-
-  .arrow {
-    right:     #{-$arrow-size + 4px};
-    top:       50%;
-    transform: translateY(-50%) rotate(45deg);
-  }
 }
 
 // ─── Placement: right ────────────────────────────────────────────────────────
@@ -144,11 +119,5 @@
 
   &.visible {
     transform: translateY(-50%) scale(1);
-  }
-
-  .arrow {
-    left:      #{-$arrow-size + 4px};
-    top:       50%;
-    transform: translateY(-50%) rotate(45deg);
   }
 }

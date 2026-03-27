@@ -38,9 +38,19 @@ function calcFixedPos(
       }
     }
     case 'left':
-      return { top: r.top + r.height / 2, left: r.left - FIXED_OFFSET }
-    case 'right':
-      return { top: r.top + r.height / 2, left: r.right + FIXED_OFFSET }
+    case 'right': {
+      const vh       = window.innerHeight
+      const bubbleH  = bubbleEl?.offsetHeight ?? 0
+      const rawTop   = r.top + r.height / 2
+      const minTop   = VIEWPORT_MARGIN + bubbleH / 2
+      const maxTop   = vh - VIEWPORT_MARGIN - bubbleH / 2
+      const top      = Math.min(Math.max(rawTop, minTop), maxTop)
+
+      return {
+        top,
+        left: placement === 'left' ? r.left - FIXED_OFFSET : r.right + FIXED_OFFSET,
+      }
+    }
   }
 }
 
@@ -86,6 +96,7 @@ export function Tooltip({
       timeoutRef.current = null
     }
     setVisible(false)
+    setFixedPos(null)
   }, [])
 
   // Calculate fixed position after bubble renders (so offsetWidth is available)

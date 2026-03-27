@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import * as React from 'react'
 import { Select } from './select'
 import type { SelectOption } from '../../typings/components/select'
 
@@ -70,7 +70,8 @@ export const Disabled: Story = {
 
 export const Controlled: Story = {
   render: () => {
-    const [value, setValue] = useState('earth')
+    const [value, setValue] = React.useState('earth')
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 320 }}>
         <Select
@@ -90,12 +91,12 @@ export const Controlled: Story = {
 export const PlanetThemes: Story = {
   render: () => (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-      {(['earth', 'mars', 'neptune', 'saturn'] as const).map(p => (
+      {(['earth', 'mars', 'neptune', 'saturn'] as const).map(planet => (
         <Select
-          key={p}
+          key={planet}
           options={PLANETS}
-          planet={p}
-          label={p.charAt(0).toUpperCase() + p.slice(1)}
+          planet={planet}
+          label={planet.charAt(0).toUpperCase() + planet.slice(1)}
           style={{ width: 200 }}
         />
       ))}

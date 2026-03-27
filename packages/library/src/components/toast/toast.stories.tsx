@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import * as React from 'react'
 import { Toast, ToastContainer } from './toast'
 import { Stack } from '../stack/stack'
 import { Button } from '../button/button'
@@ -130,7 +130,7 @@ export const WithAction: Story = {
 
 export const AutoDismiss: Story = {
   render: () => {
-    const [visible, setVisible] = useState(true)
+    const [visible, setVisible] = React.useState(true)
 
     return (
       <Stack direction="column" gap={4} style={{ padding: '24px', maxWidth: '420px' }}>
@@ -169,7 +169,7 @@ const ALL_POSITIONS: ToastPosition[] = [
 
 export const AllPositions: Story = {
   render: () => {
-    const [active, setActive] = useState<ToastPosition | null>(null)
+    const [active, setActive] = React.useState<ToastPosition | null>(null)
 
     return (
       <Stack direction="column" gap={3} align="center" style={{ padding: '24px' }}>

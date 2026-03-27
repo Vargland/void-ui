@@ -1,11 +1,4 @@
-import {
-  useState,
-  useRef,
-  useId,
-  useEffect,
-  useCallback,
-  type KeyboardEvent,
-} from 'react'
+import * as React from 'react'
 import type { SelectProps } from '../../typings/components/select'
 import { cn } from '../../helpers/classnames'
 import styles from './select.module.scss'
@@ -49,80 +42,98 @@ export function Select({
   'data-testid': testId = 'select',
   planet,
 }: SelectProps) {
-  const triggerId = useId()
-  const listboxId = useId()
+  const triggerId = React.useId()
+  const listboxId = React.useId()
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [internalValue, setInternalValue] = useState(defaultValue ?? '')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [highlightedIndex, setHighlightedIndex] = useState(0)
+  const [isOpen, setIsOpen] = React.useState(false)
+  const [internalValue, setInternalValue] = React.useState(defaultValue ?? '')
+  const [searchQuery, setSearchQuery] = React.useState('')
+  const [highlightedIndex, setHighlightedIndex] = React.useState(0)
 
   const isControlled = valueProp !== undefined
   const currentValue = isControlled ? valueProp : internalValue
 
-  const triggerRef = useRef<HTMLButtonElement>(null)
-  const searchRef = useRef<HTMLInputElement>(null)
-  const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
+  const searchRef = React.useRef<HTMLInputElement>(null)
+  const rootRef = React.useRef<HTMLDivElement>(null)
 
   const hasError = Boolean(error)
   const hintId = `${triggerId}-hint`
 
-  const selectedOption = options.find(o => o.value === currentValue)
+  const selectedOption = options.find(option => option.value === currentValue)
 
   const filteredOptions = searchable && searchQuery
-    ? options.filter(o => o.label.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? options.filter(option => option.label.toLowerCase().includes(searchQuery.toLowerCase()))
     : options
 
   // ─── Close on outside click ──────────────────────────────────────────────
 
-  useEffect(() => {
-    if (!isOpen) return
-    function handleClick(e: MouseEvent) {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+  React.useEffect(() => {
+    if (!isOpen) {
+                   return
+                 }
+
+    function handleClick(event: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
         setIsOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
+
     return () => document.removeEventListener('mousedown', handleClick)
   }, [isOpen])
 
   // ─── Focus search when opens ─────────────────────────────────────────────
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isOpen && searchable) {
       setTimeout(() => searchRef.current?.focus(), 0)
     }
+
     if (isOpen) {
-      const idx = filteredOptions.findIndex(o => o.value === currentValue)
+      const idx = filteredOptions.findIndex(option => option.value === currentValue)
+
       setHighlightedIndex(idx >= 0 ? idx : 0)
     }
   }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Handlers ────────────────────────────────────────────────────────────
 
-  const selectOption = useCallback((value: string) => {
-    if (!isControlled) setInternalValue(value)
+  const selectOption = React.useCallback((value: string) => {
+    if (!isControlled) {
+                         setInternalValue ( value )
+                       }
+
     onChange?.(value)
+
     setIsOpen(false)
+
     setSearchQuery('')
+
     triggerRef.current?.focus()
   }, [isControlled, onChange])
 
-  const clearSelection = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (!isControlled) setInternalValue('')
+  const clearSelection = React.useCallback((event: React.MouseEvent) => {
+    event.stopPropagation()
+
+    if (!isControlled) {
+                         setInternalValue ( '' )
+                       }
+
     onChange?.('')
   }, [isControlled, onChange])
 
-  const handleTriggerKeyDown = useCallback((e: KeyboardEvent<HTMLButtonElement>) => {
-    switch (e.key) {
+  const handleTriggerKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLButtonElement>) => {
+    switch (event.key) {
       case 'Enter':
       case ' ':
-        e.preventDefault()
+        event.preventDefault()
+
         setIsOpen(prev => !prev)
         break
       case 'ArrowDown':
-        e.preventDefault()
+        event.preventDefault()
+
         if (!isOpen) {
           setIsOpen(true)
         } else {
@@ -130,9 +141,11 @@ export function Select({
             Math.min(prev + 1, filteredOptions.length - 1)
           )
         }
+
         break
       case 'ArrowUp':
-        e.preventDefault()
+        event.preventDefault()
+
         setHighlightedIndex(prev => Math.max(prev - 1, 0))
         break
       case 'Escape':
@@ -141,26 +154,31 @@ export function Select({
     }
   }, [isOpen, filteredOptions.length])
 
-  const handleListKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
-    switch (e.key) {
+  const handleListKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (event.key) {
       case 'ArrowDown':
-        e.preventDefault()
+        event.preventDefault()
+
         setHighlightedIndex(prev =>
           Math.min(prev + 1, filteredOptions.length - 1)
         )
         break
       case 'ArrowUp':
-        e.preventDefault()
+        event.preventDefault()
+
         setHighlightedIndex(prev => Math.max(prev - 1, 0))
         break
       case 'Enter':
-        e.preventDefault()
+        event.preventDefault()
+
         if (filteredOptions[highlightedIndex] && !filteredOptions[highlightedIndex].disabled) {
           selectOption(filteredOptions[highlightedIndex].value)
         }
+
         break
       case 'Escape':
         setIsOpen(false)
+
         triggerRef.current?.focus()
         break
     }
@@ -214,7 +232,7 @@ export function Select({
             className={styles.clearBtn}
             aria-label="Clear selection"
             tabIndex={-1}
-            onKeyDown={e => e.key === 'Enter' && clearSelection(e as unknown as React.MouseEvent)}
+            onKeyDown={event => event.key === 'Enter' && clearSelection(event as unknown as React.MouseEvent)}
           >
             <ClearIcon />
           </span>
@@ -239,8 +257,9 @@ export function Select({
                 ref={searchRef}
                 type="text"
                 value={searchQuery}
-                onChange={e => {
-                  setSearchQuery(e.target.value)
+                onChange={event => {
+                  setSearchQuery(event.target.value)
+
                   setHighlightedIndex(0)
                 }}
                 placeholder="Search…"

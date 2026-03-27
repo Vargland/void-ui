@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Modal } from './modal'
 import { Button } from '../button/button'
@@ -40,7 +40,8 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: (args) => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = React.useState(false)
+
     return (
       <div data-void-planet={args.planet ?? 'mercury'}>
         <Button onClick={() => setOpen(true)}>Open Modal</Button>
@@ -73,7 +74,7 @@ export const Default: Story = {
 export const Sizes: Story = {
   render: () => {
     const sizes: ModalSize[] = ['sm', 'md', 'lg', 'full']
-    const [activeSize, setActiveSize] = useState<ModalSize | null>(null)
+    const [activeSize, setActiveSize] = React.useState<ModalSize | null>(null)
 
     return (
       <Stack direction="row" gap={2} wrap data-void-planet="mercury">
@@ -110,7 +111,7 @@ export const Sizes: Story = {
 
 export const WithFooter: Story = {
   render: () => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = React.useState(false)
 
     return (
       <div data-void-planet="mercury">
@@ -145,7 +146,7 @@ export const WithFooter: Story = {
 
 export const WithDescription: Story = {
   render: () => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = React.useState(false)
 
     return (
       <div data-void-planet="mercury">
@@ -182,7 +183,7 @@ export const WithDescription: Story = {
 
 export const Controlled: Story = {
   render: () => {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = React.useState(false)
 
     return (
       <Stack direction="column" gap={3} align="center" data-void-planet="mercury">
@@ -232,7 +233,7 @@ export const Controlled: Story = {
 
 export const PlanetThemes: Story = {
   render: () => {
-    const [activePlanet, setActivePlanet] = useState<string | null>(null)
+    const [activePlanet, setActivePlanet] = React.useState<string | null>(null)
 
     return (
       <Stack direction="column" gap={3} style={{ padding: '24px' }}>

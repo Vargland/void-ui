@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import * as React from 'react'
 import { Table, TableHead, TableBody, TableFooter, TableRow, TableHeader, TableCell } from './table'
 import { ALL_CELESTIAL_BODIES } from '../../helpers/constants/planets'
 
@@ -144,23 +144,28 @@ export const Bordered: Story = {
 
 export const WithSorting: Story = {
   render: () => {
-    const [sortField, setSortField]  = useState<'name' | 'missions' | 'distance' | null>(null)
-    const [sortDir,   setSortDir]    = useState<'asc' | 'desc'>('asc')
+    const [sortField, setSortField]  = React.useState<'name' | 'missions' | 'distance' | null>(null)
+    const [sortDir,   setSortDir]    = React.useState<'asc' | 'desc'>('asc')
 
     function handleSort(field: 'name' | 'missions' | 'distance') {
       if (sortField === field) {
         setSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'))
       } else {
         setSortField(field)
+
         setSortDir('asc')
       }
     }
 
-    const sorted = [...ASTRONAUTS].sort((a, b) => {
-      if (!sortField) return 0
-      const av = a[sortField]
-      const bv = b[sortField]
-      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+    const sorted = [...ASTRONAUTS].sort((rowA, rowB) => {
+      if (!sortField) {
+                        return 0
+                      }
+
+      const av = rowA[sortField]
+      const bv = rowB[sortField]
+      const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av) - (bv as number)
+
       return sortDir === 'asc' ? cmp : -cmp
     })
 
@@ -249,8 +254,8 @@ export const StickyHeader: Story = {
           </TableRow>
         </TableHead>
         <TableBody>
-          {[...ASTRONAUTS, ...ASTRONAUTS, ...ASTRONAUTS].map((row, i) => (
-            <TableRow key={`${row.id}-${i}`}>
+          {[...ASTRONAUTS, ...ASTRONAUTS, ...ASTRONAUTS].map((row, idx) => (
+            <TableRow key={`${row.id}-${idx}`}>
               <TableCell>{row.name}</TableCell>
               <TableCell>{row.planet}</TableCell>
               <TableCell numeric>{row.missions}</TableCell>
@@ -302,7 +307,7 @@ export const Sizes: Story = {
 
 export const WithSelection: Story = {
   render: () => {
-    const [selected, setSelected] = useState<number | null>(null)
+    const [selected, setSelected] = React.useState<number | null>(null)
 
     return (
       <Table hoverable>
@@ -330,7 +335,7 @@ export const WithSelection: Story = {
           <TableFooter>
             <TableRow>
               <TableCell colSpan={3}>
-                Selected: {ASTRONAUTS.find(a => a.id === selected)?.name}
+                Selected: {ASTRONAUTS.find(row => row.id === selected)?.name}
               </TableCell>
             </TableRow>
           </TableFooter>

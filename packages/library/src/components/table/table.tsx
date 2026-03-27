@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import * as React from 'react'
 import type {
   TableProps,
   TableHeadProps,
@@ -23,7 +23,7 @@ function SortIcon() {
 
 // ─── Table (root) ─────────────────────────────────────────────────────────────
 
-export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
+export const Table = React.forwardRef<HTMLTableElement, TableProps>(function Table(
   {
     variant = 'default',
     size = 'md',
@@ -70,7 +70,7 @@ export const Table = forwardRef<HTMLTableElement, TableProps>(function Table(
 
 // ─── TableHead ────────────────────────────────────────────────────────────────
 
-export const TableHead = forwardRef<HTMLTableSectionElement, TableHeadProps>(
+export const TableHead = React.forwardRef<HTMLTableSectionElement, TableHeadProps>(
   function TableHead(
     { className, 'data-testid': testId = 'table-head', children, ...rest },
     ref,
@@ -90,7 +90,7 @@ export const TableHead = forwardRef<HTMLTableSectionElement, TableHeadProps>(
 
 // ─── TableBody ────────────────────────────────────────────────────────────────
 
-export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
+export const TableBody = React.forwardRef<HTMLTableSectionElement, TableBodyProps>(
   function TableBody(
     { className, 'data-testid': testId = 'table-body', children, ...rest },
     ref,
@@ -110,7 +110,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
 // ─── TableFooter ──────────────────────────────────────────────────────────────
 
-export const TableFooter = forwardRef<HTMLTableSectionElement, TableFooterProps>(
+export const TableFooter = React.forwardRef<HTMLTableSectionElement, TableFooterProps>(
   function TableFooter(
     { className, 'data-testid': testId = 'table-footer', children, ...rest },
     ref,
@@ -130,7 +130,7 @@ export const TableFooter = forwardRef<HTMLTableSectionElement, TableFooterProps>
 
 // ─── TableRow ─────────────────────────────────────────────────────────────────
 
-export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
+export const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
   function TableRow(
     {
       selected = false,
@@ -165,7 +165,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
 
 // ─── TableHeader (th) ────────────────────────────────────────────────────────
 
-export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(
+export const TableHeader = React.forwardRef<HTMLTableCellElement, TableHeaderProps>(
   function TableHeader(
     {
       sortable = false,
@@ -196,9 +196,10 @@ export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(
         tabIndex={sortable ? 0 : undefined}
         onKeyDown={
           sortable
-            ? (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
+            ? (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault()
+
                   onSort?.()
                 }
               }
@@ -235,7 +236,7 @@ export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(
 
 // ─── TableCell (td) ──────────────────────────────────────────────────────────
 
-export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
+export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
   function TableCell(
     {
       align = 'left',

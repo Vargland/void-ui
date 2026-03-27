@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import * as React from 'react'
 import type {
   ToastItem,
   ToastVariant,
@@ -13,6 +13,7 @@ let _counter = 0
 
 function generateId(): string {
   _counter += 1
+
   return `toast-${Date.now()}-${_counter}`
 }
 
@@ -23,23 +24,23 @@ const DEFAULT_DURATION = 5000
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export function useToast(): UseToastReturn {
-  const [toasts, setToasts] = useState<ToastItem[]>([])
+  const [toasts, setToasts] = React.useState<ToastItem[]>([])
 
   // ─── dismiss ────────────────────────────────────────────────────────────────
 
-  const dismiss = useCallback((id: string) => {
-    setToasts(prev => prev.filter(t => t.id !== id))
+  const dismiss = React.useCallback((toastId: string) => {
+    setToasts(prev => prev.filter(item => item.id !== toastId))
   }, [])
 
   // ─── dismissAll ─────────────────────────────────────────────────────────────
 
-  const dismissAll = useCallback(() => {
+  const dismissAll = React.useCallback(() => {
     setToasts([])
   }, [])
 
   // ─── add (core) ─────────────────────────────────────────────────────────────
 
-  const add = useCallback((
+  const add = React.useCallback((
     title:   string,
     variant: ToastVariant,
     options: ToastOptions = {},
@@ -53,36 +54,39 @@ export function useToast(): UseToastReturn {
       ...(options.description !== undefined && { description: options.description }),
       ...(options.action !== undefined && { action: options.action }),
     }
+
     setToasts(prev => [...prev, item])
+
     return id
   }, [])
 
   // ─── toast callable with shorthand methods ───────────────────────────────
 
-  const toastFn = useCallback((
+  const toastFn = React.useCallback((
     title:   string,
     options: ToastOptions & { variant?: ToastVariant } = {},
   ): string => {
     const { variant = 'default', ...rest } = options
+
     return add(title, variant, rest)
   }, [add]) as ToastMethods
 
-  toastFn.success = useCallback(
+  toastFn.success = React.useCallback(
     (title: string, options: ToastOptions = {}) => add(title, 'success', options),
     [add],
   )
 
-  toastFn.error = useCallback(
+  toastFn.error = React.useCallback(
     (title: string, options: ToastOptions = {}) => add(title, 'error', options),
     [add],
   )
 
-  toastFn.warning = useCallback(
+  toastFn.warning = React.useCallback(
     (title: string, options: ToastOptions = {}) => add(title, 'warning', options),
     [add],
   )
 
-  toastFn.info = useCallback(
+  toastFn.info = React.useCallback(
     (title: string, options: ToastOptions = {}) => add(title, 'info', options),
     [add],
   )

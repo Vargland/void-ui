@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import * as React from 'react'
 import { Checkbox } from './checkbox'
 import { Stack } from '../stack/stack'
 import { Typography } from '../typography/typography'
@@ -102,13 +102,14 @@ export const WithError: Story = {
 
 export const Controlled: Story = {
   render: () => {
-    const [checked, setChecked] = useState(false)
+    const [checked, setChecked] = React.useState(false)
+
     return (
       <Stack direction="column" gap={3} align="start">
         <Checkbox
           label={`Controlled — ${checked ? 'checked' : 'unchecked'}`}
           checked={checked}
-          onChange={e => setChecked(e.target.checked)}
+          onChange={event => setChecked(event.target.checked)}
         />
         <Typography size="xs" color="muted">
           State: {checked ? 'true' : 'false'}

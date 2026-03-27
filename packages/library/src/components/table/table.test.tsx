@@ -34,12 +34,15 @@ describe('Table', () => {
 
   it('renders the table element', () => {
     render(<BasicTable />)
+
     expect(screen.getByTestId('table')).toBeInTheDocument()
   })
 
   it('renders thead, tbody sections', () => {
     render(<BasicTable />)
+
     expect(screen.getByTestId('table-head')).toBeInTheDocument()
+
     expect(screen.getByTestId('table-body')).toBeInTheDocument()
   })
 
@@ -58,25 +61,33 @@ describe('Table', () => {
         </TableFooter>
       </Table>,
     )
+
     expect(screen.getByTestId('table-footer')).toBeInTheDocument()
+
     expect(screen.getByText('Footer')).toBeInTheDocument()
   })
 
   it('renders all cells with text content', () => {
     render(<BasicTable />)
+
     expect(screen.getByText('Alice')).toBeInTheDocument()
+
     expect(screen.getByText('Bob')).toBeInTheDocument()
+
     expect(screen.getByText('Name')).toBeInTheDocument()
+
     expect(screen.getByText('Age')).toBeInTheDocument()
   })
 
   it('renders with default data-testid="table"', () => {
     render(<BasicTable />)
+
     expect(screen.getByTestId('table')).toBeInTheDocument()
   })
 
   it('renders with a custom data-testid', () => {
     render(<Table data-testid="my-table"><TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody></Table>)
+
     expect(screen.getByTestId('my-table')).toBeInTheDocument()
   })
 
@@ -86,6 +97,7 @@ describe('Table', () => {
     'renders variant "%s" without crashing',
     (variant) => {
       render(<Table variant={variant}><TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody></Table>)
+
       expect(screen.getByTestId('table')).toBeInTheDocument()
     },
   )
@@ -96,6 +108,7 @@ describe('Table', () => {
     'renders size "%s" without crashing',
     (size) => {
       render(<Table size={size}><TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody></Table>)
+
       expect(screen.getByTestId('table')).toBeInTheDocument()
     },
   )
@@ -104,6 +117,7 @@ describe('Table', () => {
 
   it('renders with hoverable prop without crashing', () => {
     render(<Table hoverable><TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody></Table>)
+
     expect(screen.getByTestId('table')).toBeInTheDocument()
   })
 
@@ -116,6 +130,7 @@ describe('Table', () => {
         <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('table')).toBeInTheDocument()
   })
 
@@ -131,6 +146,7 @@ describe('Table', () => {
         </TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('selected-row')).toHaveAttribute('aria-selected', 'true')
   })
 
@@ -144,6 +160,7 @@ describe('Table', () => {
         </TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('normal-row')).not.toHaveAttribute('aria-selected')
   })
 
@@ -152,6 +169,7 @@ describe('Table', () => {
   it('calls onClick when a clickable row is clicked', async () => {
     const user = userEvent.setup()
     const onClick = vi.fn()
+
     render(
       <Table>
         <TableBody>
@@ -161,7 +179,9 @@ describe('Table', () => {
         </TableBody>
       </Table>,
     )
+
     await user.click(screen.getByTestId('clickable-row'))
+
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
@@ -179,12 +199,14 @@ describe('Table', () => {
       </Table>,
     )
     const header = screen.getByTestId('sort-header')
+
     expect(header.querySelector('svg')).toBeInTheDocument()
   })
 
   it('calls onSort callback when sortable header is clicked', async () => {
     const user = userEvent.setup()
     const onSort = vi.fn()
+
     render(
       <Table>
         <TableHead>
@@ -195,7 +217,9 @@ describe('Table', () => {
         <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
       </Table>,
     )
+
     await user.click(screen.getByTestId('sort-header'))
+
     expect(onSort).toHaveBeenCalledTimes(1)
   })
 
@@ -210,6 +234,7 @@ describe('Table', () => {
         <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('sort-header')).toHaveAttribute('aria-sort', 'ascending')
   })
 
@@ -224,6 +249,7 @@ describe('Table', () => {
         <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('sort-header')).toHaveAttribute('aria-sort', 'descending')
   })
 
@@ -238,6 +264,7 @@ describe('Table', () => {
         <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('sort-header')).toHaveAttribute('aria-sort', 'none')
   })
 
@@ -255,6 +282,7 @@ describe('Table', () => {
           </TableBody>
         </Table>,
       )
+
       expect(screen.getByTestId('aligned-cell')).toBeInTheDocument()
     },
   )
@@ -272,6 +300,7 @@ describe('Table', () => {
           <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
         </Table>,
       )
+
       expect(screen.getByTestId('aligned-header')).toBeInTheDocument()
     },
   )
@@ -288,6 +317,7 @@ describe('Table', () => {
         </TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('numeric-cell')).toBeInTheDocument()
   })
 
@@ -303,6 +333,7 @@ describe('Table', () => {
         </TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('spanned-cell')).toHaveAttribute('colspan', '3')
   })
 
@@ -316,6 +347,7 @@ describe('Table', () => {
     )
     const table = screen.getByTestId('planet-table')
     const wrapper = table.closest('[data-void-planet]')
+
     expect(wrapper).toHaveAttribute('data-void-planet', 'mars')
   })
 
@@ -327,6 +359,7 @@ describe('Table', () => {
         <TableBody><TableRow><TableCell>x</TableCell></TableRow></TableBody>
       </Table>,
     )
+
     expect(screen.getByTestId('table')).toHaveClass('custom-table')
   })
 })

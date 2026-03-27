@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import * as React from 'react'
 import { createPortal } from 'react-dom'
 import type { ToastProps, ToastContainerProps, ToastVariant } from '../../typings/components/toast'
 import { cn } from '../../helpers/classnames'
@@ -27,15 +27,19 @@ export function Toast({
   className,
   'data-testid': testId = 'toast',
 }: ToastProps) {
-  const [exiting, setExiting] = useState(false)
-  const timerRef              = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [exiting, setExiting] = React.useState(false)
+  const timerRef              = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const icon                  = VARIANT_ICONS[variant]
 
   // ─── Handle dismiss with exit animation ───────────────────────────────────
 
   function handleDismiss() {
-    if (exiting) return
+    if (exiting) {
+                   return
+                 }
+
     setExiting(true)
+
     // Wait for animation to complete before calling onClose
     setTimeout(() => {
       onClose?.()
@@ -44,8 +48,10 @@ export function Toast({
 
   // ─── Auto-dismiss timer ───────────────────────────────────────────────────
 
-  useEffect(() => {
-    if (duration === 0) return
+  React.useEffect(() => {
+    if (duration === 0) {
+                          return
+                        }
 
     timerRef.current = setTimeout(() => {
       handleDismiss()

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import * as React from 'react'
 import type { AvatarProps } from '../../typings/components/avatar'
 import { cn } from '../../helpers/classnames'
 import styles from './avatar.module.scss'
@@ -15,7 +15,7 @@ export function Avatar({
   'data-testid': testId = 'avatar',
   ...rest
 }: AvatarProps) {
-  const [imgError, setImgError] = useState(false)
+  const [imgError, setImgError] = React.useState(false)
   const showImage = src && !imgError
 
   const avatar = (

@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useCallback } from 'react'
+import * as React from 'react'
 import { createPortal } from 'react-dom'
 import type { ModalProps } from '../../typings/components/modal'
 import { cn } from '../../helpers/classnames'
@@ -32,28 +32,35 @@ export function Modal({
   className,
   'data-testid': testId = 'modal',
 }: ModalProps) {
-  const titleId       = useId()
-  const descriptionId = useId()
-  const dialogRef     = useRef<HTMLDivElement>(null)
-  const previousFocus = useRef<HTMLElement | null>(null)
+  const titleId       = React.useId()
+  const descriptionId = React.useId()
+  const dialogRef     = React.useRef<HTMLDivElement>(null)
+  const previousFocus = React.useRef<HTMLElement | null>(null)
 
   // ─── Focus trap & body scroll lock ────────────────────────────────────────
 
-  useEffect(() => {
-    if (!isOpen) return
+  React.useEffect(() => {
+    if (!isOpen) {
+                   return
+                 }
 
     // Store element that had focus before the modal opened
     previousFocus.current = document.activeElement as HTMLElement
 
     // Lock body scroll
     const previousOverflow = document.body.style.overflow
+
     document.body.style.overflow = 'hidden'
 
     // Focus first focusable element inside the dialog
     const frame = requestAnimationFrame(() => {
-      if (!dialogRef.current) return
+      if (!dialogRef.current) {
+                                return
+                              }
+
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)
       const first = focusable[0]
+
       if (first) {
         first.focus()
       } else {
@@ -63,6 +70,7 @@ export function Modal({
 
     return () => {
       cancelAnimationFrame(frame)
+
       document.body.style.overflow = previousOverflow
 
       // Restore focus to the element that was active before opening
@@ -74,29 +82,35 @@ export function Modal({
 
   // ─── Escape key (document-level listener) ────────────────────────────────
 
-  useEffect(() => {
-    if (!isOpen || !closeOnEscape) return
+  React.useEffect(() => {
+    if (!isOpen || !closeOnEscape) {
+                                     return
+                                   }
+
     function handleEscape(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         event.stopPropagation()
+
         onClose()
       }
     }
     document.addEventListener('keydown', handleEscape)
+
     return () => document.removeEventListener('keydown', handleEscape)
   }, [isOpen, closeOnEscape, onClose])
 
   // ─── Tab trap ────────────────────────────────────────────────────────────
 
-  const handleKeyDown = useCallback(
+  const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === 'Tab' && dialogRef.current) {
         const focusable = Array.from(
           dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS),
-        ).filter(el => !el.closest('[hidden]'))
+        ).filter(element => !element.closest('[hidden]'))
 
         if (focusable.length === 0) {
           event.preventDefault()
+
           return
         }
 
@@ -106,11 +120,13 @@ export function Modal({
         if (event.shiftKey) {
           if (document.activeElement === first) {
             event.preventDefault()
+
             last.focus()
           }
         } else {
           if (document.activeElement === last) {
             event.preventDefault()
+
             first.focus()
           }
         }
@@ -121,7 +137,7 @@ export function Modal({
 
   // ─── Overlay click ────────────────────────────────────────────────────────
 
-  const handleOverlayClick = useCallback(
+  const handleOverlayClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (closeOnOverlayClick && event.target === event.currentTarget) {
         onClose()
@@ -132,7 +148,9 @@ export function Modal({
 
   // ─── Guard ────────────────────────────────────────────────────────────────
 
-  if (!isOpen) return null
+  if (!isOpen) {
+                 return null
+               }
 
   // ─── Dialog ───────────────────────────────────────────────────────────────
 

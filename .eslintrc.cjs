@@ -1,3 +1,4 @@
+
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
@@ -20,7 +21,7 @@ module.exports = {
     project: ['./tsconfig.base.json', './packages/*/tsconfig.json'],
     tsconfigRootDir: __dirname,
   },
-  plugins: ['@typescript-eslint', 'react', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'void-ui'],
   rules: {
     // React
     'react/react-in-jsx-scope': 'off',
@@ -35,6 +36,44 @@ module.exports = {
 
     // General
     'no-console': ['warn', { allow: ['warn', 'error'] }],
+
+    // ─── void-ui Code Conventions ────────────────────────────────────────────
+
+    // No !! double-negation — use Boolean() instead
+    'no-extra-boolean-cast': ['error', { enforceForLogicalOperands: true }],
+
+    // All if/else/for/while bodies must use braces — no single-line ifs
+    'curly': ['error', 'all'],
+
+    // Block body must not be on a single line — if (!x) { return } is invalid
+    'void-ui/no-single-line-block': 'error',
+
+    // Callback/arrow function parameters must be descriptive (min 3 chars)
+    // Bad: arr.map(e => ...)  Good: arr.map(item => ...)
+    'void-ui/no-short-callback-params': 'error',
+
+    // React hooks and APIs must use namespace import: import * as React from 'react'
+    // Bad: import { useState } from 'react'  Good: React.useState
+    'void-ui/no-react-named-imports': 'error',
+
+    // Blank line between statements — applies to declarations and expressions
+    // Does NOT apply to imports (excluded by default)
+    'padding-line-between-statements': [
+      'error',
+      // blank line BEFORE return
+      { blankLine: 'always', prev: '*', next: 'return' },
+      // blank line AFTER const/let/var blocks
+      { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
+      { blankLine: 'any',    prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] },
+      // blank line BEFORE if
+      { blankLine: 'always', prev: '*', next: 'if' },
+      // blank line AFTER if
+      { blankLine: 'always', prev: 'if', next: '*' },
+      // blank line BEFORE function declarations
+      { blankLine: 'always', prev: '*', next: 'function' },
+      // blank line between consecutive expressions (e.g. render(), await calls in tests)
+      { blankLine: 'always', prev: 'expression', next: 'expression' },
+    ],
   },
   settings: {
     react: {

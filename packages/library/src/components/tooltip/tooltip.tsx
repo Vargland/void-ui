@@ -127,6 +127,12 @@ export function Tooltip({
     setFixedPos(null)
   }, [])
 
+  const handleKeyDown = React.useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      hide()
+    }
+  }, [hide])
+
   // Recalculate position after render — bubble has real dimensions at this point
   React.useLayoutEffect(() => {
     if (strategy !== 'fixed') {
@@ -195,6 +201,7 @@ export function Tooltip({
       data-testid={testId}
       onBlur={hide}
       onFocus={show}
+      onKeyDown={handleKeyDown}
       onMouseEnter={show}
       onMouseLeave={hide}
     >
@@ -220,7 +227,9 @@ export function Tooltip({
           role="tooltip"
           style={bubbleStyle}
         >
-          <span aria-hidden="true" className={styles.arrow} />
+          {strategy !== 'fixed' && (
+            <span aria-hidden="true" className={styles.arrow} />
+          )}
 
           {content}
         </span>

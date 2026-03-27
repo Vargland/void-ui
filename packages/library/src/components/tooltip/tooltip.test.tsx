@@ -253,4 +253,48 @@ describe('Tooltip', () => {
 
     expect(screen.getByTestId('tooltip-bubble').className).not.toMatch(/visible/)
   })
+
+  // ─── strategy="fixed" ─────────────────────────────────────────────────────
+
+  it('applies fixed class when strategy="fixed"', () => {
+    renderTooltip({ strategy: 'fixed' })
+
+    expect(screen.getByTestId('tooltip-bubble').className).toMatch(/fixed/)
+  })
+
+  it('does not apply placement class when strategy="fixed"', () => {
+    renderTooltip({ strategy: 'fixed', placement: 'top' })
+    const bubble = screen.getByTestId('tooltip-bubble')
+
+    expect(bubble.className).not.toMatch(/placementTop/)
+  })
+
+  it('applies placement class when strategy="absolute"', () => {
+    renderTooltip({ strategy: 'absolute', placement: 'top' })
+    const bubble = screen.getByTestId('tooltip-bubble')
+
+    expect(bubble.className).toMatch(/placementTop/)
+  })
+
+  it('shows tooltip with strategy="fixed" after delay', () => {
+    renderTooltip({ strategy: 'fixed', delay: 0 })
+    const trigger = screen.getByTestId('tooltip')
+
+    fireEvent.mouseEnter(trigger)
+
+    act(() => { vi.advanceTimersByTime(0) })
+
+    expect(screen.getByTestId('tooltip-bubble').className).toMatch(/visible/)
+  })
+
+  it('applies position:fixed inline style when visible with strategy="fixed"', () => {
+    renderTooltip({ strategy: 'fixed', delay: 0 })
+    const trigger = screen.getByTestId('tooltip')
+
+    fireEvent.mouseEnter(trigger)
+
+    act(() => { vi.advanceTimersByTime(0) })
+
+    expect(screen.getByTestId('tooltip-bubble')).toHaveStyle({ position: 'fixed' })
+  })
 })

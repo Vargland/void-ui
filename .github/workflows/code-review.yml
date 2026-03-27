@@ -82,11 +82,17 @@ jobs:
           echo "$REVIEW" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Write review to file
+        run: printf '%s' "$REVIEW" > /tmp/pr_review.txt
+        env:
+          REVIEW: ${{ steps.claude-review.outputs.review }}
+
       - name: Post review comment
         uses: actions/github-script@v7
         with:
           script: |
-            const review = `${{ steps.claude-review.outputs.review }}`;
+            const fs = require('fs');
+            const review = fs.readFileSync('/tmp/pr_review.txt', 'utf8');
             const files = `${{ steps.files.outputs.list }}`;
 
             const body = [

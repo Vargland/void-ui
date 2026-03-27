@@ -24,8 +24,9 @@
   font-size:        var(--void-font-size-xs);
   font-weight:      var(--void-font-weight-medium);
   line-height:      1.4;
-  white-space:      nowrap;
+  white-space:      normal;
   word-break:       normal;
+  min-width:        max-content;
   pointer-events:   none;
   box-shadow:       var(--void-shadow-md);
 
@@ -39,6 +40,18 @@
     transform:  scale(1);
     visibility: visible;
   }
+}
+
+// ─── Fixed strategy ───────────────────────────────────────────────────────────
+// Overrides position: absolute so the bubble escapes stacking contexts
+
+.fixed {
+  position: fixed;
+  // Reset placement-based offsets — position comes entirely from inline style
+  top:    unset;
+  bottom: unset;
+  left:   unset;
+  right:  unset;
 }
 
 // ─── Arrow ────────────────────────────────────────────────────────────────────

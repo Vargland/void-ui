@@ -3,6 +3,34 @@ import type { TooltipProps } from '../../typings/components/tooltip'
 import { cn } from '../../helpers/classnames'
 import styles from './tooltip.module.scss'
 
+// ─── Position for fixed strategy ─────────────────────────────────────────────
+
+interface FixedPos {
+  top:  number
+  left: number
+}
+
+function calcFixedPos(
+  triggerEl: HTMLElement,
+  placement: NonNullable<TooltipProps['placement']>,
+  offset: number,
+): FixedPos {
+  const r = triggerEl.getBoundingClientRect()
+
+  switch (placement) {
+    case 'top':
+      return { top: r.top - offset, left: r.left + r.width / 2 }
+    case 'bottom':
+      return { top: r.bottom + offset, left: r.left + r.width / 2 }
+    case 'left':
+      return { top: r.top + r.height / 2, left: r.left - offset }
+    case 'right':
+      return { top: r.top + r.height / 2, left: r.right + offset }
+  }
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export function Tooltip({
   content,
   children,
@@ -10,33 +38,71 @@ export function Tooltip({
   delay       = 300,
   disabled    = false,
   maxWidth    = 200,
+  strategy    = 'absolute',
   planet,
   className,
   'data-testid': testId = 'tooltip',
 }: TooltipProps) {
-  const [visible, setVisible] = React.useState(false)
-  const timeoutRef            = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-  const tooltipId             = React.useId()
+  const [visible, setVisible]     = React.useState(false)
+  const [fixedPos, setFixedPos]   = React.useState<FixedPos | null>(null)
+  const timeoutRef                = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const triggerRef                = React.useRef<HTMLSpanElement>(null)
+  const tooltipId                 = React.useId()
 
   const show = React.useCallback(() => {
-    if (disabled) {
-                    return
-                  }
+    if (disabled) return
+
+    if (strategy === 'fixed' && triggerRef.current) {
+      setFixedPos(calcFixedPos(triggerRef.current, placement, 8))
+    }
 
     timeoutRef.current = setTimeout(() => setVisible(true), delay)
-  }, [disabled, delay])
+  }, [disabled, delay, strategy, placement])
 
   const hide = React.useCallback(() => {
     if (timeoutRef.current !== null) {
       clearTimeout(timeoutRef.current)
-
       timeoutRef.current = null
     }
-
     setVisible(false)
   }, [])
 
+  // Recalculate on scroll/resize while visible (fixed strategy only)
+  React.useEffect(() => {
+    if (strategy !== 'fixed' || !visible) return
+
+    const update = () => {
+      if (triggerRef.current) {
+        setFixedPos(calcFixedPos(triggerRef.current, placement, 8))
+      }
+    }
+
+    window.addEventListener('scroll', update, true)
+    window.addEventListener('resize', update)
+
+    return () => {
+      window.removeEventListener('scroll', update, true)
+      window.removeEventListener('resize', update)
+    }
+  }, [strategy, visible, placement])
+
   const placementClass = styles[`placement${placement.charAt(0).toUpperCase()}${placement.slice(1)}`]
+
+  // Build inline style for the bubble
+  const bubbleStyle: React.CSSProperties = { maxWidth }
+
+  if (strategy === 'fixed' && fixedPos) {
+    bubbleStyle.position  = 'fixed'
+    bubbleStyle.top       = fixedPos.top
+    bubbleStyle.left      = fixedPos.left
+
+    // Reset placement-based transforms and apply centering manually
+    if (placement === 'top' || placement === 'bottom') {
+      bubbleStyle.transform = visible ? 'translateX(-50%) scale(1)' : 'translateX(-50%) scale(0.9)'
+    } else {
+      bubbleStyle.transform = visible ? 'translateY(-50%) scale(1)' : 'translateY(-50%) scale(0.9)'
+    }
+  }
 
   const tooltip = (
     <span
@@ -49,6 +115,7 @@ export function Tooltip({
     >
       {/* Trigger — aria-describedby links it to the tooltip */}
       <span
+        ref={triggerRef}
         aria-describedby={!disabled && visible ? tooltipId : undefined}
       >
         {children}
@@ -64,8 +131,9 @@ export function Tooltip({
             styles.tooltip,
             placementClass,
             visible && styles.visible,
+            strategy === 'fixed' && styles.fixed,
           )}
-          style={{ maxWidth }}
+          style={bubbleStyle}
           aria-hidden={!visible}
         >
           {/* Arrow caret */}

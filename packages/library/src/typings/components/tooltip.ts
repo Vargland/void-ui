@@ -20,4 +20,6 @@ export interface TooltipProps extends BaseComponentProps {
   disabled?: boolean
   /** Maximum width of the tooltip in px */
   maxWidth?: number
+  /** Positioning strategy. Use 'fixed' to escape stacking contexts (e.g. inside grids or overflow containers) */
+  strategy?: 'absolute' | 'fixed'
 }

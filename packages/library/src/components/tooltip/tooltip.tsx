@@ -12,22 +12,32 @@ interface FixedPos {
 
 function calcFixedPos(
   triggerEl: HTMLElement,
+  bubbleEl: HTMLElement | null,
   placement: NonNullable<TooltipProps['placement']>,
   offset: number,
 ): FixedPos {
-  const r = triggerEl.getBoundingClientRect()
+  const r          = triggerEl.getBoundingClientRect()
+  const vw         = window.innerWidth
+  const margin     = 8
+  const bubbleW    = bubbleEl?.offsetWidth ?? 0
 
   switch (placement) {
-    // top: anchor at the top edge of the trigger, bubble grows upward via translateY(-100%)
     case 'top':
-      return { top: r.top - offset, left: r.left + r.width / 2 }
-    // bottom: anchor at the bottom edge, bubble grows downward
-    case 'bottom':
-      return { top: r.bottom + offset, left: r.left + r.width / 2 }
-    // left: anchor at the left edge, bubble grows leftward via translateX(-100%)
+    case 'bottom': {
+      // Center horizontally over the trigger, then clamp so bubble stays within viewport
+      const rawLeft  = r.left + r.width / 2
+      // After translateX(-50%), effective left edge = rawLeft - bubbleW/2
+      const minLeft  = margin + bubbleW / 2
+      const maxLeft  = vw - margin - bubbleW / 2
+      const left     = Math.min(Math.max(rawLeft, minLeft), maxLeft)
+
+      return {
+        top:  placement === 'top' ? r.top - offset : r.bottom + offset,
+        left,
+      }
+    }
     case 'left':
       return { top: r.top + r.height / 2, left: r.left - offset }
-    // right: anchor at the right edge, bubble grows rightward
     case 'right':
       return { top: r.top + r.height / 2, left: r.right + offset }
   }
@@ -51,13 +61,14 @@ export function Tooltip({
   const [fixedPos, setFixedPos]   = React.useState<FixedPos | null>(null)
   const timeoutRef                = React.useRef<ReturnType<typeof setTimeout> | null>(null)
   const triggerRef                = React.useRef<HTMLSpanElement>(null)
+  const bubbleRef                 = React.useRef<HTMLSpanElement>(null)
   const tooltipId                 = React.useId()
 
   const show = React.useCallback(() => {
     if (disabled) return
 
     if (strategy === 'fixed' && triggerRef.current) {
-      setFixedPos(calcFixedPos(triggerRef.current, placement, 8))
+      setFixedPos(calcFixedPos(triggerRef.current, bubbleRef.current, placement, 8))
     }
 
     timeoutRef.current = setTimeout(() => setVisible(true), delay)
@@ -77,7 +88,7 @@ export function Tooltip({
 
     const update = () => {
       if (triggerRef.current) {
-        setFixedPos(calcFixedPos(triggerRef.current, placement, 8))
+        setFixedPos(calcFixedPos(triggerRef.current, bubbleRef.current, placement, 8))
       }
     }
 
@@ -144,6 +155,7 @@ export function Tooltip({
       {/* Tooltip bubble */}
       {!disabled && (
         <span
+          ref={bubbleRef}
           id={tooltipId}
           role="tooltip"
           data-testid={`${testId}-bubble`}

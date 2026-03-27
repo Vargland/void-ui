@@ -1,81 +1,105 @@
 import * as React from 'react'
-import type { TooltipProps } from '../../typings/components/tooltip'
+import type { TooltipFixedPos, TooltipProps } from '../../typings/components/tooltip'
 import { cn } from '../../helpers/classnames'
 import styles from './tooltip.module.scss'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const FIXED_OFFSET   = 8  // px gap between trigger edge and bubble
-const VIEWPORT_MARGIN = 8  // px min distance from viewport edges
+const FIXED_OFFSET    = 8
 
-// ─── Position for fixed strategy ─────────────────────────────────────────────
+const VIEWPORT_MARGIN = 8
 
-interface FixedPos {
-  top:  number
-  left: number
+const FIXED_TRANSFORM_ORIGIN: Record<NonNullable<TooltipProps['placement']>, string> = {
+  top:    'bottom center',
+  bottom: 'top center',
+  left:   'right center',
+  right:  'left center',
 }
+
+const FIXED_TRANSFORM: Record<NonNullable<TooltipProps['placement']>, { visible: string; hidden: string }> = {
+  top:    { visible: 'translateX(-50%) translateY(-100%) scale(1)', hidden: 'translateX(-50%) translateY(-100%) scale(0.9)' },
+  bottom: { visible: 'translateX(-50%) scale(1)',                   hidden: 'translateX(-50%) scale(0.9)'                   },
+  left:   { visible: 'translateX(-100%) translateY(-50%) scale(1)', hidden: 'translateX(-100%) translateY(-50%) scale(0.9)' },
+  right:  { visible: 'translateY(-50%) scale(1)',                   hidden: 'translateY(-50%) scale(0.9)'                   },
+}
+
+// ─── Fixed position calculation ───────────────────────────────────────────────
 
 function calcFixedPos(
   triggerEl: HTMLElement,
-  bubbleEl: HTMLElement | null,
+  bubbleEl:  HTMLElement | null,
   placement: NonNullable<TooltipProps['placement']>,
-): FixedPos {
-  const r       = triggerEl.getBoundingClientRect()
-  const vw      = window.innerWidth
-  const bubbleW = bubbleEl?.offsetWidth ?? 0
+): TooltipFixedPos {
+  const triggerRect  = triggerEl.getBoundingClientRect()
 
-  switch (placement) {
-    case 'top':
-    case 'bottom': {
-      const rawLeft = r.left + r.width / 2
-      const minLeft = VIEWPORT_MARGIN + bubbleW / 2
-      const maxLeft = vw - VIEWPORT_MARGIN - bubbleW / 2
-      const left    = Math.min(Math.max(rawLeft, minLeft), maxLeft)
+  const viewportW    = window.innerWidth
 
-      return {
-        top:  placement === 'top' ? r.top - FIXED_OFFSET : r.bottom + FIXED_OFFSET,
-        left,
-      }
+  const viewportH    = window.innerHeight
+
+  const bubbleWidth  = bubbleEl?.offsetWidth  ?? 0
+
+  const bubbleHeight = bubbleEl?.offsetHeight ?? 0
+
+  if (placement === 'top' || placement === 'bottom') {
+    const rawLeft     = triggerRect.left + triggerRect.width / 2
+
+    const minLeft     = VIEWPORT_MARGIN + bubbleWidth / 2
+
+    const maxLeft     = viewportW - VIEWPORT_MARGIN - bubbleWidth / 2
+
+    const clampedLeft = Math.min(Math.max(rawLeft, minLeft), maxLeft)
+
+    return {
+      top:  placement === 'top'
+              ? triggerRect.top - FIXED_OFFSET
+              : triggerRect.bottom + FIXED_OFFSET,
+      left: clampedLeft,
     }
-    case 'left':
-    case 'right': {
-      const vh       = window.innerHeight
-      const bubbleH  = bubbleEl?.offsetHeight ?? 0
-      const rawTop   = r.top + r.height / 2
-      const minTop   = VIEWPORT_MARGIN + bubbleH / 2
-      const maxTop   = vh - VIEWPORT_MARGIN - bubbleH / 2
-      const top      = Math.min(Math.max(rawTop, minTop), maxTop)
+  }
 
-      return {
-        top,
-        left: placement === 'left' ? r.left - FIXED_OFFSET : r.right + FIXED_OFFSET,
-      }
-    }
+  const rawTop     = triggerRect.top + triggerRect.height / 2
+
+  const minTop     = VIEWPORT_MARGIN + bubbleHeight / 2
+
+  const maxTop     = viewportH - VIEWPORT_MARGIN - bubbleHeight / 2
+
+  const clampedTop = Math.min(Math.max(rawTop, minTop), maxTop)
+
+  return {
+    top:  clampedTop,
+    left: placement === 'left'
+            ? triggerRect.left - FIXED_OFFSET
+            : triggerRect.right + FIXED_OFFSET,
   }
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function Tooltip({
-  content,
   children,
-  placement   = 'top',
-  delay       = 300,
-  disabled    = false,
-  maxWidth    = 200,
-  strategy    = 'absolute',
-  planet,
   className,
+  content,
   'data-testid': testId = 'tooltip',
+  delay     = 300,
+  disabled  = false,
+  maxWidth  = 200,
+  placement = 'top',
+  planet,
+  strategy  = 'absolute',
 }: TooltipProps) {
-  const [visible, setVisible]   = React.useState(false)
-  const [fixedPos, setFixedPos] = React.useState<FixedPos | null>(null)
-  const timeoutRef              = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-  const triggerRef              = React.useRef<HTMLSpanElement>(null)
-  const bubbleRef               = React.useRef<HTMLSpanElement>(null)
-  const tooltipId               = React.useId()
+  const [fixedPos, setFixedPos] = React.useState<TooltipFixedPos | null>(null)
 
-  // Clear pending timeout on unmount to prevent memory leaks
+  const [visible, setVisible] = React.useState(false)
+
+  const bubbleRef  = React.useRef<HTMLSpanElement>(null)
+
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const tooltipId = React.useId()
+
+  const triggerRef = React.useRef<HTMLSpanElement>(null)
+
+  // Clear pending timeout on unmount
   React.useEffect(() => {
     return () => {
       if (timeoutRef.current !== null) {
@@ -85,7 +109,9 @@ export function Tooltip({
   }, [])
 
   const show = React.useCallback(() => {
-    if (disabled) return
+    if (disabled) {
+      return
+    }
 
     timeoutRef.current = setTimeout(() => setVisible(true), delay)
   }, [disabled, delay])
@@ -95,78 +121,83 @@ export function Tooltip({
       clearTimeout(timeoutRef.current)
       timeoutRef.current = null
     }
+
     setVisible(false)
+
     setFixedPos(null)
   }, [])
 
-  // Calculate fixed position after bubble renders (so offsetWidth is available)
+  // Recalculate position after render — bubble has real dimensions at this point
   React.useLayoutEffect(() => {
-    if (strategy !== 'fixed' || !visible || !triggerRef.current) return
+    if (strategy !== 'fixed') {
+      return
+    }
+
+    if (!visible) {
+      return
+    }
+
+    if (!triggerRef.current) {
+      return
+    }
 
     setFixedPos(calcFixedPos(triggerRef.current, bubbleRef.current, placement))
   }, [strategy, visible, placement])
 
-  // Recalculate on scroll/resize while visible (fixed strategy only)
+  // Recalculate on scroll/resize while visible
   React.useEffect(() => {
-    if (strategy !== 'fixed' || !visible) return
+    if (strategy !== 'fixed') {
+      return
+    }
 
-    const update = () => {
+    if (!visible) {
+      return
+    }
+
+    const handleUpdate = () => {
       if (triggerRef.current) {
         setFixedPos(calcFixedPos(triggerRef.current, bubbleRef.current, placement))
       }
     }
 
-    window.addEventListener('scroll', update, true)
-    window.addEventListener('resize', update)
+    window.addEventListener('scroll', handleUpdate, true)
+    window.addEventListener('resize', handleUpdate)
 
     return () => {
-      window.removeEventListener('scroll', update, true)
-      window.removeEventListener('resize', update)
+      window.removeEventListener('scroll', handleUpdate, true)
+      window.removeEventListener('resize', handleUpdate)
     }
   }, [strategy, visible, placement])
 
-  // For fixed strategy, skip the placement class entirely — position is fully inline
+  // ─── Derived values ──────────────────────────────────────────────────────────
+
   const placementClass = strategy === 'fixed'
     ? null
     : styles[`placement${placement.charAt(0).toUpperCase()}${placement.slice(1)}`]
 
-  // Build inline style for the bubble
   const bubbleStyle: React.CSSProperties = { maxWidth }
 
   if (strategy === 'fixed' && fixedPos) {
+    const transforms = FIXED_TRANSFORM[placement]
+
+    bubbleStyle.left            = fixedPos.left
     bubbleStyle.position        = 'fixed'
     bubbleStyle.top             = fixedPos.top
-    bubbleStyle.left            = fixedPos.left
-    bubbleStyle.transformOrigin = placement === 'top'    ? 'bottom center'
-                                : placement === 'bottom' ? 'top center'
-                                : placement === 'left'   ? 'right center'
-                                :                         'left center'
-
-    if (placement === 'top') {
-      bubbleStyle.transform = visible
-        ? 'translateX(-50%) translateY(-100%) scale(1)'
-        : 'translateX(-50%) translateY(-100%) scale(0.9)'
-    } else if (placement === 'bottom') {
-      bubbleStyle.transform = visible ? 'translateX(-50%) scale(1)' : 'translateX(-50%) scale(0.9)'
-    } else if (placement === 'left') {
-      bubbleStyle.transform = visible
-        ? 'translateX(-100%) translateY(-50%) scale(1)'
-        : 'translateX(-100%) translateY(-50%) scale(0.9)'
-    } else {
-      bubbleStyle.transform = visible ? 'translateY(-50%) scale(1)' : 'translateY(-50%) scale(0.9)'
-    }
+    bubbleStyle.transform       = visible ? transforms.visible : transforms.hidden
+    bubbleStyle.transformOrigin = FIXED_TRANSFORM_ORIGIN[placement]
   }
+
+  // ─── Render ──────────────────────────────────────────────────────────────────
 
   const tooltip = (
     <span
       className={cn(styles.root, className)}
       data-testid={testId}
+      onBlur={hide}
+      onFocus={show}
       onMouseEnter={show}
       onMouseLeave={hide}
-      onFocus={show}
-      onBlur={hide}
     >
-      {/* Trigger — aria-describedby links it to the tooltip */}
       <span
         ref={triggerRef}
         aria-describedby={!disabled && visible ? tooltipId : undefined}
@@ -174,24 +205,22 @@ export function Tooltip({
         {children}
       </span>
 
-      {/* Tooltip bubble */}
       {!disabled && (
         <span
           ref={bubbleRef}
-          id={tooltipId}
-          role="tooltip"
-          data-testid={`${testId}-bubble`}
+          aria-hidden={!visible}
           className={cn(
             styles.tooltip,
             placementClass,
             visible && styles.visible,
             strategy === 'fixed' && styles.fixed,
           )}
+          data-testid={`${testId}-bubble`}
+          id={tooltipId}
+          role="tooltip"
           style={bubbleStyle}
-          aria-hidden={!visible}
         >
-          {/* Arrow caret */}
-          <span className={styles.arrow} aria-hidden="true" />
+          <span aria-hidden="true" className={styles.arrow} />
 
           {content}
         </span>

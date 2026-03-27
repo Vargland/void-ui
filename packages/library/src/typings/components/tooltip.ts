@@ -5,6 +5,13 @@ import type { BaseComponentProps } from '../helpers'
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right'
 
+// ─── Fixed position ───────────────────────────────────────────────────────────
+
+export type TooltipFixedPos = {
+  top:  number
+  left: number
+}
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 export interface TooltipProps extends BaseComponentProps {

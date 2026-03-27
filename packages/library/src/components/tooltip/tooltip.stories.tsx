@@ -58,7 +58,7 @@ export const Default: Story = {
       style={{ padding: '64px' }}
     >
       <Tooltip {...args}>
-        <Button variant="secondary" size="md">Hover me</Button>
+        <Button size="md" variant="secondary">Hover me</Button>
       </Tooltip>
     </Stack>
   ),
@@ -69,21 +69,21 @@ export const Default: Story = {
 export const Placements: Story = {
   render: () => (
     <Stack direction="column" gap={4} style={{ padding: '80px' }}>
-      <Stack direction="row" gap={6} align="center" justify="center">
+      <Stack align="center" direction="row" gap={6} justify="center">
         <Tooltip content="Tooltip on top" placement="top">
-          <Button variant="secondary" size="sm">Top</Button>
+          <Button size="sm" variant="secondary">Top</Button>
         </Tooltip>
 
         <Tooltip content="Tooltip on bottom" placement="bottom">
-          <Button variant="secondary" size="sm">Bottom</Button>
+          <Button size="sm" variant="secondary">Bottom</Button>
         </Tooltip>
 
         <Tooltip content="Tooltip on left" placement="left">
-          <Button variant="secondary" size="sm">Left</Button>
+          <Button size="sm" variant="secondary">Left</Button>
         </Tooltip>
 
         <Tooltip content="Tooltip on right" placement="right">
-          <Button variant="secondary" size="sm">Right</Button>
+          <Button size="sm" variant="secondary">Right</Button>
         </Tooltip>
       </Stack>
     </Stack>
@@ -95,21 +95,21 @@ export const Placements: Story = {
 
 export const WithDelay: Story = {
   render: () => (
-    <Stack direction="row" gap={4} align="center" style={{ padding: '64px' }}>
-      <Tooltip content="No delay (0 ms)" placement="top" delay={0}>
-        <Button variant="secondary" size="sm">No delay</Button>
+    <Stack align="center" direction="row" gap={4} style={{ padding: '64px' }}>
+      <Tooltip content="No delay (0 ms)" delay={0} placement="top">
+        <Button size="sm" variant="secondary">No delay</Button>
       </Tooltip>
 
-      <Tooltip content="Short delay (150 ms)" placement="top" delay={150}>
-        <Button variant="secondary" size="sm">150 ms</Button>
+      <Tooltip content="Short delay (150 ms)" delay={150} placement="top">
+        <Button size="sm" variant="secondary">150 ms</Button>
       </Tooltip>
 
-      <Tooltip content="Default delay (300 ms)" placement="top" delay={300}>
-        <Button variant="secondary" size="sm">300 ms</Button>
+      <Tooltip content="Default delay (300 ms)" delay={300} placement="top">
+        <Button size="sm" variant="secondary">300 ms</Button>
       </Tooltip>
 
-      <Tooltip content="Long delay (800 ms)" placement="top" delay={800}>
-        <Button variant="secondary" size="sm">800 ms</Button>
+      <Tooltip content="Long delay (800 ms)" delay={800} placement="top">
+        <Button size="sm" variant="secondary">800 ms</Button>
       </Tooltip>
     </Stack>
   ),
@@ -120,13 +120,13 @@ export const WithDelay: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <Stack direction="row" gap={4} align="center" style={{ padding: '64px' }}>
+    <Stack align="center" direction="row" gap={4} style={{ padding: '64px' }}>
       <Tooltip content="I am enabled" placement="top">
-        <Button variant="secondary" size="sm">Enabled tooltip</Button>
+        <Button size="sm" variant="secondary">Enabled tooltip</Button>
       </Tooltip>
 
-      <Tooltip content="You cannot see this" placement="top" disabled>
-        <Button variant="secondary" size="sm" disabled>Disabled tooltip</Button>
+      <Tooltip content="You cannot see this" disabled placement="top">
+        <Button disabled size="sm" variant="secondary">Disabled tooltip</Button>
       </Tooltip>
     </Stack>
   ),
@@ -137,11 +137,8 @@ export const Disabled: Story = {
 
 export const WithRichContent: Story = {
   render: () => (
-    <Stack direction="row" gap={4} align="center" style={{ padding: '64px' }}>
+    <Stack align="center" direction="row" gap={4} style={{ padding: '64px' }}>
       <Tooltip
-        placement="bottom"
-        maxWidth={240}
-        delay={0}
         content={
           <Stack direction="column" gap={1}>
             <Typography size="xs" style={{ fontWeight: 600, color: 'inherit' }}>
@@ -152,22 +149,25 @@ export const WithRichContent: Story = {
             </Typography>
           </Stack>
         }
+        delay={0}
+        maxWidth={240}
+        placement="bottom"
       >
-        <Button variant="secondary" size="md">Rich content</Button>
+        <Button size="md" variant="secondary">Rich content</Button>
       </Tooltip>
 
       <Tooltip
-        placement="top"
-        maxWidth={180}
-        delay={0}
         content={
-          <Stack direction="row" gap={1} align="center">
-            <Badge tone="success" size="sm">Live</Badge>
+          <Stack align="center" direction="row" gap={1}>
+            <Badge size="sm" tone="success">Live</Badge>
             <Typography size="xs" style={{ color: 'inherit' }}>Service is operational</Typography>
           </Stack>
         }
+        delay={0}
+        maxWidth={180}
+        placement="top"
       >
-        <Button variant="secondary" size="md">Status badge</Button>
+        <Button size="md" variant="secondary">Status badge</Button>
       </Tooltip>
     </Stack>
   ),
@@ -178,21 +178,21 @@ export const WithRichContent: Story = {
 
 export const OnButtons: Story = {
   render: () => (
-    <Stack direction="row" gap={3} align="center" style={{ padding: '64px' }}>
-      <Tooltip content="Create a new item" placement="top" delay={0}>
-        <Button variant="primary" size="md">New</Button>
+    <Stack align="center" direction="row" gap={3} style={{ padding: '64px' }}>
+      <Tooltip content="Create a new item" delay={0} placement="top">
+        <Button size="md" variant="primary">New</Button>
       </Tooltip>
 
-      <Tooltip content="Edit the selected item" placement="top" delay={0}>
-        <Button variant="secondary" size="md">Edit</Button>
+      <Tooltip content="Edit the selected item" delay={0} placement="top">
+        <Button size="md" variant="secondary">Edit</Button>
       </Tooltip>
 
-      <Tooltip content="This action is irreversible" placement="top" delay={0}>
-        <Button variant="danger" size="md">Delete</Button>
+      <Tooltip content="This action is irreversible" delay={0} placement="top">
+        <Button size="md" variant="danger">Delete</Button>
       </Tooltip>
 
-      <Tooltip content="Cannot perform this action" placement="top" delay={0} disabled>
-        <Button variant="ghost" size="md" disabled>Disabled</Button>
+      <Tooltip content="Cannot perform this action" delay={0} disabled placement="top">
+        <Button disabled size="md" variant="ghost">Disabled</Button>
       </Tooltip>
     </Stack>
   ),
@@ -207,10 +207,10 @@ export const PlanetThemes: Story = {
       {ALL_CELESTIAL_BODIES.map(planet => (
         <Stack
           key={planet}
-          direction="row"
           align="center"
-          gap={3}
           data-void-planet={planet}
+          direction="row"
+          gap={3}
           style={{
             padding:      '16px 20px',
             background:   'var(--void-color-background-surface)',
@@ -219,25 +219,25 @@ export const PlanetThemes: Story = {
           }}
         >
           <Typography
-            size="xs"
             color="secondary"
-            uppercase
-            tracking="wide"
+            size="xs"
             style={{ width: '72px', flexShrink: 0 }}
+            tracking="wide"
+            uppercase
           >
             {planet}
           </Typography>
 
-          <Tooltip content="Top tooltip" placement="top" delay={0}>
-            <Button variant="secondary" size="sm">Top</Button>
+          <Tooltip content="Top tooltip" delay={0} placement="top">
+            <Button size="sm" variant="secondary">Top</Button>
           </Tooltip>
 
-          <Tooltip content="Bottom tooltip" placement="bottom" delay={0}>
-            <Button variant="secondary" size="sm">Bottom</Button>
+          <Tooltip content="Bottom tooltip" delay={0} placement="bottom">
+            <Button size="sm" variant="secondary">Bottom</Button>
           </Tooltip>
 
-          <Tooltip content="Right tooltip" placement="right" delay={0}>
-            <Button variant="secondary" size="sm">Right</Button>
+          <Tooltip content="Right tooltip" delay={0} placement="right">
+            <Button size="sm" variant="secondary">Right</Button>
           </Tooltip>
         </Stack>
       ))}

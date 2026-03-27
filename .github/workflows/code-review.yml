@@ -45,7 +45,9 @@ jobs:
         run: |
           FILES=$(git diff origin/${{ github.base_ref }}...HEAD --name-only \
             -- '*.ts' '*.tsx' '*.scss' ':!*.test.*' ':!*.stories.*' ':!dist/*')
-          echo "list=$FILES" >> $GITHUB_OUTPUT
+          echo "list<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Claude code review
         id: claude-review

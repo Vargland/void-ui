@@ -18,12 +18,16 @@ function calcFixedPos(
   const r = triggerEl.getBoundingClientRect()
 
   switch (placement) {
+    // top: anchor at the top edge of the trigger, bubble grows upward via translateY(-100%)
     case 'top':
       return { top: r.top - offset, left: r.left + r.width / 2 }
+    // bottom: anchor at the bottom edge, bubble grows downward
     case 'bottom':
       return { top: r.bottom + offset, left: r.left + r.width / 2 }
+    // left: anchor at the left edge, bubble grows leftward via translateX(-100%)
     case 'left':
       return { top: r.top + r.height / 2, left: r.left - offset }
+    // right: anchor at the right edge, bubble grows rightward
     case 'right':
       return { top: r.top + r.height / 2, left: r.right + offset }
   }
@@ -86,19 +90,35 @@ export function Tooltip({
     }
   }, [strategy, visible, placement])
 
-  const placementClass = styles[`placement${placement.charAt(0).toUpperCase()}${placement.slice(1)}`]
+  // For fixed strategy, skip the placement class entirely — position is fully inline
+  const placementClass = strategy === 'fixed'
+    ? null
+    : styles[`placement${placement.charAt(0).toUpperCase()}${placement.slice(1)}`]
 
   // Build inline style for the bubble
   const bubbleStyle: React.CSSProperties = { maxWidth }
 
   if (strategy === 'fixed' && fixedPos) {
-    bubbleStyle.position  = 'fixed'
-    bubbleStyle.top       = fixedPos.top
-    bubbleStyle.left      = fixedPos.left
+    const isVertical = placement === 'top' || placement === 'bottom'
 
-    // Reset placement-based transforms and apply centering manually
-    if (placement === 'top' || placement === 'bottom') {
+    bubbleStyle.position        = 'fixed'
+    bubbleStyle.top             = fixedPos.top
+    bubbleStyle.left            = fixedPos.left
+    bubbleStyle.transformOrigin = placement === 'top'    ? 'bottom center'
+                                : placement === 'bottom' ? 'top center'
+                                : placement === 'left'   ? 'right center'
+                                :                         'left center'
+
+    if (placement === 'top') {
+      bubbleStyle.transform = visible
+        ? 'translateX(-50%) translateY(-100%) scale(1)'
+        : 'translateX(-50%) translateY(-100%) scale(0.9)'
+    } else if (placement === 'bottom') {
       bubbleStyle.transform = visible ? 'translateX(-50%) scale(1)' : 'translateX(-50%) scale(0.9)'
+    } else if (placement === 'left') {
+      bubbleStyle.transform = visible
+        ? 'translateX(-100%) translateY(-50%) scale(1)'
+        : 'translateX(-100%) translateY(-50%) scale(0.9)'
     } else {
       bubbleStyle.transform = visible ? 'translateY(-50%) scale(1)' : 'translateY(-50%) scale(0.9)'
     }

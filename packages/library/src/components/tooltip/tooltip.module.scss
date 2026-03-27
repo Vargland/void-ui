@@ -52,6 +52,11 @@
   bottom: unset;
   left:   unset;
   right:  unset;
+
+  // Arrow has no valid anchor when position is computed dynamically — hide it
+  .arrow {
+    display: none;
+  }
 }
 
 // ─── Arrow ────────────────────────────────────────────────────────────────────
